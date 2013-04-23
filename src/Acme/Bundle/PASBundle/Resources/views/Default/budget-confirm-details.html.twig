@@ -1,0 +1,56 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Budget Confirmation Page - Details{% endblock %}
+
+{% block main %}
+	{% if requests == false %}
+		<div id="heading">
+			<h3>Budget Details</h3>
+		</div>
+
+		<div id="main">
+			<h4>No budget request found for category {{ categories[cid] }}</h4>
+		</div>
+	{% else %}
+		<div id="heading">
+			<h3>Budget Details: {{ categories[cid] }}</h3>
+		</div>
+
+		<div id="main">
+			<table id="budget_details">
+				<thead>
+					<tr>
+						<th class="details_no">No.</th>
+						<th class="details_schedule">Starting Date of Activity</th>
+						<th class="details_schedule">Ending Date of Activity</th>
+						<th class="details_abstract">Abstract of Activity</th>
+						<th class="details_details">Details</th>
+						<th class="details_amount">Amount (US$)</th>
+					</tr>
+				</thead>
+				<tfoot>
+					<tr>
+						<td class="details_no">Total</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td class="details_amount">{{ sum }}</td>
+					</tr>
+				</tfoot>
+				<tbody>
+					{% for req in requests %}
+						<tr>
+							<td class="details_no">{{ loop.index }}</td>
+							<td class="details_schedule">{{ req.startdate|date("m/d/Y") }}</td>
+							<td class="details_schedule">{{ req.enddate|date("m/d/Y") }}</td>
+							<td class="details_abstract">{{ req.abstract }}</td>
+							<td class="details_details">{{ req.details }}</td>
+							<td class="details_amount">{{ req.amount }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% endif %}
+{% endblock %}

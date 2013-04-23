@@ -1,0 +1,202 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Payment Request Form{% endblock %}
+
+{% block main %}
+	<div id="heading">
+		<h3>Payment request form</h3>
+	</div>
+
+	<div id="main">
+		<h4>To request payment of BDA expenses, please fill out this form.</h4>
+		<form id="post_request_form" class="bda_form" action="{{ path('pas_post_request_form') }}" method="post" {{ form_enctype(form) }}>
+			{{ form_errors(form) }}
+
+			{{ form_row(form.rid) }}
+
+			<div id="requester" class="form_item">
+				{{ form_label(form.requester) }}<br />
+				{{ form_errors(form.requester) }}
+				{{ form_widget(form.requester) }}
+			</div>
+
+			<div id="category" class="form_item">
+				{{ form_label(form.category) }}<br />
+				{{ form_errors(form.category) }}
+				{{ form_widget(form.category) }}
+			</div>
+
+			<div id="explanation" class="form_item">
+				{{ form_label(form.explanation) }}<br />
+				{{ form_errors(form.explanation) }}
+				{{ form_widget(form.explanation) }}
+			</div>
+
+			<div id="amount" class="form_item">
+				{{ form_label(form.amount) }}<br />
+				{{ form_errors(form.amount) }}
+				{{ form_widget(form.amount) }}
+			</div>
+
+			<div id="curtype" class="form_item">
+				{{ form_label(form.curtype) }}<br />
+				{{ form_errors(form.curtype) }}
+				{{ form_widget(form.curtype) }}
+			</div>
+
+			<div id="usd_amount" class="form_item">
+				$<span></span> (data from Google)
+			</div>
+
+			<div id="paymentMethod" class="form_item">
+				{{ form_label(form.paymentMethod) }}<br />
+				{{ form_errors(form.paymentMethod) }}
+				{{ form_widget(form.paymentMethod) }}
+			</div>
+
+			<div id="check">
+				<div id="companyName" class="form_item">
+					{{ form_label(form.companyName) }}<br />
+					{{ form_errors(form.companyName) }}
+					{{ form_widget(form.companyName) }}
+				</div>
+
+				<div id="attention" class="form_item">
+					{{ form_label(form.attention) }}<br />
+					{{ form_errors(form.attention) }}
+					{{ form_widget(form.attention) }}
+				</div>
+
+				<div id="address" class="form_item">
+					{{ form_label(form.address) }}<br />
+					{{ form_errors(form.address) }}
+					{{ form_widget(form.address) }}
+				</div>
+			</div>
+
+			<div id="wire">
+				<div id="accountName" class="form_item">
+					{{ form_label(form.accountName) }}<br />
+					{{ form_errors(form.accountName) }}
+					{{ form_widget(form.accountName) }}
+				</div>
+
+				<div id="bankName" class="form_item">
+					{{ form_label(form.bankName) }}<br />
+					{{ form_errors(form.bankName) }}
+					{{ form_widget(form.bankName) }}
+				</div>
+
+				<div id="accountNumber" class="form_item">
+					{{ form_label(form.accountNumber) }}<br />
+					{{ form_errors(form.accountNumber) }}
+					{{ form_widget(form.accountNumber) }}
+				</div>
+
+				<div id="swiftCode" class="form_item">
+					{{ form_label(form.swiftCode) }}<br />
+					{{ form_errors(form.swiftCode) }}
+					{{ form_widget(form.swiftCode) }}
+				</div>
+
+				<div id="routingNumber" class="form_item">
+					{{ form_label(form.routingNumber) }}<br />
+					{{ form_errors(form.routingNumber) }}
+					{{ form_widget(form.routingNumber) }}
+				</div>
+			</div>
+
+			<div id="contactEmail" class="form_item">
+				{{ form_label(form.contactEmail) }}<br />
+				{{ form_errors(form.contactEmail) }}
+				{{ form_widget(form.contactEmail) }}
+			</div>
+
+			<div id="pre_approval" class="form_item">
+				{{ form_label(form.preApproval) }}<br />
+				{{ form_errors(form.preApproval) }}
+				{{ form_widget(form.preApproval) }}
+			</div>
+
+			<div id="pre_approved">
+				<div id="prid" class="form_item">
+					{{ form_label(form.prid) }}<br />
+					{{ form_errors(form.prid) }}
+					{{ form_widget(form.prid) }}
+				</div>
+
+				<div id="invoices" class="form_item">
+					{{ form_label(form.invoice) }}<br />
+					{{ form_errors(form.invoice) }}
+					{{ form_widget(form.invoice) }}
+				</div>
+			</div>
+
+			<div id="un_pre_approved">
+				<div id="level" class="form_item">
+					{{ form_label(form.level) }}<br />
+					{{ form_errors(form.level) }}
+					{{ form_widget(form.level) }}
+				</div>
+
+				<div id="chair" class="form_item">
+					{{ form_label(form.chairId) }}<br />
+					{{ form_errors(form.chairId) }}
+					{{ form_widget(form.chairId) }}
+					{{ form_row(form.chairApproved) }}
+				</div>
+
+				<div id="secretary" class="form_item">
+					{{ form_label(form.secretaryId) }}<br />
+					{{ form_errors(form.secretaryId) }}
+					{{ form_widget(form.secretaryId) }}
+					{{ form_row(form.secretaryApproved) }}
+				</div>
+
+				<div id="president" class="form_item">
+					{{ form_label(form.presidentId) }}<br />
+					{{ form_errors(form.presidentId) }}
+					{{ form_widget(form.presidentId) }}
+					{{ form_row(form.presidentApproved) }}
+				</div>
+			</div>
+
+			<div id="cfo" class="form_item">
+				{{ form_label(form.cfoId) }}<br />
+				{{ form_errors(form.cfoId) }}
+				{{ form_widget(form.cfoId) }}
+				{{ form_row(form.cfoApproved) }}
+			</div>
+
+			{{ form_rest(form) }}
+
+			<div id="buttons" class="form_item">
+				<input type="submit" value="Submit" />
+			</div>
+		</form>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	<script type="text/javascript">
+		$(function() {
+			ConvertCurrency();
+			SelectPaymentMethod();
+			SelectPreApproved();
+
+			$("#form_amount, #form_curtype").change(function() {
+				ConvertCurrency();
+			});
+
+			$("#form_paymentMethod").change(function() {
+				SelectPaymentMethod();
+			});
+
+			$("input[type=radio]").change(function() {
+				SelectPreApproved();
+			});
+		});
+	</script>
+{% endblock %}

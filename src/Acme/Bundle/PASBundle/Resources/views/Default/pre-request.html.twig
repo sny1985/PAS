@@ -1,0 +1,140 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Pre-Payment Request Form{% endblock %}
+
+{% block main %}
+	<div id="heading">
+		<h3>Pre-payment request form</h3>
+	</div>
+
+	<div id="main">
+		<h4>To request payment of BDA expenses, please fill out this form.</h4>
+		<form id="pre_request_form" class="bda_form" action="{{ path('pas_pre_request_form') }}" method="post" {{ form_enctype(form) }}>
+			{{ form_errors(form) }}
+
+			{{ form_row(form.prid) }}
+
+			<div id="requester" class="form_item">
+				{{ form_label(form.requester) }}<br />
+				{{ form_errors(form.requester) }}
+				{{ form_widget(form.requester) }}
+			</div>
+
+			<div id="category" class="form_item">
+				{{ form_label(form.category) }}<br />
+				{{ form_errors(form.category) }}
+				{{ form_widget(form.category) }}
+			</div>
+
+			<div id="explanation" class="form_item">
+				{{ form_label(form.explanation) }}<br />
+				{{ form_errors(form.explanation) }}
+				{{ form_widget(form.explanation) }}
+			</div>
+
+			<div id="amount" class="form_item">
+				{{ form_label(form.amount) }}<br />
+				{{ form_errors(form.amount) }}
+				{{ form_widget(form.amount) }}
+			</div>
+
+			<div id="curtype" class="form_item">
+				{{ form_label(form.curtype) }}<br />
+				{{ form_errors(form.curtype) }}
+				{{ form_widget(form.curtype) }}
+			</div>
+
+			<div id="usd_amount" class="form_item">
+				$<span></span> (data from Google)
+			</div>
+
+			<div id="budget" class="form_item">
+				<a id="budget_btn" href="#">Click Here to Choose One Budget:</a>
+				<table id="budget_table" class="status summary">
+					<thead>
+						<tr>
+							<th class="check_no">No.</th>
+							<th class="check_category">Officer/Committee Chair/TF Chair</th>
+							<th class="check_amount">Amount (US$)</th>
+						</tr>
+					</thead>
+					<tfoot>
+					</tfoot>
+					<tbody>
+						{% for year in years %}
+							{% for cat in budgets[year]['categories'] %}
+								<tr id="{{ year }}-{{ cat }}">
+									<td class="check_no">{{ loop.index }}</td>
+									<td class="check_category">{{ categories[cat] }}</td>
+									<td class="check_amount">{{ budgets[year][cat]['amount'] }}</td>
+								</tr>
+							{% endfor %}
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div id="level" class="form_item">
+				{{ form_label(form.level) }}<br />
+				{{ form_errors(form.level) }}
+				{{ form_widget(form.level) }}
+			</div>
+
+			<div id="chair" class="form_item">
+				{{ form_label(form.chairId) }}<br />
+				{{ form_errors(form.chairId) }}
+				{{ form_widget(form.chairId) }}
+				{{ form_row(form.chairApproved) }}
+			</div>
+
+			<div id="cfo" class="form_item">
+				{{ form_label(form.cfoId) }}<br />
+				{{ form_errors(form.cfoId) }}
+				{{ form_widget(form.cfoId) }}
+				{{ form_row(form.cfoApproved) }}
+			</div>
+
+			<div id="president" class="form_item">
+				{{ form_label(form.presidentId) }}<br />
+				{{ form_errors(form.presidentId) }}
+				{{ form_widget(form.presidentId) }}
+				{{ form_row(form.presidentApproved) }}
+			</div>
+
+			<div id="secretary" class="form_item">
+				{{ form_label(form.secretaryId) }}<br />
+				{{ form_errors(form.secretaryId) }}
+				{{ form_widget(form.secretaryId) }}
+				{{ form_row(form.secretaryApproved) }}
+			</div>
+
+			{{ form_rest(form) }}
+
+			<div id="buttons" class="form_item">
+				<input type="submit" value="Submit" />
+			</div>
+		</form>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	<script type="text/javascript">
+		$(function() {
+			ConvertCurrency();
+			SelectBudget();
+
+			$("#form_amount, #form_curtype").change(function() {
+				ConvertCurrency();
+			});
+
+			$("#budget_btn").click(function() {
+				// ADD REQUIRED ATTRIBUTE ???
+				var url = window.location.href;
+				url = url.slice(0, url.lastIndexOf("/")) + "/budget-check";
+				window.open(url, "smallwin", "width=960,height=600,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no");
+			});
+		});
+	</script>
+{% endblock %}

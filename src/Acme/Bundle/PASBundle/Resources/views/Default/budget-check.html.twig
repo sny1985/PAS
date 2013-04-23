@@ -1,0 +1,79 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Budget Check Page{% endblock %}
+
+{% block main %}
+	<div id="heading">
+		<h3>Budget Check Page</h3>
+	</div>
+
+	<div id="main">
+		<form id="budget_check_form">
+			<select id="fiscalyear">
+				<option value="">Choose One Fiscal Year</option>
+				{% for year in years %}
+					<option value="{{ year }}" {% if loop.index == loop.last %}selected{% endif %} >{{ year }}</option>
+				{% endfor %}
+			</select>
+
+			{% for year in years %}
+				<table id="{{ year }}" class="status summary">
+					<thead>
+						<tr>
+							<th class="check_no">No.</th>
+							<th class="check_category">Officer/Committee Chair/TF Chair</th>
+							<th class="check_amount">Amount (US$)</th>
+							<th class="check_selected">Selected</th>
+						</tr>
+					</thead>
+					<tfoot>
+						<tr>
+							<td class="check_no">Total</td>
+							<td></td>
+							<td class="check_amount">{{ budgets[year]['sum'] }}</td>
+							<td></td>
+						</tr>
+					</tfoot>
+					<tbody>
+						{% for cat in budgets[year]['categories'] %}
+							<tr>
+								<td class="check_no">{{ loop.index }}</td>
+								<td class="check_category">{{ categories[cat] }}</td>
+								<td class="check_amount">{{ budgets[year][cat]['amount'] }}</td>
+								<td class="check_selected"><input type="radio" name="selected_budget" value="{{ year }}-{{ cat }}" required="required" /></td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% endfor %}
+
+			<div id="buttons" class="form_item">
+				<input type="submit" value="Done" />
+			</div>
+		</form>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	<script type="text/javascript">
+		$(function() {
+			SelectYear();
+			$("#fiscalyear").change(function (){
+				SelectYear();
+			});
+			$("#budget_check_form").submit(function(event) {
+				event.preventDefault();
+				var $selected = $("input[name=selected_budget]:checked");
+				var id = $selected.val();
+				var year = id.slice(0, 4);
+				var cat = id.slice(5);
+				if (id) {
+					window.opener.SelectBudget({"year": year, "cat": cat});
+					window.close();
+				}
+			});
+		});
+	</script>
+{% endblock %}

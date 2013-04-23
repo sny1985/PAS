@@ -1,0 +1,61 @@
+login:
+    pattern: /login
+    defaults: { _controller: AcmePASBundle:Security:login }
+
+login_check:
+    pattern: /login_check
+    
+logout:
+    pattern: /logout
+
+pas_homepage:
+    pattern: /home
+    defaults: { _controller: AcmePASBundle:Home:home }
+
+pas_user:
+    pattern: /user
+    defaults: { _controller: AcmePASBundle:User:user }
+
+pas_budget_request_form:
+    pattern: /budget-request
+    defaults: { _controller: AcmePASBundle:BudgetRequest:budgetRequest }
+
+pas_budget_confirmation_form:
+    pattern: /budget-confirm
+    defaults: { _controller: AcmePASBundle:BudgetConfirmation:budgetConfirm }
+
+pas_budget_check_form:
+    pattern: /budget-check
+    defaults: { _controller: AcmePASBundle:BudgetCheck:budgetCheck }
+
+pas_pre_request_form:
+    pattern: /pre-request
+    defaults: { _controller: AcmePASBundle:PreRequest:preRequest }
+
+pas_pre_request_status:
+    pattern: /pre-request-review
+    defaults: { _controller: AcmePASBundle:PreRequestStatus:preRequestReview }
+
+pas_pre_approval_form:
+    pattern: /pre-approve
+    defaults: { _controller: AcmePASBundle:PreRequestApproval:preApprove }
+
+pas_post_request_form:
+    pattern: /post-request
+    defaults: { _controller: AcmePASBundle:PostRequest:postRequest }
+
+pas_post_request_status:
+    pattern: /post-request-review
+    defaults: { _controller: AcmePASBundle:PostRequestStatus:postRequestReview }
+
+pas_post_approval_form:
+    pattern: /post-approve
+    defaults: { _controller: AcmePASBundle:PostRequestApproval:postApprove }
+
+pas_notice_email:
+    pattern: /notice
+    defaults: { _controller: AcmePASBundle:NoticeEmail:notice }
+    
+pas_xls_exporting:
+    pattern: /xls-export
+    defaults: { _controller: AcmePASBundle:XLSExporting:export }

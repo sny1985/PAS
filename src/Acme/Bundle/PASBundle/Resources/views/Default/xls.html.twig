@@ -1,0 +1,16 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Expense Budget Progress Exporter{% endblock %}
+
+{% block main %}
+	<div id="heading">
+		<h3>Expense Budget Progress</h3>
+	</div>
+	<div id="main">
+		{% if id == false %}
+			<h4>No expense budget progress found for id {{ id }}</h4>
+		{% else %}
+			<h4>Your expense budget progress is generated</h4>
+		{% endif %}
+	</div>
+{% endblock %}

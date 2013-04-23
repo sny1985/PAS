@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new Liuggio\ExcelBundle\LiuggioExcelBundle(),
+            new Acme\Bundle\PASBundle\AcmePASBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

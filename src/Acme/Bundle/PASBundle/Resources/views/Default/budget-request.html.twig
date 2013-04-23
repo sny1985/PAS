@@ -1,0 +1,96 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Budget Request Form{% endblock %}
+
+{% block main %}
+	<div id="heading">
+		<h3>Budget request form</h3>
+	</div>
+
+	<div id="main">
+		<h4>To request budget, please fill out this form.</h4>
+		<form id="budget_request_form" class="bda_form" action="{{ path('pas_budget_request_form') }}" method="post" {{ form_enctype(form) }}>
+			{{ form_errors(form) }}
+
+			{{ form_row(form.bid) }}
+
+			<div id="holder" class="form_item">
+				{{ form_label(form.holder) }}<br />
+				{{ form_errors(form.holder) }}
+				{{ form_widget(form.holder) }}
+			</div>
+
+			<div id="category" class="form_item">
+				{{ form_label(form.category) }}<br />
+				{{ form_errors(form.category) }}
+				{{ form_widget(form.category) }}
+			</div>
+
+			<div id="startdate" class="form_item">
+				{{ form_label(form.startmonth) }}<br />
+				{{ form_errors(form.startmonth) }}
+				{{ form_widget(form.startmonth) }}
+				{{ form_errors(form.startyear) }}
+				{{ form_widget(form.startyear) }}
+			</div>
+
+			<div id="enddate" class="form_item">
+				{{ form_label(form.endmonth) }}<br />
+				{{ form_errors(form.endmonth) }}
+				{{ form_widget(form.endmonth) }}
+				{{ form_errors(form.endyear) }}
+				{{ form_widget(form.endyear) }}
+			</div>
+
+			<div id="abstract" class="form_item">
+				{{ form_label(form.abstract) }}<br />
+				{{ form_errors(form.abstract) }}
+				{{ form_widget(form.abstract) }}
+			</div>
+
+			<div id="details" class="form_item">
+				{{ form_label(form.details) }}<br />
+				{{ form_errors(form.details) }}
+				{{ form_widget(form.details) }}
+			</div>
+
+			<div id="amount" class="form_item">
+				{{ form_label(form.amount) }}<br />
+				{{ form_errors(form.amount) }}
+				{{ form_widget(form.amount) }}
+			</div>
+
+			<div id="curtype" class="form_item">
+				{{ form_label(form.curtype) }}<br />
+				{{ form_errors(form.curtype) }}
+				{{ form_widget(form.curtype) }}
+			</div>
+
+			<div id="usd_amount" class="form_item">
+				$<span></span> (data from Google)
+			</div>
+
+			{{ form_row(form.approved) }}
+
+			{{ form_rest(form) }}
+
+			<div id="buttons" class="form_item">
+				<input type="submit" value="Submit" />
+			</div>
+		</form>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	<script type="text/javascript">
+		$(function() {
+			ConvertCurrency();
+
+			$("#form_amount, #form_curtype").change(function() {
+				ConvertCurrency();
+			});
+		});
+	</script>
+{% endblock %}

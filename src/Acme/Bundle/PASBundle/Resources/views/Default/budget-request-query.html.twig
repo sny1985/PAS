@@ -1,0 +1,85 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Budget Request Status{% endblock %}
+
+{% block main %}
+	<div id="heading">
+		<h3>Budget Details</h3>
+	</div>
+
+	{% if request == false %}
+		<div id="main">
+			<h4>No budget request found for id {{ id }}</h4>
+		</div>
+	{% else %}
+		<div id="main">
+			<table id="budget_status">
+				<tr>
+					<td class="status_tag">Budget Holder:</td>
+					<td class="status_content">{{ requester.username }}</td>
+				</tr>
+				<tr>
+					<td class="status_tag">Email:</td>
+					<td class="status_content">{{ requester.email }}</td>
+				</tr>
+				<tr>
+					<td class="status_tag">Budget Category:</td>
+					<td class="status_content">{{ categories[request.category] }}</td>
+				</tr>
+				<tr>
+					<td class="status_tag">Starting Date of Activity:</td>
+					<td class="status_content">{{ request.startdate|date("m/d/Y") }}</td>
+				</tr>
+				<tr>
+					<td class="status_tag">Ending Date of Activity:</td>
+					<td class="status_content">{{ request.enddate|date("m/d/Y") }}</td>
+				</tr>
+				<tr>
+					<td class="status_tag">Abstract of activity:</td>
+					<td class="status_content">
+						{% if request.abstract == null %}
+							N/A
+						{% else %}
+							{{ request.abstract }}
+						{% endif %}
+					</td>
+				</tr>
+				<tr>
+					<td class="status_tag">Details:</td>
+					<td class="status_content">
+						{% if request.details == null %}
+							N/A
+						{% else %}
+							{{ request.details }}
+						{% endif %}
+					</td>
+				</tr>
+				<tr>
+					<td class="status_tag">Amount:</td>
+					<td class="status_content">{{ request.amount|number_format(2, '.', '') }}</td>
+				</tr>
+				<tr>
+					<td class="status_tag">Currency Type:</td>
+					<td class="status_content">{{ currencies['code'][request.curtype] }}</td>
+				</tr>
+				<tr>
+					<td class="status_tag">Approved:</td>
+					<td class="status_content">
+						{% if request.approved == '1' %}
+							CFO approved
+						{% elseif request.approved == '2' %}
+							CFO changed request's status to pending
+						{% else %}
+							waiting for CFO's approval
+						{% endif %}
+					</td>
+				</tr>
+			</table>
+
+			<div id="links">
+				<a href="{{ path('pas_budget_request_form', {'action': 'edit', 'id': id}) }}">Edit This Request</a> &nbsp; 
+				<a href="{{ path('pas_budget_request_form') }}">Submit Another Budget Request</a>
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}

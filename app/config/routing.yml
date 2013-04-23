@@ -1,0 +1,4 @@
+acme_pas:
+    resource: "@AcmePASBundle/Resources/config/routing.yml"
+    prefix:   /
+
