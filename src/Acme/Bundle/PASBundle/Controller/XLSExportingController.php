@@ -20,7 +20,8 @@ class XLSExportingController extends Controller
 			$id = $param['id'];
 			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
 			$postRequests = $em->getRepository('AcmePASBundle:PostRequest')->findByPrid($id);
-			$requester = $em->getRepository('AcmePASBundle:User')->findByUid($preRequest->getRequester())[0]->getUsername();
+			$requester = $em->getRepository('AcmePASBundle:User')->findByUid($preRequest->getRequester());
+			$requester = $requester[0]->getUsername();
 
 			// create new PHPExcel object
 			$excelObj = $this->get('xls.service_xls5')->excelObj;
