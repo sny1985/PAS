@@ -16,7 +16,6 @@ class User implements AdvancedUserInterface, \Serializable
 	* @ORM\Id
 	* @ORM\Column(type="integer")
 	* @ORM\GeneratedValue(strategy="AUTO")
-	* @Assert\NotNull(message="User id should not be null.")
 	* @Assert\Range(min="0")
 	*/
 	private $uid;
@@ -30,20 +29,19 @@ class User implements AdvancedUserInterface, \Serializable
 
 	/**
 	* @ORM\Column(type="string", length=32)
-	* @Assert\Length(max="32", maxMessage="The name cannot be longer than {{ limit }} characters length.")
 	*/
 	private $salt;
 
 	/**
 	* @ORM\Column(type="string", length=40)
-	* @Assert\NotNull(message="User password should not be null.")
+	* @Assert\NotNull(message="Password should not be null.")
 	* @Assert\Length(max="40", maxMessage="The name cannot be longer than {{ limit }} characters length.")
 	*/
 	private $password;
 
 	/**
 	* @ORM\Column(type="string", length=80, unique=true)
-	* @Assert\NotNull(message="User email address should not be null.")
+	* @Assert\NotNull(message="Email address should not be null.")
 	* @Assert\Email(checkMX=true)
 	* @Assert\Length(max = "80", maxMessage = "The name cannot be longer than {{ limit }} characters length.")
 	*/
@@ -51,22 +49,15 @@ class User implements AdvancedUserInterface, \Serializable
 
 	/**
 	* @ORM\Column(type="string", length=10)
-	* @Assert\NotNull(message="User role should not be null.")
+	* @Assert\NotNull(message="Role should not be null.")
 	* @Assert\Length(max="10", maxMessage="The name cannot be longer than {{ limit }} characters length.")
 	*/
 	private $role;
 
 	/**
 	* @ORM\Column(type="boolean")
-	* @Assert\NotNull(message="User active status should not be null.")
-	* @Assert\Type(type="bool")
 	*/
 	private $isActive;
-
-	public function __construct() {
-		$this->isActive = true;
-		$this->salt = md5(uniqid(null, true));
-	}
 
 	public function getUid() {
 		return $this->uid;
@@ -74,6 +65,11 @@ class User implements AdvancedUserInterface, \Serializable
 	
 	public function setUid($uid) {
 		$this->uid = $uid;
+	}
+
+	public function __construct() {
+		$this->isActive = true;
+		$this->salt = md5(uniqid(null, true));
 	}
 
 	/**
@@ -141,7 +137,7 @@ class User implements AdvancedUserInterface, \Serializable
 	}
 
 	public function getIsActive() {
-		return $this->roles;
+		return $this->isActive;
 	}
 
 	public function setIsActive($isActive) {

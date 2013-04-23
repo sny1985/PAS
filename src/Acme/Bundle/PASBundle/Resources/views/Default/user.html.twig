@@ -1,0 +1,47 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}User{% endblock %}
+
+{% block main %}
+	<div id="heading">
+		<h3>User Management form</h3>
+	</div>
+
+	<div id="main">
+		<form id="user_form" class="bda_form" action="{{ path('pas_user') }}" method="post" {{ form_enctype(form) }}>
+			{{ form_errors(form) }}
+
+			{{ form_row(form.uid) }}
+
+			<div id="username" class="form_item">
+				{{ form_label(form.username) }}<br />
+				{{ form_errors(form.username) }}
+				{{ form_widget(form.username) }}
+			</div>
+
+			<div id="password" class="form_item">
+				{{ form_label(form.password) }}<br />
+				{{ form_errors(form.password) }}
+				{{ form_widget(form.password) }}
+			</div>
+
+			<div id="email" class="form_item">
+				{{ form_label(form.email) }}<br />
+				{{ form_errors(form.email) }}
+				{{ form_widget(form.email) }}
+			</div>
+
+			<div id="role" class="form_item">
+				{{ form_label(form.role) }}<br />
+				{{ form_errors(form.role) }}
+				{{ form_widget(form.role) }}
+			</div>
+
+			{{ form_rest(form) }}
+
+			<div id="buttons" class="form_item">
+				<input type="submit" value="Submit" />
+			</div>
+		</form>
+	</div>
+{% endblock %}
