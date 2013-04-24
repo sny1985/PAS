@@ -21,7 +21,7 @@ class UserController extends Controller
 			$user = $em->getRepository('AcmePASBundle:User')->findOneByUid($id);
 		}
 
-		$role_array = array('cfo' => 'cfo', 'president' => 'president', 'secretary' => 'secretary', 'chair' => 'chair', 'vtm' => 'vtm', 'requester' => 'requester');
+		$role_array = array('cfo' => 'cfo', 'president' => 'president', 'secretary' => 'secretary', 'chair' => 'chair', 'vtm' => 'vtm', 'requester' => 'requester', 'admin' => 'admin');
 
 		// create form
 		$form = $this->createFormBuilder($user)
