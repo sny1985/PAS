@@ -98,7 +98,7 @@ class PostRequestController extends Controller
 						->add('routingNumber', 'text', array('label' => 'Routing Number:', 'required' => false))
 						->add('contactEmail', 'text', array('label' => 'Contact Email (if known):', 'required' => false))
 						->add('invoice', 'file', array('label' => 'Invoice:','required' => false))
-						->add('level', 'choice', array('choices' => array(1 => 'Below or equal to US$10,000: by the Chair', 2 => 'Above US$10,000: by Secretary, President and CFO '), 'empty_value' => 'Choose one level', 'label' => 'Approval Level:', 'preferred_choices' => array('empty_value')))
+						->add('level', 'choice', array('choices' => array(1 => 'Below or equal to US$10,000: by the Chair', 2 => 'Above US$10,000: by Secretary, President and CFO '), 'empty_value' => 'Choose one level', 'label' => 'Approval Level:', 'preferred_choices' => array('empty_value'), 'required' => false))
 						->add('chairId', 'choice', array('choices' => $chair_array, 'empty_value' => false, 'label' => 'Chair:', 'required' => false))
 						->add('chairApproved', 'hidden', array('data' => 0))
 						->add('chairComment', 'hidden', array('data' => null))
@@ -141,7 +141,7 @@ class PostRequestController extends Controller
 					$oldRequest->setSwiftCode($postRequest->getSwiftCode());
 					$oldRequest->setRoutingNumber($postRequest->getRoutingNumber());
 					$oldRequest->setContactEmail($postRequest->getContactEmail());
-					$oldRequest->setInvoices($postRequest->getInvoices());
+					$oldRequest->setInvoicePath($postRequest->getInvoicePath());
 					$oldRequest->setLevel($postRequest->getLevel());
 					$oldRequest->setChairId($preRequest->getChairId());
 					$oldRequest->setCfoId($preRequest->getCfoId());
@@ -153,7 +153,7 @@ class PostRequestController extends Controller
 					$oldRequest->setPresidentApproved(0);
 					$oldRequest->setSecretaryApproved(0);
 					$em->flush();
-				} else {
+				} else {				
 					$em->persist($postRequest);
 					$em->flush();
 				}
@@ -172,7 +172,7 @@ class PostRequestController extends Controller
 							->setSubject('Payment Request Notice Email')
 							->setFrom('sny1985@gmail.com')
 							->setTo($this->user->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
+							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'role' => 'requester', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id), true))), 'text/html');
 				$this->get('mailer')->send($message);
 
 				// send notice email to approvers
@@ -181,7 +181,7 @@ class PostRequestController extends Controller
 								->setSubject('Payment Request Notice Email')
 								->setFrom('sny1985@gmail.com')
 								->setTo($this->user->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $selected_chair, 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id), true))), 'text/html');
+								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $selected_chair, 'role' => 'chair', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
 				if ($postRequest->getCfoId()) {
@@ -189,7 +189,7 @@ class PostRequestController extends Controller
 								->setSubject('Payment Request Notice Email')
 								->setFrom('sny1985@gmail.com')
 								->setTo($this->user->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $cfo, 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id), true))), 'text/html');
+								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $cfo, 'role' => 'cfo', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
 				if ($postRequest->getPresidentId()) {
@@ -197,7 +197,7 @@ class PostRequestController extends Controller
 								->setSubject('Payment Request Notice Email')
 								->setFrom('sny1985@gmail.com')
 								->setTo($this->user->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $president, 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id), true))), 'text/html');
+								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $president, 'role' => 'president', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
 				if ($postRequest->getSecretaryId()) {
@@ -205,7 +205,7 @@ class PostRequestController extends Controller
 								->setSubject('Payment Request Notice Email')
 								->setFrom('sny1985@gmail.com')
 								->setTo($this->user->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $secretary, 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id), true))), 'text/html');
+								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $secretary, 'role' => 'secretary', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
 

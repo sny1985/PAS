@@ -14,6 +14,7 @@ class PostRequestApprovalController extends Controller
 		$em = $this->getDoctrine()->getManager();
 		$form = null;
 		$id = null;
+		$isEmailSent = false;
 		$postRequest = new PostRequest();
 		$requester = null;
 		$selected_chair = null;
@@ -82,31 +83,45 @@ class PostRequestApprovalController extends Controller
 				$data = $form->getData();
 				switch ($this->user->getRole()) {
 					case 'chair':
-						$oldRequest->setChairApproved($data['approval']);
-						$oldRequest->setChairComment($data['comment']);
+						if ($oldRequest->getChairId() == $this->user->getUid()) {
+							$oldRequest->setChairApproved($data['approval']);
+							$oldRequest->setChairComment($data['comment']);
+							$isEmailSent = true;
+						}
 						break;
 					case 'cfo':
-						$oldRequest->setCfoApproved($data['approval']);
-						$oldRequest->setCfoComment($data['comment']);
+						if ($oldRequest->getCfoId() == $this->user->getUid()) {
+							$oldRequest->setCfoApproved($data['approval']);
+							$oldRequest->setCfoComment($data['comment']);
+							$isEmailSent = true;
+						}
 						break;
 					case 'president':
-						$oldRequest->setPresidentApproved($data['approval']);
-						$oldRequest->setPresidentComment($data['comment']);
+						if ($oldRequest->getPresidentId() == $this->user->getUid()) {
+							$oldRequest->setPresidentApproved($data['approval']);
+							$oldRequest->setPresidentComment($data['comment']);
+							$isEmailSent = true;
+						}
 						break;
 					case 'secretary':
-						$oldRequest->setSecretaryApproved($data['approval']);
-						$oldRequest->setSecretaryComment($data['comment']);
+						if ($oldRequest->getSecretaryId() == $this->user->getUid()) {
+							$oldRequest->setSecretaryApproved($data['approval']);
+							$oldRequest->setSecretaryComment($data['comment']);
+							$isEmailSent = true;
+						}
 						break;
 				}
 				$em->flush();
 
 				// send notice email to requester
-				$message = \Swift_Message::newInstance()
-							->setSubject('Payment Approval Notice Email')
-							->setFrom('sny1985@gmail.com')
-							->setTo($this->user->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'type' => 'Payment Approval', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
-				$this->get('mailer')->send($message);
+				if ($isEmailSent) {
+					$message = \Swift_Message::newInstance()
+								->setSubject('Payment Approval Notice Email')
+								->setFrom('sny1985@gmail.com')
+								->setTo($this->user->getEmail())
+								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Payment Approval', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id), true))), 'text/html');
+					$this->get('mailer')->send($message);
+				}
 
 				// redirect to prevent resubmission
 				return $this->redirect($this->generateUrl('pas_post_request_status', array('id' => $id)));

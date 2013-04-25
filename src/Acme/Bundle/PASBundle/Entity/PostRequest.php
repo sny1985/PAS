@@ -130,8 +130,6 @@ class PostRequest
 
 	/**
 	* @ORM\Column(type="smallint", nullable=true)
-	* @Assert\NotNull(message="Request Level should not be null.")
-	* @Assert\Range(min="0")
 	*/
 	protected $level;
 
@@ -495,13 +493,13 @@ class PostRequest
 	}
 
 	public function uploadFiles() {
-		// UPLOAD MULTIPLE FILES ???
+		// ??? CHANGE DESIGN TO UPLOAD MULTIPLE FILES AT THE SAME TIME
 		if (null === $this->invoice) {
 			return;
 		}
 
 		$this->invoicePath = 'invoice_' . sha1(uniqid(mt_rand(), true)) . '.' . $this->invoice->guessExtension();
-		$this->invoice->move(__DIR__.'/../../../../web/uploads/documents', __DIR__.'/../../../../web/uploads/documents/' . $this->invoicePath);
+		$this->invoice->move(__DIR__.'/../../../../../uploads/documents', __DIR__.'/../../../../../uploads/documents/' . $this->invoicePath);
 		$this->invoice = null;
 	}
 }

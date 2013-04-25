@@ -59,17 +59,17 @@ class User implements AdvancedUserInterface, \Serializable
 	*/
 	private $isActive;
 
+	public function __construct() {
+		$this->isActive = true;
+		$this->salt = md5(uniqid(null, true));
+	}
+
 	public function getUid() {
 		return $this->uid;
 	}
 	
 	public function setUid($uid) {
 		$this->uid = $uid;
-	}
-
-	public function __construct() {
-		$this->isActive = true;
-		$this->salt = md5(uniqid(null, true));
 	}
 
 	/**

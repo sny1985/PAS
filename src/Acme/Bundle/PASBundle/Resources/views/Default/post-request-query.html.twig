@@ -35,19 +35,6 @@
 			{% endif %}
 
 			<table id="postrequest_status" class="status">
-				{% if role == 'requester' %}
-					{% if status == 2 %}
-						<tr>
-							<td class="status_tag">Comment:</td>
-							<td class="status_content">
-								{% if request.chairComment != false %} {{ request.chairComment }} {% endif %}
-								{% if request.cfoComment != false %} {{ request.cfoComment }} {% endif %}
-								{% if request.presidentComment != false %} {{ request.presidentComment }} {% endif %}
-								{% if request.secretaryComment != false %} {{ request.secretaryComment }} {% endif %}
-							</td>
-						</tr>
-					{% endif %}
-				{% endif %}
 				<tr>
 					<td class="status_tag">Requester:</td>
 					<td class="status_content">{{ requester.username }}</td>
@@ -144,7 +131,7 @@
 					</tr>
 					<tr>
 						<td class="status_tag">Invoice:</td>
-						<td class="status_content"><a class="link" href="../uploads/documents/{{ request.invoicePath }}" target="_blank">{{ request.invoicePath }}</a></td>
+						<td class="status_content"><a class="link" href="../../uploads/documents/{{ request.invoicePath }}" target="_blank">{{ request.invoicePath }}</a></td>
 					</tr>
 					<tr>
 						<td class="status_tag">Approvers:</td>
@@ -190,7 +177,7 @@
 								{% if request.cfoApproved == 1 %}
 									{{ cfo.username }} approved
 								{% elseif request.cfoApproved == 2 %}
-									{{ secretary.username }} changed request's status to pending
+									{{ cfo.username }} changed request's status to pending
 								{% else %}
 									waiting for {{ cfo.username }}'s approval
 								{% endif %}
@@ -198,9 +185,9 @@
 							{% endif %}
 							{% if request.presidentId != 0 %}
 								{% if request.presidentApproved == 1 %}
-									{{ secretary.username }} approved
+									{{ president.username }} approved
 								{% elseif request.presidentApproved == 2 %}
-									{{ secretary.username }} changed request's status to pending
+									{{ president.username }} changed request's status to pending
 								{% else %}
 									waiting for {{ president.username }}'s approval
 								{% endif %}
@@ -219,6 +206,15 @@
 						</td>
 					</tr>
 				{% endif %}
+				<tr>
+					<td class="status_tag">Comment:</td>
+					<td class="status_content">
+						{% if request.chairComment != false %} {{ request.chairComment }}<br /> {% endif %}
+						{% if request.cfoComment != false %} {{ request.cfoComment }}<br /> {% endif %}
+						{% if request.presidentComment != false %} {{ request.presidentComment }}<br /> {% endif %}
+						{% if request.secretaryComment != false %} {{ request.secretaryComment }}<br /> {% endif %}
+					</td>
+				</tr>
 			</table>
 
 			{% if role == 'requester' %}
