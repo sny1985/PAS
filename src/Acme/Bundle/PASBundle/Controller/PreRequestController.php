@@ -146,7 +146,10 @@ class PreRequestController extends Controller
 				$action = $session->get('action');
 				if (isset($action) && $action == 'edit') {
 					$session->remove('action');
+					
+var_dump($preRequest);					
 					$oldRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($preRequest->getPrid());
+var_dump($oldRequest);
 					$oldRequest->setCategory($preRequest->getCategory());
 					$oldRequest->setExplanation($preRequest->getExplanation());
 					$oldRequest->setAmount($preRequest->getAmount());
@@ -182,7 +185,7 @@ class PreRequestController extends Controller
 							->setSubject('Pre-Payment Request Notice Email')
 							->setFrom('sny1985@gmail.com')
 							->setTo($this->user->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
+							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'role' => 'requester', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_request_status', array('id' => $id), true))), 'text/html');
 				$this->get('mailer')->send($message);
 
 				// send notice email to approvers
@@ -191,7 +194,7 @@ class PreRequestController extends Controller
 								->setSubject('Pre-Payment Request Notice Email')
 								->setFrom('sny1985@gmail.com')
 								->setTo($this->user->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $selected_chair, 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
+								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $selected_chair, 'role' => 'chair', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
 				if ($preRequest->getCfoId()) {
@@ -199,7 +202,7 @@ class PreRequestController extends Controller
 								->setSubject('Pre-Payment Request Notice Email')
 								->setFrom('sny1985@gmail.com')
 								->setTo($this->user->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $cfo, 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
+								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $cfo, 'role' => 'cfo', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
 				if ($preRequest->getPresidentId()) {
@@ -207,7 +210,7 @@ class PreRequestController extends Controller
 								->setSubject('Pre-Payment Request Notice Email')
 								->setFrom('sny1985@gmail.com')
 								->setTo($this->user->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $president, 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
+								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $president, 'role' => 'president', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
 				if ($preRequest->getSecretaryId()) {
@@ -215,7 +218,7 @@ class PreRequestController extends Controller
 								->setSubject('Pre-Payment Request Notice Email')
 								->setFrom('sny1985@gmail.com')
 								->setTo($this->user->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $secretary, 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
+								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $secretary, 'role' => 'secretary', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
 

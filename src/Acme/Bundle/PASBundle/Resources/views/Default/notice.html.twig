@@ -15,31 +15,23 @@
 				{% else %}
 					Dear {{ receiver.username }},
 				{% endif %}
-				<br />
+				<br /><br />
 				{% if type == "BDA Expense Budget Request" %}
 					{% if role == "requester" %}
-						Your {{ type }} is submitted successfully.<br />
+						Your {{ type }} is submitted successfully.
 					{% else %}
-						A new {{ type }} is submitted.<br />
+						A new {{ type }} is submitted.
 					{% endif %}
 				{% elseif type == "BDA Expense Budget Approval" %}
-					Your BDA Expense Budget Request is approved.<br />
+					Your BDA Expense Budget Request is approved.
 				{% elseif type == "Pre-Payment Request" or type == "Payment Request" %}
 					{% if role == "requester" %}
-						Your {{ type }} is submitted successfully.<br />
+						Your {{ type }} is submitted successfully.
 					{% else %}
-						A new {{ type }} is submitted. You are asked to approve it.<br />
+						A new {{ type }} is submitted. You are asked to approve it.
 					{% endif %}
 				{% elseif type == "Pre-Payment Approval" or type == "Payment Approval" %}
-					Your {{ type }} is 
-					{% if status == 0 %}
-						waiting for approval.
-					{% elseif status == 1 %}
-						is approved.
-					{% else %}
-						is pending.
-					{% endif %}
-					<br />
+					The status of your {{ type }} is changed.
 				{% endif %}
 				<br />
 				Please check the details at the following link:<br />

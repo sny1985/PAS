@@ -9,6 +9,7 @@ use Acme\Bundle\PASBundle\Entity\BudgetRequest;
 use Acme\Bundle\PASBundle\Entity\User;
 
 // ??? DUE TO LACK OF MYSQL YEAR FUNCTION SUPPORT, MANY OPERATIONS HAVE TO BE DONE IN PHP CODE
+// ??? NEED TO OPTIMIZE THE OPERATION
 
 class BudgetConfirmationController extends Controller
 {
@@ -35,22 +36,6 @@ class BudgetConfirmationController extends Controller
 			if ($result->icc == true) {
 				$rs = explode(' ', $result->rhs);
 				$currency_array['rate'][$key + 1] = (double)$rs[0];
-			}
-		}
-
-		// update approved field of unapproved records, and send emails to these just approved requesters
-		if ($req->isMethod('POST')) {
-			foreach ($unapproved_array as $unapproved) {
-				$q = $em->createQuery("update AcmePASBundle:BudgetRequest br set br.approved = 1 where br.bid = $unapproved")->execute();
-
-				$user = $em->createQuery("select u from AcmePASBundle:User u, AcmePASBundle:BudgetRequest br where u.uid = br.holder and br.bid = $unapproved")->execute();
-				$message = \Swift_Message::newInstance()
-							->setSubject('BDA Expense Budget Approval Notice Email')
-							->setFrom('sny1985@gmail.com')
-							->setTo( $user[0]->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $user[0], 'type' => 'BDA Expense Budget Approval', 'link' => $this->generateUrl('pas_budget_request_form', array('action' => 'query', 'id' => $unapproved), true))), 'text/html');
-					// show submission result
-					$this->get('mailer')->send($message);
 			}
 		}
 
@@ -120,6 +105,22 @@ class BudgetConfirmationController extends Controller
 				$budgets[$year][$category]['amount'] = sprintf("%0.2f", $budgets[$year][$category]['amount']);
 			}
 			$budgets[$year]['sum'] = sprintf("%0.2f", $budgets[$year]['sum']);
+		}
+
+		// update approved field of unapproved records, and send emails to these just approved requesters
+		if ($req->isMethod('POST')) {
+			foreach ($unapproved_array as $unapproved) {
+				$q = $em->createQuery("update AcmePASBundle:BudgetRequest br set br.approved = 1 where br.bid = $unapproved")->execute();
+
+				$user = $em->createQuery("select u from AcmePASBundle:User u, AcmePASBundle:BudgetRequest br where u.uid = br.holder and br.bid = $unapproved")->execute();
+				$message = \Swift_Message::newInstance()
+							->setSubject('BDA Expense Budget Approval Notice Email')
+							->setFrom('sny1985@gmail.com')
+							->setTo( $user[0]->getEmail())
+							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $user[0], 'role' => 'requester', 'type' => 'BDA Expense Budget Approval', 'link' => $this->generateUrl('pas_budget_request_form', array('action' => 'query', 'id' => $unapproved), true))), 'text/html');
+					// show submission result
+					$this->get('mailer')->send($message);
+			}
 		}
 
 		return $this->render('AcmePASBundle:Default:budget-confirm-summary.html.twig', array('categories' => $category_array, 'years' => $year_array, 'requests' => $budgets));

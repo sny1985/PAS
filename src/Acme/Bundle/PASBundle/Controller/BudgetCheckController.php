@@ -41,6 +41,10 @@ class BudgetCheckController extends Controller
 		$budgets = array();
 		$sum = 0;
 		foreach ($budgetRequests as $request) {
+			// show approved requests only
+			if ($request['approved'] != 1)
+				continue;
+
 			// find years
 			$year = $request['startdate']->format('Y');
 			if (array_key_exists($year, $year_array) == false) {
