@@ -65,7 +65,7 @@ class PostRequestController extends Controller
 		// has pre approval no.
 		if (isset($param) && isset($param['prid'])) {
 			$postRequest->setPreApproval(1);
-			$postRequest->setPrid($param['prid']);
+			$postRequest->setPreApprovalNo(sprintf("%08d", $param['prid']));
 		}
 		// edit
 		if (isset($param) && isset($param['action']) && isset($param['id'])) {
@@ -86,7 +86,7 @@ class PostRequestController extends Controller
 						->add('amount', 'money', array('currency' => false, 'label' => 'Amount:'))
 						->add('curtype', 'choice', array('choices' => $currency_array['code'], 'empty_value' => 'Choose one type', 'label' => 'Currency Type:', 'preferred_choices' => array('empty_value')))
 						->add('preApproval', 'choice', array('choices' => array(0 => 'No', 1 => 'Yes'), 'empty_value' => false, 'expanded' => true, 'label' => 'Pre Approved?', 'preferred_choices' => array($preApproval)))
-						->add('prid', 'number', array('label' => 'Pre-approval Number:', 'required' => false))
+						->add('preApprovalNo', 'text', array('label' => 'Pre-approval Number:', 'required' => false))
 						->add('paymentMethod', 'choice', array('choices' => array(1 => "Check (payment to US-based vendors only)", 2 => 'Wire Transfer'), 'empty_value' => 'Choose one method', 'label' => 'Payment Method:', 'preferred_choices' => array('empty_value')))
 						->add('companyName', 'text', array('label' => 'Company Name (payable to):', 'required' => false))
 						->add('attention', 'text', array('label' => 'Attention:', 'required' => false))
@@ -120,6 +120,7 @@ class PostRequestController extends Controller
 			// validate the data and insert into database
 			// HANDLE MULTIPLE FILES UPLOADING ???
 			if ($form->isValid()) {
+				$postRequest->formatPreApprovalNo();
 				$postRequest->uploadFiles();
 				$action = $session->get('action');
 				if (isset($action) && $action == 'edit') {

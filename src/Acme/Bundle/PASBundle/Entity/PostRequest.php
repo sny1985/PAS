@@ -59,11 +59,15 @@ class PostRequest
 	* @Assert\Range(min="0", max="1")
 	*/
 	protected $preApproval;
-	
+
 	/**
-	* @ORM\Column(type="integer", nullable=true)
 	* @Assert\Type(type="numeric", message="The value {{ value }} is not a valid {{ type }}.")
 	* @Assert\Range(min="0")
+	*/
+	protected $preApprovalNo;
+
+	/**
+	* @ORM\Column(type="integer", nullable=true)
 	*/
 	protected $prid;
 
@@ -270,6 +274,14 @@ class PostRequest
 
 	public function setPreApproval($preApproval) {
 		$this->preApproval = $preApproval;
+	}
+
+	public function getPreApprovalNo() {
+		return $this->preApprovalNo;
+	}
+
+	public function setPreApprovalNo($preApprovalNo) {
+		$this->preApprovalNo = $preApprovalNo;
 	}
 
 	public function getPrid() {
@@ -489,6 +501,12 @@ class PostRequest
 			$this->date = new \DateTime($date);
 		} else {
 			$this->date = $date;
+		}
+	}
+
+	public function formatPreApprovalNo() {
+		if ($this->preApprovalNo != null) {
+			$this->prid = $this->preApprovalNo;
 		}
 	}
 
