@@ -116,7 +116,7 @@ class BudgetRequestController extends Controller
 							->setSubject('BDA Expense Budget Request Notice Email')
 							->setFrom('sny1985@gmail.com')
 							->setTo($this->user->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'type' => 'BDA Expense Budget Request', 'link' => $this->generateUrl('pas_budget_request_form', array('id' => $id, 'action' => 'query'), true))), 'text/html');
+							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'role' => 'requester', 'type' => 'BDA Expense Budget Request', 'link' => $this->generateUrl('pas_budget_request_form', array('id' => $id, 'action' => 'query'), true))), 'text/html');
 				$this->get('mailer')->send($message);
 
 				// send notice email to CFO
@@ -124,7 +124,7 @@ class BudgetRequestController extends Controller
 							->setSubject('BDA Expense Budget Request Notice Email')
 							->setFrom('sny1985@gmail.com')
 							->setTo($cfo->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $cfo, 'type' => 'BDA Expense Budget Request', 'link' => $this->generateUrl('pas_budget_confirmation_form', array(), true))), 'text/html');
+							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $cfo, 'role' => 'cfo', 'type' => 'BDA Expense Budget Request', 'link' => $this->generateUrl('pas_budget_confirmation_form', array(), true))), 'text/html');
 				$this->get('mailer')->send($message);
 
 				// fetch data from database and go to success page

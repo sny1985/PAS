@@ -2,50 +2,51 @@
 
 {% block title %}{{ type }} Notice Email{% endblock %}
 
-{% block css %}<link href="http://50.112.118.94/PAS/web/bundles/acmepas/css/style.css" type="text/css" rel="stylesheet" />{% endblock %}
+{% block body %}
+	{% block main %}
+		<div id="heading">
+			<h3>{{ type }} Notice</h3>
+		</div>
 
-{% block main %}
-	<div id="heading">
-		<h3>{{ type }} Notice</h3>
-	</div>
-
-	<div id="main">
-		<p>
-			{% if receiver == false %}
-				To whom it may concern,
-			{% else %}
-				Dear {{ receiver.username }},
-			{% endif %}
-			<br />
-			{% if type == "BDA Expense Budget Request" %}
-				{% if receiver.role == "requester" %}
-					Your {{ type }} is submitted successfully.<br />
+		<div id="main">
+			<p>
+				{% if receiver == false %}
+					To whom it may concern,
 				{% else %}
-					A new {{ type }} is submitted.
-				{% endif %}
-			{% elseif type == "BDA Expense Budget Approval" %}
-				Your BDA Expense Budget Request is approved.
-			{% elseif type == "Pre-Payment Request" or type == "Payment Request" %}
-				{% if receiver.role == "requester" %}
-					Your {{ type }} is submitted successfully.<br />
-				{% else %}
-					A new {{ type }} is submitted. You are asked to approve it.<br />
-				{% endif %}
-			{% elseif type == "Pre-Payment Approval" or type == "Payment Approval" %}
-				Your {{ type }} is 
-				{% if status == 0 %}
-					waiting for approval.
-				{% elseif status == 1 %}
-					is approved.
-				{% else %}
-					is pending.
+					Dear {{ receiver.username }},
 				{% endif %}
 				<br />
-			{% endif %}
-			Please check the details at the following link:<br />
-			<a href="{{ link }}" class="link">{{ link }}</a>
-		</p>
-	</div>
+				{% if type == "BDA Expense Budget Request" %}
+					{% if role == "requester" %}
+						Your {{ type }} is submitted successfully.<br />
+					{% else %}
+						A new {{ type }} is submitted.<br />
+					{% endif %}
+				{% elseif type == "BDA Expense Budget Approval" %}
+					Your BDA Expense Budget Request is approved.<br />
+				{% elseif type == "Pre-Payment Request" or type == "Payment Request" %}
+					{% if role == "requester" %}
+						Your {{ type }} is submitted successfully.<br />
+					{% else %}
+						A new {{ type }} is submitted. You are asked to approve it.<br />
+					{% endif %}
+				{% elseif type == "Pre-Payment Approval" or type == "Payment Approval" %}
+					Your {{ type }} is 
+					{% if status == 0 %}
+						waiting for approval.
+					{% elseif status == 1 %}
+						is approved.
+					{% else %}
+						is pending.
+					{% endif %}
+					<br />
+				{% endif %}
+				<br />
+				Please check the details at the following link:<br />
+				<a href="{{ link }}" class="link">{{ link }}</a>
+			</p>
+		</div>
+	{% endblock %}
 {% endblock %}
 
 {% block javascripts %}{% endblock %}
