@@ -10,7 +10,9 @@
 		{% block body %}
 			<div id="logout">
 				{% if app.security.getToken().getUser() != 'anon.' %}
-					Welcome {{ app.security.getToken().getUser().getUsername() }} &nbsp; <a href="{{ path('logout') }}">Log Out</a>
+					Welcome {{ app.security.getToken().getUser().getUsername() }} &nbsp; 
+					<a href="{{ path('pas_homepage') }}">Home</a> &nbsp; 
+					<a href="{{ path('logout') }}">Log Out</a>
 				{% endif %}
 			</div>
 			<div id="content">

@@ -10,6 +10,9 @@
 
 		<div id="main">
 			<h4>No budget request found for category {{ categories[cid] }}</h4>
+			<div id="links">
+				<a href="{{ path('pas_budget_confirmation_form') }}">Back</a> &nbsp; 
+			</div>
 		</div>
 	{% else %}
 		<div id="heading">
