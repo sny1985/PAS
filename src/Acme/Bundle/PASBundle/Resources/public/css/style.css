@@ -534,7 +534,6 @@ hr {background-color: #ffffff; color: #ffffff; border: medium none; height: 2px;
 #logout {position: absolute; top: 0; right: 0; padding: 10px;}
 #logout a:link, #logout a:visited {color: #0a9bd8; text-decoration: none;}
 #logout a:hover {text-decoration: underline;}
-#logout p {font-size: 1em;}
 
 /* home */
 #home_nav {width: 300px; margin: 0 auto;}
