@@ -534,11 +534,11 @@ hr {background-color: #ffffff; color: #ffffff; border: medium none; height: 2px;
 #logout {position: absolute; top: 0; right: 0; padding: 10px;}
 
 /* home */
+#home_nav {width: 300px; margin: 0 auto;}
 #home_nav ul {list-style-type: none; margin: 0; padding: 0;}
 #home_nav li {background-color: #0b759e; font-size: 1.5em; text-align: center; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; width: 250px; margin: 20px; padding: 5px; display: block;}
 #home_nav li a:link, #home_nav li a:visited {color: #ffffff; text-align: center; text-decoration: none;}
 #home_nav li a:hover {text-decoration: underline;}
-#home_nav {float: left;}
 #goid {float: left;}
 
 /* form */
