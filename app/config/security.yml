@@ -31,11 +31,15 @@ security:
             form_login:
                 default_target_path: /home
                 use_referer: true
-            logout: ~
+            logout:
+                path: /logout
+                target: /login
         secured_area:
             pattern:    ^/
             form_login: ~
-            logout: ~
+            logout:
+                path: /logout
+                target: /login
 
     access_control:
         - { path: ^/user, roles: ROLE_ADMIN }

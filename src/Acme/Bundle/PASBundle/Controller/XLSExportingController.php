@@ -15,9 +15,25 @@ class XLSExportingController extends Controller
 		$em = $this->getDoctrine()->getManager();
 		$id = null;
 
+		// get currency type list from database and get the rate to USD
+		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
+		foreach ($currencies as $key => $value) {
+			$currency_array['name'][$key + 1] = $value->getName();
+			$currency_array['code'][$key + 1] = $value->getCode();
+			// get rate from google
+			$currency_array['rate'][$key + 1] = 1;
+			$url = "http://www.google.com/ig/calculator?hl=en&q=1" . $value->getCode() . "=?USD";
+			$result = file_get_contents($url);
+			$result = json_decode(preg_replace('/(\w+):/i', '"\1":', $result));
+			if ($result->icc == true) {
+				$rs = explode(' ', $result->rhs);
+				$currency_array['rate'][$key + 1] = (double)$rs[0];
+			}
+		}
+
 		$param = $req->query->all();
 		if (isset($param) && isset($param['id'])) {
-			$id = $param['id'];
+			$id = sprintf("%08d", intval($param['id']));
 			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
 			$postRequests = $em->getRepository('AcmePASBundle:PostRequest')->findByPrid($id);
 			$requester = $em->getRepository('AcmePASBundle:User')->findByUid($preRequest->getRequester());
@@ -47,16 +63,16 @@ class XLSExportingController extends Controller
 			$row = 4;
 
 			// fill data
-			$total = $preRequest->getAmount();
+			$total = $preRequest->getAmount() * $currency_array['rate'][$preRequest->getCurtype()];
 			$totalCompleted = 0;
-			$progress = $totalCompleted / ($total * 100.0);
 			for ($i = 0, $num = count($postRequests); $i < $num; $i++, $row++) {
-				if ($i == 0) $excelObj->getActiveSheet()->setCellValue("A$row", $id);
-				$excelObj->getActiveSheet()->setCellValue("B$row", $postRequests[$i]->getAbstract());
-				$excelObj->getActiveSheet()->setCellValue("C$row", $postRequests[$i]->getAmount());
-				$excelObj->getActiveSheet()->setCellValue("D$row", $postRequests[$i]->getAmount());
+				if ($i == 0) $excelObj->getActiveSheet()->setCellValue("A$row", "#".$id); // add # before id to prevent number-conversion
+				$excelObj->getActiveSheet()->setCellValue("B$row", $postRequests[$i]->getExplanation());
+				$excelObj->getActiveSheet()->setCellValue("C$row", sprintf("%.2f", $postRequests[$i]->getAmount()));
+				$excelObj->getActiveSheet()->setCellValue("D$row", sprintf("%.2f", $postRequests[$i]->getAmount() * $currency_array['rate'][$postRequests[$i]->getCurtype()]));
 				$totalCompleted += $postRequests[$i]->getAmount();
 			}
+			$progress = $totalCompleted * 100.0 / $total;
 
 			$excelObj->getActiveSheet()->setCellValue("A$row", "Total");
 			$excelObj->getActiveSheet()->setCellValue("D$row", $totalCompleted);
@@ -67,7 +83,7 @@ class XLSExportingController extends Controller
 			$row++;
 
 			$excelObj->getActiveSheet()->setCellValue("A$row", "Budget Progress");
-			$excelObj->getActiveSheet()->setCellValue("D$row", $progress);
+			$excelObj->getActiveSheet()->setCellValue("D$row", sprintf("%.2f", $progress)."%");
 
 			// rename worksheet
 			$excelObj->getActiveSheet()->setTitle("Requester $requester");

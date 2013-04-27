@@ -16,6 +16,7 @@ class BudgetConfirmationController extends Controller
 	public function budgetConfirmAction(Request $req)
 	{
 		$em = $this->getDoctrine()->getManager();
+		$sender = "nshi@caistudio.com";
 
 		// get category list from database
 		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
@@ -115,8 +116,8 @@ class BudgetConfirmationController extends Controller
 				$user = $em->createQuery("select u from AcmePASBundle:User u, AcmePASBundle:BudgetRequest br where u.uid = br.holder and br.bid = $unapproved")->execute();
 				$message = \Swift_Message::newInstance()
 							->setSubject('BDA Expense Budget Approval Notice Email')
-							->setFrom('sny1985@gmail.com')
-							->setTo( $user[0]->getEmail())
+							->setFrom($sender)
+							->setTo($user[0]->getEmail())
 							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $user[0], 'role' => 'requester', 'type' => 'BDA Expense Budget Approval', 'link' => $this->generateUrl('pas_budget_request_form', array('action' => 'query', 'id' => $unapproved), true))), 'text/html');
 					// show submission result
 					$this->get('mailer')->send($message);

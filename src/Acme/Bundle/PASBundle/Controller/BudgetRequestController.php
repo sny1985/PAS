@@ -19,6 +19,7 @@ class BudgetRequestController extends Controller
 		$em = $this->getDoctrine()->getManager();
 		$form = null;
 		$id = null;
+		$sender = "nshi@caistudio.com";
 		$session = $this->get("session");
 		$this->user = $this->getUser();
 
@@ -58,7 +59,7 @@ class BudgetRequestController extends Controller
 		}
 
 		$month_array = array(null => 'Choose one month', 1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April', 5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August', 9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December');
-		$year_array = array(null => 'Choose one year', date('Y') - 1 => date('Y') - 1, date('Y') => date('Y'), date('Y') + 1 => date('Y') + 1);
+		$year_array = array(null => 'Choose one year', date('Y') => date('Y'), date('Y') + 1 => date('Y') + 1, date('Y') + 2 => date('Y') + 2);
 
 		// create form
 		$form = $this->createFormBuilder($budgetRequest)
@@ -114,7 +115,7 @@ class BudgetRequestController extends Controller
 				// send notice email to requester
 				$message = \Swift_Message::newInstance()
 							->setSubject('BDA Expense Budget Request Notice Email')
-							->setFrom('sny1985@gmail.com')
+							->setFrom($sender)
 							->setTo($this->user->getEmail())
 							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'role' => 'requester', 'type' => 'BDA Expense Budget Request', 'link' => $this->generateUrl('pas_budget_request_form', array('id' => $id, 'action' => 'query'), true))), 'text/html');
 				$this->get('mailer')->send($message);
@@ -122,7 +123,7 @@ class BudgetRequestController extends Controller
 				// send notice email to CFO
 				$message = \Swift_Message::newInstance()
 							->setSubject('BDA Expense Budget Request Notice Email')
-							->setFrom('sny1985@gmail.com')
+							->setFrom($sender)
 							->setTo($cfo->getEmail())
 							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $cfo, 'role' => 'cfo', 'type' => 'BDA Expense Budget Request', 'link' => $this->generateUrl('pas_budget_confirmation_form', array(), true))), 'text/html');
 				$this->get('mailer')->send($message);

@@ -18,6 +18,7 @@ class PreRequestApprovalController extends Controller
 		$preRequest = new PreRequest();
 		$requester = null;
 		$selected_chair = null;
+		$sender = "nshi@caistudio.com";
 		$status = null;
 		$this->user = $this->getUser();
 
@@ -117,7 +118,7 @@ class PreRequestApprovalController extends Controller
 					// send notice email to requester
 					$message = \Swift_Message::newInstance()
 								->setSubject('Pre-Payment Approval Notice Email')
-								->setFrom('sny1985@gmail.com')
+								->setFrom($sender)
 								->setTo($this->user->getEmail())
 								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Pre-Payment Approval', 'link' => $this->generateUrl('pas_pre_request_status', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);

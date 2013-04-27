@@ -16,6 +16,7 @@ class PostRequestController extends Controller
 		$form = null;
 		$postRequest = new PostRequest();
 		$preApproval = 0;
+		$sender = "nshi@caistudio.com";
 		$session = $this->get("session");
 		$this->user = $this->getUser();
 
@@ -144,10 +145,10 @@ class PostRequestController extends Controller
 					$oldRequest->setContactEmail($postRequest->getContactEmail());
 					$oldRequest->setInvoicePath($postRequest->getInvoicePath());
 					$oldRequest->setLevel($postRequest->getLevel());
-					$oldRequest->setChairId($preRequest->getChairId());
-					$oldRequest->setCfoId($preRequest->getCfoId());
-					$oldRequest->setPresidentId($preRequest->getPresidentId());
-					$oldRequest->setSecretaryId($preRequest->getSecretaryId());
+					$oldRequest->setChairId($postRequest->getChairId());
+					$oldRequest->setCfoId($postRequest->getCfoId());
+					$oldRequest->setPresidentId($postRequest->getPresidentId());
+					$oldRequest->setSecretaryId($postRequest->getSecretaryId());
 					$oldRequest->setDate($postRequest->getDate());
 					$oldRequest->setChairApproved(0);
 					$oldRequest->setCfoApproved(0);
@@ -171,7 +172,7 @@ class PostRequestController extends Controller
 				// send notice email to requester
 				$message = \Swift_Message::newInstance()
 							->setSubject('Payment Request Notice Email')
-							->setFrom('sny1985@gmail.com')
+							->setFrom($sender)
 							->setTo($this->user->getEmail())
 							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'role' => 'requester', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id), true))), 'text/html');
 				$this->get('mailer')->send($message);
@@ -180,32 +181,32 @@ class PostRequestController extends Controller
 				if ($postRequest->getChairId()) {
 					$message = \Swift_Message::newInstance()
 								->setSubject('Payment Request Notice Email')
-								->setFrom('sny1985@gmail.com')
-								->setTo($this->user->getEmail())
+								->setFrom($sender)
+								->setTo($selected_chair->getEmail())
 								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $selected_chair, 'role' => 'chair', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
 				if ($postRequest->getCfoId()) {
 					$message = \Swift_Message::newInstance()
 								->setSubject('Payment Request Notice Email')
-								->setFrom('sny1985@gmail.com')
-								->setTo($this->user->getEmail())
+								->setFrom($sender)
+								->setTo($cfo->getEmail())
 								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $cfo, 'role' => 'cfo', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
 				if ($postRequest->getPresidentId()) {
 					$message = \Swift_Message::newInstance()
 								->setSubject('Payment Request Notice Email')
-								->setFrom('sny1985@gmail.com')
-								->setTo($this->user->getEmail())
+								->setFrom($sender)
+								->setTo($president->getEmail())
 								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $president, 'role' => 'president', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
 				if ($postRequest->getSecretaryId()) {
 					$message = \Swift_Message::newInstance()
 								->setSubject('Payment Request Notice Email')
-								->setFrom('sny1985@gmail.com')
-								->setTo($this->user->getEmail())
+								->setFrom($sender)
+								->setTo($secretary->getEmail())
 								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $secretary, 'role' => 'secretary', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}

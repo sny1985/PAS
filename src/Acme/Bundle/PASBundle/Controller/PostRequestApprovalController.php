@@ -18,6 +18,7 @@ class PostRequestApprovalController extends Controller
 		$postRequest = new PostRequest();
 		$requester = null;
 		$selected_chair = null;
+		$sender = "nshi@caistudio.com";
 		$status = null;
 		$this->user = $this->getUser();
 
@@ -117,7 +118,7 @@ class PostRequestApprovalController extends Controller
 				if ($isEmailSent) {
 					$message = \Swift_Message::newInstance()
 								->setSubject('Payment Approval Notice Email')
-								->setFrom('sny1985@gmail.com')
+								->setFrom($sender)
 								->setTo($this->user->getEmail())
 								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Payment Approval', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
