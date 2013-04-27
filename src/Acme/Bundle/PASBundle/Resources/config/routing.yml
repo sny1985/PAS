@@ -59,10 +59,6 @@ pas_post_approval_form:
     pattern: /post-approve
     defaults: { _controller: AcmePASBundle:PostRequestApproval:postApprove }
 
-pas_notice_email:
-    pattern: /notice
-    defaults: { _controller: AcmePASBundle:NoticeEmail:notice }
-    
 pas_xls_exporting:
     pattern: /xls-export
     defaults: { _controller: AcmePASBundle:XLSExporting:export }
