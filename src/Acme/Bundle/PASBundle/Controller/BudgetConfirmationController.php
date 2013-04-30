@@ -16,7 +16,6 @@ class BudgetConfirmationController extends Controller
 	public function budgetConfirmAction(Request $req)
 	{
 		$em = $this->getDoctrine()->getManager();
-		$sender = "nshi@caistudio.com";
 
 		// get category list from database
 		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
@@ -109,7 +108,11 @@ class BudgetConfirmationController extends Controller
 		}
 
 		// update approved field of unapproved records, and send emails to these just approved requesters
+		// APPROVE BUDGETS ONLY IN SELECTED FY ???
 		if ($req->isMethod('POST')) {
+			// get sender's email address
+			$sender = $em->getRepository('AcmePASBundle:User')->findOneByUid(0)->getEmail();
+
 			foreach ($unapproved_array as $unapproved) {
 				$q = $em->createQuery("update AcmePASBundle:BudgetRequest br set br.approved = 1 where br.bid = $unapproved")->execute();
 
@@ -118,10 +121,13 @@ class BudgetConfirmationController extends Controller
 							->setSubject('BDA Expense Budget Approval Notice Email')
 							->setFrom($sender)
 							->setTo($user[0]->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $user[0], 'role' => 'requester', 'type' => 'BDA Expense Budget Approval', 'link' => $this->generateUrl('pas_budget_request_form', array('action' => 'query', 'id' => $unapproved), true))), 'text/html');
+							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $user[0], 'role' => 'requester', 'type' => 'BDA Expense Budget Approval', 'link' => $this->generateUrl('pas_budget_request_status', array('action' => 'query', 'id' => $unapproved), true))), 'text/html');
 					// show submission result
 					$this->get('mailer')->send($message);
 			}
+
+			// redirect to success page
+			return $this->redirect($this->generateUrl('pas_success', array('form' => 'budget approval')));
 		}
 
 		return $this->render('AcmePASBundle:Default:budget-confirm-summary.html.twig', array('categories' => $category_array, 'years' => $year_array, 'requests' => $budgets));

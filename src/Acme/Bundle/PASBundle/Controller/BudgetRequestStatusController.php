@@ -17,7 +17,6 @@ class BudgetRequestStatusController extends Controller
 		$budgetRequest = null;
 		$em = $this->getDoctrine()->getManager();
 		$id = null;
-		$sender = "nshi@caistudio.com";
 		$this->user = $this->getUser();
 
 		// if the HTTP method is POST, handle form submission
@@ -27,12 +26,15 @@ class BudgetRequestStatusController extends Controller
 			if (isset($param) && isset($param['id']))
 				$id = $param['id'];
 
-			// get CFO from database, assume only one cfo in database
 			$users = $em->getRepository('AcmePASBundle:User')->findAll();
+			// get sender's email address
+			$sender = $users[0]->getEmail();
+
+			// get CFO from database, assume only one cfo in database
+			
 			foreach ($users as $user) {
 				if ($user->getRole() == "cfo") {
 					$cfo = $user;
-					break;
 				}
 			}
 
@@ -75,6 +77,11 @@ class BudgetRequestStatusController extends Controller
 			if (isset($param['action']))
 				$action = $param['action'];
 			$budgetRequest = $em->getRepository('AcmePASBundle:BudgetRequest')->findOneByBid($id);
+
+			// do not allow other people peek it
+			if ($budgetRequest && $budgetRequest->getHolder() != $this->user->getUid()) {
+				throw $this->createNotFoundException('You are not allowed to view this request.');
+			}
 		}
 
 		return $this->render('AcmePASBundle:Default:budget-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'requester' => $this->user, 'request' => $budgetRequest, 'action' => $action));
