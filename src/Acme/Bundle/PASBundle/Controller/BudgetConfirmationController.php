@@ -16,6 +16,12 @@ class BudgetConfirmationController extends Controller
 	public function budgetConfirmAction(Request $req)
 	{
 		$em = $this->getDoctrine()->getManager();
+		$this->user = $this->getUser();
+
+		// do not allow other people peek it
+		if ($this->user->getRole() != 'cfo') {
+			throw $this->createNotFoundException('You are not allowed to view this page.');
+		}
 
 		// get category list from database
 		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();

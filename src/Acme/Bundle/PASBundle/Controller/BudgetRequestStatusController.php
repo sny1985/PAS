@@ -55,20 +55,7 @@ class BudgetRequestStatusController extends Controller
 			$this->get('mailer')->send($message);
 
 			// redirect to success page
-			return $this->redirect($this->generateUrl('pas_success', array('form' => 'budget')));
-		}
-
-		// get category list from database
-		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
-		foreach ($categories as $key => $value) {
-			$category_array[$key + 1] = $value->getName();
-		}
-
-		// get currency type list from database
-		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
-		foreach ($currencies as $key => $value) {
-			$currency_array['name'][$key + 1] = $value->getName();
-			$currency_array['code'][$key + 1] = $value->getCode();
+			return $this->redirect($this->generateUrl('pas_success', array('form' => 'budget request')));
 		}
 
 		$param = $req->query->all();
@@ -82,6 +69,19 @@ class BudgetRequestStatusController extends Controller
 			if ($budgetRequest && $budgetRequest->getHolder() != $this->user->getUid()) {
 				throw $this->createNotFoundException('You are not allowed to view this request.');
 			}
+		}
+
+		// get category list from database
+		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
+		foreach ($categories as $key => $value) {
+			$category_array[$key + 1] = $value->getName();
+		}
+
+		// get currency type list from database
+		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
+		foreach ($currencies as $key => $value) {
+			$currency_array['name'][$key + 1] = $value->getName();
+			$currency_array['code'][$key + 1] = $value->getCode();
 		}
 
 		return $this->render('AcmePASBundle:Default:budget-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'requester' => $this->user, 'request' => $budgetRequest, 'action' => $action));

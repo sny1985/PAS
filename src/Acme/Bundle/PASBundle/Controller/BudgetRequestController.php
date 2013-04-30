@@ -36,7 +36,7 @@ class BudgetRequestController extends Controller
 		}
 
 		// if there is a query and the action is query, then show record; otherwise edit the record in the form
-		$param = $req->query->all();
+			$param = $req->query->all();
 		if (isset($param) && isset($param['action']) && isset($param['id'])) {
 			$action = $param['action'];
 			$id = $param['id'];
