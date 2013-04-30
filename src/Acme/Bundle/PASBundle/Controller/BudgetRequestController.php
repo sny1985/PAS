@@ -19,7 +19,6 @@ class BudgetRequestController extends Controller
 		$em = $this->getDoctrine()->getManager();
 		$form = null;
 		$id = null;
-		$sender = "nshi@caistudio.com";
 		$session = $this->get("session");
 		$this->user = $this->getUser();
 
@@ -36,23 +35,13 @@ class BudgetRequestController extends Controller
 			$currency_array['code'][$key + 1] = $value->getCode();
 		}
 
-		// get CFO from database
-		$users = $em->getRepository('AcmePASBundle:User')->findAll();
-		foreach ($users as $user) {
-			if ($user->getRole() == "cfo") {
-				$cfo = $user;
-			}
-		}
-
 		// if there is a query and the action is query, then show record; otherwise edit the record in the form
 		$param = $req->query->all();
 		if (isset($param) && isset($param['action']) && isset($param['id'])) {
 			$action = $param['action'];
 			$id = $param['id'];
 			$budgetRequest = $em->getRepository('AcmePASBundle:BudgetRequest')->findOneByBid($id);
-			if ($action == 'query') {
-				return $this->render('AcmePASBundle:Default:budget-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'requester' => $this->user, 'request' => $budgetRequest, 'action' => $action));
-			} else if ($action == 'edit' && $budgetRequest) {
+			if ($action == 'edit' && $budgetRequest) {
 				$session->set('action', 'edit');
 				$budgetRequest->getActivityDuration();
 			}
@@ -112,28 +101,10 @@ class BudgetRequestController extends Controller
 				// if the request is a new one, there is no bid before insertion
 				$id = $budgetRequest->getBid();
 
-				// send notice email to requester
-				$message = \Swift_Message::newInstance()
-							->setSubject('BDA Expense Budget Request Notice Email')
-							->setFrom($sender)
-							->setTo($this->user->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'role' => 'requester', 'type' => 'BDA Expense Budget Request', 'link' => $this->generateUrl('pas_budget_request_form', array('id' => $id, 'action' => 'query'), true))), 'text/html');
-				$this->get('mailer')->send($message);
-
-				// send notice email to CFO
-				$message = \Swift_Message::newInstance()
-							->setSubject('BDA Expense Budget Request Notice Email')
-							->setFrom($sender)
-							->setTo($cfo->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $cfo, 'role' => 'cfo', 'type' => 'BDA Expense Budget Request', 'link' => $this->generateUrl('pas_budget_confirmation_form', array(), true))), 'text/html');
-				$this->get('mailer')->send($message);
-
 				// fetch data from database and go to success page
 				$budgetRequest = $em->getRepository('AcmePASBundle:BudgetRequest')->findOneByBid($id);
-				// redirect to prevent resubmission
-				return $this->redirect($this->generateUrl('pas_budget_request_form', array('action' => 'query', 'id' => $id)));
-			} else {
-				// HANDLE EXCEPTIONS ???
+				// redirect to confirmation page
+				return $this->redirect($this->generateUrl('pas_budget_request_status', array('id' => $id, 'action' => 'submit')));
 			}
 		}
 

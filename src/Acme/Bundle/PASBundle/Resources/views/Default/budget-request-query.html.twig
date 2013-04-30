@@ -75,11 +75,28 @@
 					</td>
 				</tr>
 			</table>
-
-			<div id="links">
-				<a href="{{ path('pas_budget_request_form', {'action': 'edit', 'id': id}) }}">Edit This Request</a> &nbsp; 
-				<a href="{{ path('pas_budget_request_form') }}">Submit Another Budget Request</a>
-			</div>
+			{% if action == 'submit' %}
+				<form id="budget_request_form" class="bda_form" action="{{ path('pas_budget_request_status') }}" method="post">
+					<div id="buttons" class="form_item">
+						<input type="button" value="Edit" onclick="edit({{ id }})" /><input type="submit" value="Confirm" />
+					</div>
+					<input type="hidden" name="id" value="{{ id }}">
+				</form>
+			{% elseif action == 'query' %}
+				<div id="links">
+					<a href="{{ path('pas_budget_request_form', {'action': 'edit', 'id': id}) }}">Submit Another Request</a>
+				</div>
+			{% endif %}
 		</div>
 	{% endif %}
 {% endblock %}
+
+{% block javascripts %}
+	<script type="text/javascript">
+		function edit(id) {
+			var url = window.location.href;
+			url = url.slice(0, url.lastIndexOf('/'));
+			window.location.replace(url + "/budget-request?id=" + id + "&action=" + "edit");
+		}
+	</script>
+{% endblock%}

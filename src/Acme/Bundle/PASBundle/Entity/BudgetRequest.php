@@ -235,14 +235,16 @@ class BudgetRequest
 	}
 
 	public function setActivityDuration() {
+		// use current month/year if not specified
 		if (null == $this->startmonth || null == $this->startyear || null == $this->endmonth || null == $this->endyear) {
-			// EXCEPTION ???
-			return;
+			$this->startmonth = $this->endmonth = date('m');
+			$this->startyear = $this->endyear = date('Y');
 		}
-		
-		if ($this->startyear > $this->endyear || ($this->startyear == $this->endyear  && $this->startmonth > $this->endmonth)) {
-			// EXCEPTION ???
-			return;
+
+		// use starting date if the ending date is not legal
+		if ($this->startyear > $this->endyear || ($this->startyear == $this->endyear && $this->startmonth > $this->endmonth)) {
+			$this->endmonth = $this->startmonth;
+			$this->endyear = $this->startyear;
 		}
 
 		$this->startdate = new \DateTime(date("d-m-Y", strtotime("1-$this->startmonth-$this->startyear")));

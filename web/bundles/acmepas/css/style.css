@@ -557,8 +557,8 @@ hr {background-color: #ffffff; color: #ffffff; border: medium none; height: 2px;
 #form_preApproval {margin-top: 20px;}
 #budget_btn {color: #ffffff; text-decoration: none; margin-bottom: 10px; display: inline-block;}
 #pre_approved, #un_pre_approved, #check, #wire, #chair, #secretary, #cfo, #president {display: none;}
-#buttons {width: 100px; padding: 0; margin: 20px auto;}
-#buttons input[type=submit] {width: 100px; margin: 0 auto;}
+#buttons {width: 200px; padding: 0; margin: 20px auto;}
+#buttons input[type=button], #buttons input[type=submit] {width: 100px;}
 
 /* table */
 table th, table td {border: 1px solid #ffffff; vertical-align: top; padding: 10px;}

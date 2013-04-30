@@ -19,13 +19,13 @@ pas_homepage:
     pattern: /home
     defaults: { _controller: AcmePASBundle:Home:home }
 
-pas_user:
-    pattern: /user
-    defaults: { _controller: AcmePASBundle:User:user }
-
 pas_budget_request_form:
     pattern: /budget-request
     defaults: { _controller: AcmePASBundle:BudgetRequest:budgetRequest }
+
+pas_budget_request_status:
+    pattern: /budget-request-review
+    defaults: { _controller: AcmePASBundle:BudgetRequestStatus:budgetRequestReview }
 
 pas_budget_confirmation_form:
     pattern: /budget-confirm
@@ -59,6 +59,14 @@ pas_post_approval_form:
     pattern: /post-approve
     defaults: { _controller: AcmePASBundle:PostRequestApproval:postApprove }
 
+pas_success:
+    pattern: /success
+    defaults: { _controller: AcmePASBundle:Success:success }
+
 pas_xls_exporting:
     pattern: /xls-export
     defaults: { _controller: AcmePASBundle:XLSExporting:export }
+
+pas_user:
+    pattern: /user
+    defaults: { _controller: AcmePASBundle:User:user }

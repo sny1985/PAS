@@ -1,0 +1,43 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Submit Successfully{% endblock %}
+
+{% block main %}
+	<div id="heading">
+		<h3>
+			{% if form == 'budget' %}
+				Budget Request Form
+			{% elseif form == 'pre' %}
+				Pre-Payment Request Form
+			{% elseif form == 'post' %}
+				Post-Payment Request Form
+			{% endif %}
+		</h3>
+	</div>
+
+	<div id="main">
+		<h4>Thank you. Your 
+			{% if form == 'budget' %}
+				budget
+			{% elseif form == 'pre' %}
+				pre-payment
+			{% elseif form == 'post' %}
+				post-payment
+			{% endif %}
+			 request is submitted successfully!
+		</h4>
+		<br />
+		<div id="links">
+			{% if form == 'budget' %}
+				<a href="{{ path('pas_budget_request_form') }}">Submit Another Request</a>
+			{% elseif form == 'pre' %}
+				<a href="{{ path('pas_pre_request_form') }}">Submit Another Request</a>
+			{% elseif form == 'post' %}
+				<a href="{{ path('pas_post_request_form') }}">Submit Another Request</a>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}
