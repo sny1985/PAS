@@ -65,12 +65,18 @@
 			});
 			$("#budget_check_form").submit(function(event) {
 				event.preventDefault();
+				var result = {};
 				var $selected = $("input[name=selected_budget]:checked");
+				var $uncles = $selected.parent().siblings().each(function () {
+					if ($(this).hasClass("check_no")) result.no = $(this).text();
+					if ($(this).hasClass("check_category")) result.category = $(this).text();
+					if ($(this).hasClass("check_amount")) result.amount = $(this).text();
+				});				
 				var id = $selected.val();
-				var year = id.slice(0, 4);
-				var cat = id.slice(5);
 				if (id) {
-					window.opener.SelectBudget({"year": year, "cat": cat});
+					result.year = id.slice(0, 4);
+					result.cat = id.slice(5);
+					window.opener.SelectBudget(result);
 					window.close();
 				}
 			});

@@ -79,7 +79,7 @@
 				</tr>
 				<tr>
 					<td class="status_tag">Budget:</td>
-					<td class="status_content">{{ categories[request.budgetCategory[5:]] }}</td>
+					<td class="status_content">{{ request.budget|split('-')[1] }}</td>
 				</tr>
 				<tr>
 					<td class="status_tag">Level:</td>
@@ -147,38 +147,50 @@
 				</tr>
 			</table>
 
-			{% if role == 'requester' %}
+			{% if action == 'submit' %}
+				<form id="pre_request_form" class="bda_form" action="{{ path('pas_pre_request_status') }}" method="post">
+					<div id="buttons" class="form_item">
+						<input type="button" value="Edit" onclick="edit({{ id }})" /><input type="submit" value="Confirm" />
+					</div>
+					<input type="hidden" name="id" value="{{ id }}">
+				</form>
+			{% elseif action == 'query' %}
 				<div id="links">
 					<a href="{{ path('pas_pre_request_form', {'action': 'edit', 'id': id}) }}">Edit This Request</a> &nbsp; 
-					<a href="{{ path('pas_pre_request_form') }}">Submit Another Pre-Payment Request</a> &nbsp; 
 					<a href="{{ path('pas_post_request_form', {'prid': id}) }}">Submit Payment Request</a> &nbsp; 
 					<a href="{{ path('pas_xls_exporting', {'id': id}) }}">Export Expense Budget Progress</a>
 				</div>
-			{% else %}
-				{% if action == 'approve' %}
-					<form id="pre_approval_form" class="bda_form" action="{{ path('pas_pre_approval_form', {'id': id}) }}" method="post" {{ form_enctype(form) }}>
-						<div class="form_item">
-							{{ form_errors(form.approval) }}
-							{{ form_widget(form.approval) }}
-						</div>
-						<div class="form_item">
-							{{ form_label(form.comment) }}<br />
-							{{ form_errors(form.comment) }}
-							{{ form_widget(form.comment) }}
-						</div>
-
-						{{ form_rest(form) }}
-
-						<div id="buttons" class="form_item">
-							<input type="submit" value="Submit" />
-						</div>
-					</form>
-				{% elseif action == 'query' %}
-					<div id="links">
-						<a href="{{ path('pas_pre_approval_form', {'id': id}) }}">Edit</a> &nbsp; 
+			{% elseif action == 'approve' %}
+				<form id="pre_approval_form" class="bda_form" action="{{ path('pas_pre_approval_form', {'id': id}) }}" method="post" {{ form_enctype(form) }}>
+					<div class="form_item">
+						{{ form_errors(form.approval) }}
+						{{ form_widget(form.approval) }}
 					</div>
-				{% endif %}
+					<div class="form_item">
+						{{ form_label(form.comment) }}<br />
+						{{ form_errors(form.comment) }}
+						{{ form_widget(form.comment) }}
+					</div>
+
+					{{ form_rest(form) }}
+
+					<div id="buttons" class="form_item">
+						<input type="submit" value="Submit" />
+					</div>
+				</form>
 			{% endif %}
 		</div>
 	{% endif %}
 {% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	<script type="text/javascript">
+		function edit(id) {
+			var url = window.location.href;
+			url = url.slice(0, url.lastIndexOf('/'));
+			window.location.replace(url + "/pre-request?id=" + id + "&action=" + "edit");
+		}
+	</script>
+{% endblock%}

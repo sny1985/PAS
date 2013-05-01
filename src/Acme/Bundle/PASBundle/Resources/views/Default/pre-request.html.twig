@@ -53,7 +53,6 @@
 				<table id="budget_table" class="status summary">
 					<thead>
 						<tr>
-							<th class="check_no">No.</th>
 							<th class="check_category">Officer/Committee Chair/TF Chair</th>
 							<th class="check_amount">Amount (US$)</th>
 						</tr>
@@ -61,15 +60,10 @@
 					<tfoot>
 					</tfoot>
 					<tbody>
-						{% for year in years %}
-							{% for cat in budgets[year]['categories'] %}
-								<tr id="{{ year }}-{{ cat }}">
-									<td class="check_no">{{ loop.index }}</td>
-									<td class="check_category">{{ categories[cat] }}</td>
-									<td class="check_amount">{{ budgets[year][cat]['amount'] }}</td>
-								</tr>
-							{% endfor %}
-						{% endfor %}
+						<tr>
+							<td id="selected_category" class="check_category"></td>
+							<td id="selected_amount" class="check_amount"></td>
+						</tr>
 					</tbody>
 				</table>
 			</div>

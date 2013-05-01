@@ -12,13 +12,11 @@ class PreRequestApprovalController extends Controller
 	public function preApproveAction(Request $req)
 	{
 		$em = $this->getDoctrine()->getManager();
-		$form = null;
 		$id = null;
-		$isEmailSent = false;
+		$sendEmail = false;
 		$preRequest = new PreRequest();
 		$requester = null;
 		$selected_chair = null;
-		$sender = "nshi@caistudio.com";
 		$status = null;
 		$this->user = $this->getUser();
 
@@ -58,6 +56,16 @@ class PreRequestApprovalController extends Controller
 			$id = $param['id'];
 			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
 			if ($preRequest) {
+				// do not allow other people peek it
+				$user_id = $this->user->getUid();
+				$chair_id = $preRequest->getChairId();
+				$cfo_id = $preRequest->getCfoId();
+				$president_id = $preRequest->getPresidentId();
+				$secretary_id = $preRequest->getSecretaryId();
+				if ($user_id != $chair_id && $user_id != $cfo_id && $user_id != $president_id && $user_id != $secretary_id) {
+					throw $this->createNotFoundException('You are not allowed to view this request.');
+				}
+			
 				foreach ($users as $user) {
 					if ($user->getUid() == $preRequest->getRequester()) {
 						$requester = $user;
@@ -87,50 +95,51 @@ class PreRequestApprovalController extends Controller
 						if ($oldRequest->getChairId() == $this->user->getUid()) {
 							$oldRequest->setChairApproved($data['approval']);
 							$oldRequest->setChairComment($data['comment']);
-							$isEmailSent = true;
+							$sendEmail = true;
 						}
 						break;
 					case 'cfo':
 						if ($oldRequest->getCfoId() == $this->user->getUid()) {
 							$oldRequest->setCfoApproved($data['approval']);
 							$oldRequest->setCfoComment($data['comment']);
-							$isEmailSent = true;
+							$sendEmail = true;
 						}
 						break;
 					case 'president':
 						if ($oldRequest->getPresidentId() == $this->user->getUid()) {
 							$oldRequest->setPresidentApproved($data['approval']);
 							$oldRequest->setPresidentComment($data['comment']);
-							$isEmailSent = true;
+							$sendEmail = true;
 						}
 						break;
 					case 'secretary':
 						if ($oldRequest->getSecretaryId() == $this->user->getUid()) {
 							$oldRequest->setSecretaryApproved($data['approval']);
 							$oldRequest->setSecretaryComment($data['comment']);
-							$isEmailSent = true;
+							$sendEmail = true;
 						}
 						break;
 				}
 				$em->flush();
 
-				if ($isEmailSent) {
+				if ($sendEmail) {
+					// get sender's email address
+					$sender = $users[0]->getEmail();
+
 					// send notice email to requester
 					$message = \Swift_Message::newInstance()
 								->setSubject('Pre-Payment Approval Notice Email')
 								->setFrom($sender)
-								->setTo($this->user->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Pre-Payment Approval', 'link' => $this->generateUrl('pas_pre_request_status', array('id' => $id), true))), 'text/html');
+								->setTo($requester->getEmail())
+								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Pre-Payment Approval', 'link' => $this->generateUrl('pas_pre_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
 
 				// redirect to prevent resubmission
-				return $this->redirect($this->generateUrl('pas_pre_request_status', array('id' => $id)));
-			} else {
-				// HANDLE EXCEPTIONS ???
+				return $this->redirect($this->generateUrl('pas_success', array('form' => 'pre approval')));
 			}
 		}
 
-		return $this->render('AcmePASBundle:Default:pre-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'user' => $this->user, 'role' => 'approver', 'request' => $preRequest, 'action' => 'approve', 'status' => $status, 'form' => $form->createView()));
+		return $this->render('AcmePASBundle:Default:pre-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => 'approver', 'request' => $preRequest, 'action' => 'approve', 'status' => $status, 'form' => $form->createView()));
 	}
 }

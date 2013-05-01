@@ -101,8 +101,6 @@ class BudgetRequestController extends Controller
 				// if the request is a new one, there is no bid before insertion
 				$id = $budgetRequest->getBid();
 
-				// fetch data from database and go to success page
-				$budgetRequest = $em->getRepository('AcmePASBundle:BudgetRequest')->findOneByBid($id);
 				// redirect to confirmation page
 				return $this->redirect($this->generateUrl('pas_budget_request_status', array('id' => $id, 'action' => 'submit')));
 			}

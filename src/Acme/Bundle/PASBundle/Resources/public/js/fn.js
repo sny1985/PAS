@@ -25,18 +25,32 @@ function SelectLevel(amount) {
 	var level;
 	if (amount <= 10000) {
 		level = 1;
+		// change level
 		$("#form_level option:nth-child(3)").prop("selected", false);
 		$("#form_level option:nth-child(2)").prop("selected", true);
-		$("select", $chair).prop('required', true);
+		// show chair
+		$("select option:selected", $chair).removeAttr("selected");
+		$("select", $chair).attr("required", "required");
 		$chair.show();
+		// clear cfo, president & secretary
+		$("select", $cfo).val($("select option:first", $cfo).val());
+		$("select", $president).val($("select option:first", $president).val());
+		$("select", $secretary).val($("select option:first", $secretary).val());
 		if ($unPreApproved.length && !$unPreApproved.prop("checked")) $cfo.show();
 	} else {
 		level = 2;
+		// change level
 		$("#form_level option:nth-child(2)").prop("selected", false);
 		$("#form_level option:nth-child(3)").prop("selected", true);
-		$("select", $chair).removeProp('required');
+		// clear chair
+		$("select", $chair).val($("select option:first", $chair).val());
+		$("select", $chair).attr("required", false);
+		// select first element and show
+		$("select", $cfo).val($("select option:last", $cfo).val());
 		$cfo.show();
+		$("select", $president).val($("select option:last", $president).val());
 		$president.show();
+		$("select", $secretary).val($("select option:last", $secretary).val());
 		$secretary.show();
 	}
 }
@@ -69,22 +83,19 @@ function ConvertCurrency() {
 }
 
 function SelectBudget(data) {
-	var $bc = $("#form_budgetCategory");
+	var $bc = $("#form_budget");
 
 	if (data) {
-		$bc.val(data.year + "-" + data.cat);
+		$bc.val(data.year + "-" + data.category + "-" + data.amount);
 	}
 
-	var id = $bc.val();
-	if (id) {
+	if ($bc.val()) {
+		var value = $bc.val().split("-");
+		$("#selected_category").html(value[1]);
+		$("#selected_amount").html(value[2]);
 		$("#budget_table").show();
-		$("#budget_table tbody tr").each(function() {
-			if ($(this).prop("id") != id) {
-				$(this).hide();
-			} else {
-				$(this).show();
-			}
-		});
+	} else {
+		$("#budget_table").hide();
 	}
 }
 

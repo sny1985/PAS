@@ -36,37 +36,39 @@ class BudgetCheckController extends Controller
 			}
 		}
 
-		$budgetRequests = $em->createQuery('SELECT ba.category, ba.approved, ba.startdate, ba.enddate, ba.date, ba.amount, ba.curtype FROM AcmePASBundle:BudgetRequest ba GROUP BY ba.startdate, ba.category, ba.date')->getResult();
+		$budgetRequests = $em->getRepository('AcmePASBundle:BudgetRequest')->findAll();
 		$year_array = array();
 		$budgets = array();
 		$sum = 0;
 		foreach ($budgetRequests as $request) {
 			// show approved requests only
-			if ($request['approved'] != 1)
+			if ($request->getApproved() != 1)
 				continue;
 
-			// find years
-			$year = $request['startdate']->format('Y');
+			// find years and place them in order
+			$year = $request->getStartdate()->format('Y');
 			if (array_key_exists($year, $year_array) == false) {
 				$year_array[$year] = $year;
 			}
+			ksort($year_array);
 			// record categories
 			if (!isset($budgets[$year]["categories"])) {
 				$budgets[$year]["categories"] = array();
 			}
-			if (array_search($request['category'], $budgets[$year]["categories"]) == false) {
-				array_push($budgets[$year]["categories"], $request['category']); 
+			$category = $request->getCategory();
+			if (array_search($category, $budgets[$year]["categories"]) == false) {
+				array_push($budgets[$year]["categories"], $category); 
 			}
 			// calculate total amount of each category
-			if (!isset($budgets[$year][$request['category']]['amount'])) {
-				$budgets[$year][$request['category']]['amount'] = 0;
+			if (!isset($budgets[$year][$category]['amount'])) {
+				$budgets[$year][$category]['amount'] = 0;
 			}
-			$budgets[$year][$request['category']]['amount'] += $request['amount'] * $currency_array['rate'][$request['curtype']];
+			$budgets[$year][$category]['amount'] += $request->getAmount() * $currency_array['rate'][$request->getCurtype()];
 			// calculate total amount of all categories yearly
 			if (!isset($budgets[$year]["sum"])) {
 				$budgets[$year]["sum"] = 0;
 			}
-			$budgets[$year]['sum'] += $request['amount'] * $currency_array['rate'][$request['curtype']];
+			$budgets[$year]['sum'] += $request->getAmount() * $currency_array['rate'][$request->getCurtype()];
 		}
 
 		foreach ($year_array as $year) {

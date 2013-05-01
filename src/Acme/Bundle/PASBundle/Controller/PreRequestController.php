@@ -14,9 +14,7 @@ class PreRequestController extends Controller
 	{
 		$actoin = null;
 		$em = $this->getDoctrine()->getManager();
-		$form = null;
 		$preRequest = new PreRequest();
-		$sender = "nshi@caistudio.com";
 		$session = $this->get("session");
 		$this->user = $this->getUser();
 
@@ -44,7 +42,6 @@ class PreRequestController extends Controller
 		}
 
 		// get chairs, secretary, CFO & president from database
-		$chairs = array();
 		$chair_array = array();
 		$chair_array[0] = "Choose one chair";
 		$cfo_array = array();
@@ -56,49 +53,13 @@ class PreRequestController extends Controller
 		$users = $em->getRepository('AcmePASBundle:User')->findAll();
 		foreach ($users as $user) {
 			if ($user->getRole() == "chair") {
-				array_push($chairs, $user);
 				$chair_array[$user->getUid()] = $user->getUsername();
 			} else if ($user->getRole() == "cfo") {
-				$cfo = $user;
 				$cfo_array[$user->getUid()] = $user->getUsername();
 			} else if ($user->getRole() == "president") {
-				$president = $user;
 				$president_array[$user->getUid()] = $user->getUsername();
 			} else if ($user->getRole() == "secretary") {
-				$secretary = $user;
 				$secretary_array[$user->getUid()] = $user->getUsername();
-			}
-		}
-
-		$budgetRequests = $em->getRepository('AcmePASBundle:BudgetRequest')->findAll();
-		$year_array = array();
-		$budgets = array();
-		$sum = 0;
-		foreach ($budgetRequests as $request) {
-			// find years and place them in order
-			$year = $request->getStartdate()->format('Y');
-			if (array_key_exists($year, $year_array) == false) {
-				$year_array[$year] = $year;
-			}
-			ksort($year_array);
-			// record categories
-			if (!isset($budgets[$year]["categories"])) {
-				$budgets[$year]["categories"] = array();
-			}
-			$category = $request->getCategory();
-			if (array_search($category, $budgets[$year]["categories"]) == false) {
-				array_push($budgets[$year]["categories"], $category); 
-			}
-			// calculate total amount of each category
-			if (!isset($budgets[$year][$category]['amount'])) {
-				$budgets[$year][$category]['amount'] = 0;
-			}
-			$budgets[$year][$category]['amount'] += $request->getAmount() * $currency_array['rate'][$request->getCurtype()];
-		}
-
-		foreach ($year_array as $year) {
-			foreach ($budgets[$year]['categories'] as $category) {
-				$budgets[$year][$category]['amount'] = sprintf("%0.2f", $budgets[$year][$category]['amount']);
 			}
 		}
 
@@ -122,9 +83,9 @@ class PreRequestController extends Controller
 						->add('explanation', 'textarea', array('label' => 'Explanation of the Expense:', 'required' => false))
 						->add('amount', 'money', array('currency' => false, 'label' => 'Amount:'))
 						->add('curtype', 'choice', array('choices' => $currency_array['code'], 'empty_value' => 'Choose one type', 'label' => 'Currency Type:', 'preferred_choices' => array('empty_value')))
-						->add('budgetCategory', 'hidden', array('data' => null))
+						->add('budget', 'hidden', array('data' => null))
 						->add('level', 'choice', array('choices' => array(1 => 'Below or equal to US$10,000: by the Chair', 2 => 'Above US$10,000: by Secretary, President and CFO '), 'empty_value' => 'Choose one level', 'label' => 'Approval Level:', 'preferred_choices' => array('empty_value')))
-						->add('chairId', 'choice', array('choices' => $chair_array, 'empty_value' => false, 'label' => 'Chair:', 'required' => false))
+						->add('chairId', 'choice', array('choices' => $chair_array, 'empty_value' => false, 'label' => 'Chair:'))
 						->add('chairApproved', 'hidden', array('data' => 0))
 						->add('chairComment', 'hidden', array('data' => null))
 						->add('secretaryId', 'choice', array('choices' => $secretary_array, 'empty_value' => false, 'label' => 'Secretary:', 'required' => false))
@@ -147,15 +108,13 @@ class PreRequestController extends Controller
 				$action = $session->get('action');
 				if (isset($action) && $action == 'edit') {
 					$session->remove('action');
-					
-var_dump($preRequest);					
 					$oldRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($preRequest->getPrid());
 var_dump($oldRequest);
 					$oldRequest->setCategory($preRequest->getCategory());
 					$oldRequest->setExplanation($preRequest->getExplanation());
 					$oldRequest->setAmount($preRequest->getAmount());
 					$oldRequest->setCurtype($preRequest->getCurtype());
-					$oldRequest->setBudgetCategory($preRequest->getBudgetCategory());
+					$oldRequest->setBudget($preRequest->getBudget());
 					$oldRequest->setLevel($preRequest->getLevel());
 					$oldRequest->setChairId($preRequest->getChairId());
 					$oldRequest->setCfoId($preRequest->getCfoId());
@@ -175,62 +134,12 @@ var_dump($oldRequest);
 				// if the request is a new one, there is no bid before insertion
 				$id = $preRequest->getPrid();
 
-				foreach ($users as $user) {
-					if ($user->getUid() == $preRequest->getChairId()) {
-						$selected_chair = $user;
-					}
-				}
-
-				// send notice email to requester
-				$message = \Swift_Message::newInstance()
-							->setSubject('Pre-Payment Request Notice Email')
-							->setFrom($sender)
-							->setTo($this->user->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'role' => 'requester', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_request_status', array('id' => $id), true))), 'text/html');
-				$this->get('mailer')->send($message);
-
-				// send notice email to approvers
-				if ($preRequest->getChairId()) {
-					$message = \Swift_Message::newInstance()
-								->setSubject('Pre-Payment Request Notice Email')
-								->setFrom($sender)
-								->setTo($selected_chair->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $selected_chair, 'role' => 'chair', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
-					$this->get('mailer')->send($message);
-				}
-				if ($preRequest->getCfoId()) {
-					$message = \Swift_Message::newInstance()
-								->setSubject('Pre-Payment Request Notice Email')
-								->setFrom($sender)
-								->setTo($cfo->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $cfo, 'role' => 'cfo', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
-					$this->get('mailer')->send($message);
-				}
-				if ($preRequest->getPresidentId()) {
-					$message = \Swift_Message::newInstance()
-								->setSubject('Pre-Payment Request Notice Email')
-								->setFrom($sender)
-								->setTo($president->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $president, 'role' => 'president', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
-					$this->get('mailer')->send($message);
-				}
-				if ($preRequest->getSecretaryId()) {
-					$message = \Swift_Message::newInstance()
-								->setSubject('Pre-Payment Request Notice Email')
-								->setFrom($sender)
-								->setTo($secretary->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $secretary, 'role' => 'secretary', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
-					$this->get('mailer')->send($message);
-				}
-
-				// redirect to prevent resubmission
-				return $this->redirect($this->generateUrl('pas_pre_request_status', array('id' => $id, 'action' => $action)));
-			} else {
-				// HANDLE EXCEPTIONS ???
+				// redirect to confirmation page
+				return $this->redirect($this->generateUrl('pas_pre_request_status', array('id' => $id, 'action' => 'submit')));
 			}
 		}
 
 		// display form
-		return $this->render('AcmePASBundle:Default:pre-request.html.twig', array('form' => $form->createView(), 'categories' => $category_array, 'years' => $year_array, 'budgets' => $budgets));
+		return $this->render('AcmePASBundle:Default:pre-request.html.twig', array('form' => $form->createView(), 'categories' => $category_array));
 	}
 }
