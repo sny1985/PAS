@@ -25,6 +25,7 @@
 							<th class="summary_date">Last Received Date</th>
 							<th class="summary_category">Officer/Committee Chair/TF Chair</th>
 							<th class="summary_amount">Amount (US$)</th>
+							<th class="summary_approved">Is Approved?</th>
 						</tr>
 					</thead>
 					<tfoot>
@@ -47,6 +48,7 @@
 										<td class="summary_date">{{ requests[year][cat]['lastdate']|date("m/d/Y") }}</td>
 										<td class="summary_category"><a class="link" href="{{ path('pas_budget_confirmation_form', {'cid': loop.parent.loop.index, 'year': year}) }}">{{ categories[cat] }}</a></td>
 										<td class="summary_amount">{{ requests[year][cat]['amount'] }}</td>
+										<td class="summary_approved">{% if requests[year][cat]['approved'] == 1 %}Yes{% else %}No{% endif %}</td>
 										{% set received = 1 %}
 									{% endif %}
 								{% endfor %}
@@ -55,6 +57,7 @@
 									<td class="summary_date"></td>
 									<td class="summary_category"><a class="link" href="{{ path('pas_budget_confirmation_form', {'cid': loop.index, 'year': year}) }}">{{ categories[loop.index] }}</a></td>
 									<td class="summary_amount"></td>
+									<td class="summary_approved"></td>
 								{% endif %}
 							</tr>
 						{% endfor %}

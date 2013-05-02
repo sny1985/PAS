@@ -48,28 +48,12 @@ class PostRequestStatusController extends Controller
 			}
 		}
 
-		// if there is a query
-		$param = $req->query->all();
-		// approve
-		if (isset($param) && isset($param['id'])) {
-			$id = $param['id'];
-			$postRequest = $em->getRepository('AcmePASBundle:PostRequest')->findOneByRid($id);
-			if ($postRequest) {
-				foreach ($users as $user) {
-					if ($user->getUid() == $postRequest->getRequester()) {
-						$requester = $user;
-					}
-					if ($user->getUid() == $postRequest->getChairId()) {
-						$selected_chair = $user;
-					}
-				}
-			}
-		}
-
-		// show result
+		// show results
 		$param = $req->query->all();
 		if (isset($param) && isset($param['id'])) {
 			$id = $param['id'];
+			if (isset($param['action']))
+				$action = $param['action'];
 			$postRequest = $em->getRepository('AcmePASBundle:PostRequest')->findOneByRid($id);
 			if ($postRequest) {
 				$level = $postRequest->getLevel();
@@ -99,6 +83,73 @@ class PostRequestStatusController extends Controller
 			}
 		}
 
-		return $this->render('AcmePASBundle:Default:post-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'user' => $this->user, 'role' => 'requester', 'request' => $postRequest, 'action' => 'query', 'status' => $status));
+		// if the HTTP method is POST, handle form submission
+		if ($req->isMethod('POST')) {
+			// get id
+			$param = $req->request->all();
+			if (isset($param) && isset($param['id'])) {
+				$id = $param['id'];
+				$postRequest = $em->getRepository('AcmePASBundle:PostRequest')->findOneByRid($id);
+			}
+
+			foreach ($users as $user) {
+				if ($user->getUid() == $postRequest->getRequester()) {
+					$requester = $user;
+				}
+				if ($user->getUid() == $postRequest->getChairId()) {
+					$selected_chair = $user;
+				}
+			}
+
+			// get sender's email address
+			$sender = $users[0]->getEmail();
+
+			// send notice email to requester
+			$message = \Swift_Message::newInstance()
+						->setSubject('Payment Request Notice Email')
+						->setFrom($sender)
+						->setTo($requester->getEmail())
+						->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'role' => 'requester', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
+			$this->get('mailer')->send($message);
+
+			// send notice email to approvers
+			if ($postRequest->getChairId()) {
+				$message = \Swift_Message::newInstance()
+							->setSubject('Payment Request Notice Email')
+							->setFrom($sender)
+							->setTo($selected_chair->getEmail())
+							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $selected_chair, 'role' => 'chair', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
+				$this->get('mailer')->send($message);
+			}
+			if ($postRequest->getCfoId()) {
+				$message = \Swift_Message::newInstance()
+							->setSubject('Payment Request Notice Email')
+							->setFrom($sender)
+							->setTo($cfo->getEmail())
+							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $cfo, 'role' => 'cfo', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
+				$this->get('mailer')->send($message);
+			}
+			if ($postRequest->getPresidentId()) {
+				$message = \Swift_Message::newInstance()
+							->setSubject('Payment Request Notice Email')
+							->setFrom($sender)
+							->setTo($president->getEmail())
+							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $president, 'role' => 'president', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
+				$this->get('mailer')->send($message);
+			}
+			if ($postRequest->getSecretaryId()) {
+				$message = \Swift_Message::newInstance()
+							->setSubject('Payment Request Notice Email')
+							->setFrom($sender)
+							->setTo($secretary->getEmail())
+							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $secretary, 'role' => 'secretary', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
+				$this->get('mailer')->send($message);
+			}
+
+			// redirect to prevent resubmission
+			return $this->redirect($this->generateUrl('pas_success', array('form' => 'post request')));
+		}
+
+		return $this->render('AcmePASBundle:Default:post-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => 'requester', 'request' => $postRequest, 'action' => $action, 'status' => $status));
 	}
 }

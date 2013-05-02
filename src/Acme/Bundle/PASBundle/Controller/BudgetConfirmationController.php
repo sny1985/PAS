@@ -4,6 +4,7 @@ namespace Acme\Bundle\PASBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Acme\Bundle\PASBundle\Entity\BudgetCategory;
 use Acme\Bundle\PASBundle\Entity\BudgetRequest;
 use Acme\Bundle\PASBundle\Entity\User;
@@ -20,7 +21,7 @@ class BudgetConfirmationController extends Controller
 
 		// do not allow other people peek it
 		if ($this->user->getRole() != 'cfo') {
-			throw $this->createNotFoundException('You are not allowed to view this page.');
+			throw new HttpException(403, 'You are not allowed to view this page.');
 		}
 
 		// get category list from database
@@ -100,6 +101,8 @@ class BudgetConfirmationController extends Controller
 				$budgets[$year]["sum"] = 0;
 			}
 			$budgets[$year]['sum'] += $request->getAmount() * $currency_array['rate'][$request->getCurtype()];
+			// find out if approved or not
+			$budgets[$year][$category]['approved'] = $request->getApproved();
 			// find unapproved requests
 			if (!$request->getApproved()) {
 				array_push($unapproved_array, $request->getBid());

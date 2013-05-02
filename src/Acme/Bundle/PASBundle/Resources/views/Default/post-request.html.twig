@@ -67,10 +67,28 @@
 					{{ form_widget(form.attention) }}
 				</div>
 
-				<div id="address" class="form_item">
-					{{ form_label(form.address) }}<br />
-					{{ form_errors(form.address) }}
-					{{ form_widget(form.address) }}
+				<div id="street" class="form_item">
+					{{ form_label(form.street) }}<br />
+					{{ form_errors(form.street) }}
+					{{ form_widget(form.street) }}
+				</div>
+
+				<div id="city" class="form_item">
+					{{ form_label(form.city) }}<br />
+					{{ form_errors(form.city) }}
+					{{ form_widget(form.city) }}
+				</div>
+
+				<div id="state" class="form_item">
+					{{ form_label(form.state) }}<br />
+					{{ form_errors(form.state) }}
+					{{ form_widget(form.state) }}
+				</div>
+
+				<div id="zipcode" class="form_item">
+					{{ form_label(form.zipcode) }}<br />
+					{{ form_errors(form.zipcode) }}
+					{{ form_widget(form.zipcode) }}
 				</div>
 			</div>
 
@@ -167,6 +185,8 @@
 				{{ form_widget(form.cfoId) }}
 				{{ form_row(form.cfoApproved) }}
 			</div>
+
+			<input type="hidden" name="action" value="{% if action != false %}{{ action }}{% endif %}">
 
 			{{ form_rest(form) }}
 

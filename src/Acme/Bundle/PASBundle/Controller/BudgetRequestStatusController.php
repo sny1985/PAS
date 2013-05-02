@@ -64,11 +64,6 @@ class BudgetRequestStatusController extends Controller
 			if (isset($param['action']))
 				$action = $param['action'];
 			$budgetRequest = $em->getRepository('AcmePASBundle:BudgetRequest')->findOneByBid($id);
-
-			// do not allow other people peek it
-			if ($budgetRequest && $budgetRequest->getHolder() != $this->user->getUid()) {
-				throw $this->createNotFoundException('You are not allowed to view this request.');
-			}
 		}
 
 		// get category list from database

@@ -4,6 +4,7 @@ namespace Acme\Bundle\PASBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Acme\Bundle\PASBundle\Entity\BudgetApplication;
 use Acme\Bundle\PASBundle\Entity\PreRequest;
 use Acme\Bundle\PASBundle\Entity\User;
@@ -12,10 +13,9 @@ class PreRequestController extends Controller
 {
 	public function preRequestAction(Request $req)
 	{
-		$actoin = null;
+		$action = "submit";
 		$em = $this->getDoctrine()->getManager();
 		$preRequest = new PreRequest();
-		$session = $this->get("session");
 		$this->user = $this->getUser();
 
 		// get category list from database
@@ -66,12 +66,15 @@ class PreRequestController extends Controller
 		// if there is a query
 		$param = $req->query->all();
 		// edit
-		if (isset($param) && isset($param['action']) && isset($param['id'])) {
-			$action = $param['action'];
+		if (isset($param) && isset($param['id']) && isset($param['action'])) {
 			$id = $param['id'];
+			$action = $param['action'];
 			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
-			if ($action == 'edit' && $preRequest) {
-				$session->set('action', 'edit');
+			if ($preRequest) {
+				// do not allow other people peek it
+				if ($preRequest->getRequester() != $this->user->getUid()) {
+					throw new HttpException(403, 'You are not allowed to change this request.');
+				}
 			}
 		}
 
@@ -103,11 +106,11 @@ class PreRequestController extends Controller
 		// if the HTTP method is POST, handle form submission
 		if ($req->isMethod('POST')) {
 			$form->bind($req);
-			// validate the data and insert into database
+			// validate the data and put into database
 			if ($form->isValid()) {
-				$action = $session->get('action');
+				$post = $req->request->all();
+				$action = $post['action'];
 				if (isset($action) && $action == 'edit') {
-					$session->remove('action');
 					$oldRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($preRequest->getPrid());
 var_dump($oldRequest);
 					$oldRequest->setCategory($preRequest->getCategory());
@@ -140,6 +143,6 @@ var_dump($oldRequest);
 		}
 
 		// display form
-		return $this->render('AcmePASBundle:Default:pre-request.html.twig', array('form' => $form->createView(), 'categories' => $category_array));
+		return $this->render('AcmePASBundle:Default:pre-request.html.twig', array('form' => $form->createView(), 'categories' => $category_array, 'action' => $action));
 	}
 }

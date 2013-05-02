@@ -4,7 +4,7 @@ namespace Acme\Bundle\PASBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Acme\Bundle\PASBundle\Entity\BudgetRequest;
 use Acme\Bundle\PASBundle\Entity\BudgetCategory;
 use Acme\Bundle\PASBundle\Entity\CurrencyType;
@@ -14,12 +14,10 @@ class BudgetRequestController extends Controller
 {
 	public function budgetRequestAction(Request $req)
 	{
-		$actoin = null;
+		$action = "submit";
 		$budgetRequest = new BudgetRequest();
 		$em = $this->getDoctrine()->getManager();
-		$form = null;
 		$id = null;
-		$session = $this->get("session");
 		$this->user = $this->getUser();
 
 		// get category list from database
@@ -37,13 +35,19 @@ class BudgetRequestController extends Controller
 
 		// if there is a query and the action is query, then show record; otherwise edit the record in the form
 			$param = $req->query->all();
-		if (isset($param) && isset($param['action']) && isset($param['id'])) {
-			$action = $param['action'];
+		if (isset($param) && isset($param['id']) && isset($param['action'])) {
 			$id = $param['id'];
+			$action = $param['action'];
 			$budgetRequest = $em->getRepository('AcmePASBundle:BudgetRequest')->findOneByBid($id);
-			if ($action == 'edit' && $budgetRequest) {
-				$session->set('action', 'edit');
-				$budgetRequest->getActivityDuration();
+			if ($budgetRequest) {
+				// do not allow other people peek it
+				if ($budgetRequest && $budgetRequest->getHolder() != $this->user->getUid()) {
+					throw new HttpException(403, 'You are not allowed to change this request.');
+				}
+			
+				if ($action == 'edit') {
+					$budgetRequest->getActivityDuration();
+				}
 			}
 		}
 
@@ -77,9 +81,9 @@ class BudgetRequestController extends Controller
 			// validate the data
 			if ($form->isValid()) {
 				// put into database
-				$action = $session->get('action');
+				$post = $req->request->all();
+				$action = $post['action'];
 				if (isset($action) && $action == 'edit') {
-					$session->remove('action');
 					// update database
 					$oldRequest = $em->getRepository('AcmePASBundle:BudgetRequest')->findOneByBid($budgetRequest->getBid());
 					$oldRequest->setCategory($budgetRequest->getCategory());
@@ -107,6 +111,6 @@ class BudgetRequestController extends Controller
 		}
 
 		// display form
-		return $this->render('AcmePASBundle:Default:budget-request.html.twig', array('form' => $form->createView()));
+		return $this->render('AcmePASBundle:Default:budget-request.html.twig', array('form' => $form->createView(), 'action' => $action));
 	}
 }

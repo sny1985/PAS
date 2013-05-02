@@ -1,0 +1,13 @@
+<div id="content">
+	<div id="logo">
+		<img src="{{ asset('bundles/acmepas/images/logo.png') }}" width="113" height="60" alt="logo" />
+	</div>
+	<div id="heading">
+		<h3>{{ status_code }} {{ status_text }}</h3>
+	</div>
+	<div id="main">
+		<div id="error">
+			<h4>{{ exception.message|nl2br|format_file_from_text }}</h4>
+		</div>
+	</div>
+</div>

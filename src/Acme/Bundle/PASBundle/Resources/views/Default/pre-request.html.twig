@@ -102,6 +102,8 @@
 				{{ form_row(form.secretaryApproved) }}
 			</div>
 
+			<input type="hidden" name="action" value="{% if action != false %}{{ action }}{% endif %}">
+
 			{{ form_rest(form) }}
 
 			<div id="buttons" class="form_item">

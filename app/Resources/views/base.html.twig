@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<title>{% block title %}Welcome!{% endblock %}</title>
 		<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-		{% block css %}<link href="{{ asset('../web/bundles/acmepas/css/style.css') }}" type="text/css" rel="stylesheet" />{% endblock %}
+		{% block css %}<link href="{{ asset('bundles/acmepas/css/style.css') }}" type="text/css" rel="stylesheet" />{% endblock %}
 	</head>
 	<body>
 		{% block body %}
@@ -17,7 +17,7 @@
 			</div>
 			<div id="content">
 				<div id="logo">
-					<img src="{{ asset('../web/bundles/acmepas/images/logo.png') }}" width="113" height="60" alt="logo" />
+					<img src="{{ asset('bundles/acmepas/images/logo.png') }}" width="113" height="60" alt="logo" />
 				</div>
 				{% block main %}
 				{% endblock %}
@@ -26,7 +26,7 @@
 		
 		{% block javascripts %}
 			<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-			<script src="{{ asset('../web/bundles/acmepas/js/fn.js') }}"></script>
+			<script src="{{ asset('bundles/acmepas/js/fn.js') }}"></script>
 		{% endblock %}
 	</body>
 </html>

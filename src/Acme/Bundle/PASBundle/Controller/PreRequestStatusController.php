@@ -57,11 +57,6 @@ class PreRequestStatusController extends Controller
 				$action = $param['action'];
 			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
 			if ($preRequest) {
-				// do not allow other people peek it
-				if ($preRequest->getRequester() != $this->user->getUid()) {
-					throw $this->createNotFoundException('You are not allowed to view this request.');
-				}
-			
 				$level = $preRequest->getLevel();
 				if ($level == 1) {
 					$status = $preRequest->getChairApproved();
@@ -114,7 +109,7 @@ class PreRequestStatusController extends Controller
 			$message = \Swift_Message::newInstance()
 						->setSubject('Pre-Payment Request Notice Email')
 						->setFrom($sender)
-						->setTo($this->user->getEmail())
+						->setTo($requester->getEmail())
 						->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'role' => 'requester', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
 			$this->get('mailer')->send($message);
 

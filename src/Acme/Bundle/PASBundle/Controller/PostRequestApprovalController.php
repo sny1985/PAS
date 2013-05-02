@@ -4,6 +4,7 @@ namespace Acme\Bundle\PASBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Acme\Bundle\PASBundle\Entity\PostRequest;
 use Acme\Bundle\PASBundle\Entity\User;
 
@@ -12,13 +13,11 @@ class PostRequestApprovalController extends Controller
 	public function postApproveAction(Request $req)
 	{
 		$em = $this->getDoctrine()->getManager();
-		$form = null;
 		$id = null;
-		$isEmailSent = false;
+		$sendEmail = false;
 		$postRequest = new PostRequest();
 		$requester = null;
 		$selected_chair = null;
-		$sender = "nshi@caistudio.com";
 		$status = null;
 		$this->user = $this->getUser();
 
@@ -58,6 +57,16 @@ class PostRequestApprovalController extends Controller
 			$id = $param['id'];
 			$postRequest = $em->getRepository('AcmePASBundle:PostRequest')->findOneByRid($id);
 			if ($postRequest) {
+				// do not allow other people peek it
+				$user_id = $this->user->getUid();
+				$chair_id = $postRequest->getChairId();
+				$cfo_id = $postRequest->getCfoId();
+				$president_id = $postRequest->getPresidentId();
+				$secretary_id = $postRequest->getSecretaryId();
+				if ($user_id != $chair_id && $user_id != $cfo_id && $user_id != $president_id && $user_id != $secretary_id) {
+					throw new HttpException(403, 'You are not allowed to approve this request.');
+				}
+
 				foreach ($users as $user) {
 					if ($user->getUid() == $postRequest->getRequester()) {
 						$requester = $user;
@@ -87,50 +96,51 @@ class PostRequestApprovalController extends Controller
 						if ($oldRequest->getChairId() == $this->user->getUid()) {
 							$oldRequest->setChairApproved($data['approval']);
 							$oldRequest->setChairComment($data['comment']);
-							$isEmailSent = true;
+							$sendEmail = true;
 						}
 						break;
 					case 'cfo':
 						if ($oldRequest->getCfoId() == $this->user->getUid()) {
 							$oldRequest->setCfoApproved($data['approval']);
 							$oldRequest->setCfoComment($data['comment']);
-							$isEmailSent = true;
+							$sendEmail = true;
 						}
 						break;
 					case 'president':
 						if ($oldRequest->getPresidentId() == $this->user->getUid()) {
 							$oldRequest->setPresidentApproved($data['approval']);
 							$oldRequest->setPresidentComment($data['comment']);
-							$isEmailSent = true;
+							$sendEmail = true;
 						}
 						break;
 					case 'secretary':
 						if ($oldRequest->getSecretaryId() == $this->user->getUid()) {
 							$oldRequest->setSecretaryApproved($data['approval']);
 							$oldRequest->setSecretaryComment($data['comment']);
-							$isEmailSent = true;
+							$sendEmail = true;
 						}
 						break;
 				}
 				$em->flush();
 
-				// send notice email to requester
-				if ($isEmailSent) {
+				if ($sendEmail) {
+					// get sender's email address
+					$sender = $users[0]->getEmail();
+
+					// send notice email to requester
 					$message = \Swift_Message::newInstance()
 								->setSubject('Payment Approval Notice Email')
 								->setFrom($sender)
-								->setTo($this->user->getEmail())
-								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Payment Approval', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id), true))), 'text/html');
+								->setTo($requester->getEmail())
+								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Payment Approval', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
 
 				// redirect to prevent resubmission
-				return $this->redirect($this->generateUrl('pas_post_request_status', array('id' => $id)));
-			} else {
-				// HANDLE EXCEPTIONS ???
+				return $this->redirect($this->generateUrl('pas_success', array('form' => 'post approval')));
 			}
 		}
 
-		return $this->render('AcmePASBundle:Default:post-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'user' => $this->user, 'role' => 'approver', 'request' => $postRequest, 'action' => 'approve', 'status' => $status, 'form' => $form->createView()));
+		return $this->render('AcmePASBundle:Default:post-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => 'approver', 'request' => $postRequest, 'action' => 'approve', 'status' => $status, 'form' => $form->createView()));
 	}
 }

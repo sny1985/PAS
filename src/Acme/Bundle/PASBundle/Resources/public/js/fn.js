@@ -30,7 +30,7 @@ function SelectLevel(amount) {
 		$("#form_level option:nth-child(2)").prop("selected", true);
 		// show chair
 		$("select option:selected", $chair).removeAttr("selected");
-		$("select", $chair).attr("required", "required");
+		$("select", $chair).attr("required", "required"); // HOW TO MAKE IT REQUIRED ???
 		$chair.show();
 		// clear cfo, president & secretary
 		$("select", $cfo).val($("select option:first", $cfo).val());
@@ -111,7 +111,10 @@ function SelectPaymentMethod() {
 	if (method == '1') {
 		$("#form_companyName").prop("required", true);
 		$("#form_attention").prop("required", true);
-		$("#form_address").prop("required", true);
+		$("#form_street").prop("required", true);
+		$("#form_city").prop("required", true);
+		$("#form_state").prop("required", true);
+		$("#form_zipcode").prop("required", true);
 		$("#form_accountName").val("").removeProp("required");
 		$("#form_bankName").val("").removeProp("required");
 		$("#form_accountNumber").val("").removeProp("required");
@@ -121,7 +124,10 @@ function SelectPaymentMethod() {
 	} else if (method == '2') {
 		$("#form_companyName").val("").removeProp("required");
 		$("#form_attention").val("").removeProp("required");
-		$("#form_address").val("").removeProp("required");
+		$("#form_street").val("").removeProp("required");
+		$("#form_city").val("").removeProp("required");
+		$("#form_state").val("").removeProp("required");
+		$("#form_zipcode").val("").removeProp("required");
 		$("#form_accountName").prop("required", true);
 		$("#form_bankName").prop("required", true);
 		$("#form_accountNumber").prop("required", true);

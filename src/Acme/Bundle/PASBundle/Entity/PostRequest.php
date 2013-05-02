@@ -89,9 +89,24 @@ class PostRequest
 	protected $attention;
 
 	/**
-	* @ORM\Column(type="string", length=160, nullable=true)
+	* @ORM\Column(type="string", length=60, nullable=true)
 	*/
-	protected $address;
+	protected $street;
+
+	/**
+	* @ORM\Column(type="string", length=40, nullable=true)
+	*/
+	protected $city;
+
+	/**
+	* @ORM\Column(type="string", length=20, nullable=true)
+	*/
+	protected $state;
+
+	/**
+	* @ORM\Column(type="string", length=10, nullable=true)
+	*/
+	protected $zipcode;
 
 	/**
 	* @ORM\Column(type="string", length=80, nullable=true)
@@ -316,12 +331,36 @@ class PostRequest
 		$this->attention = $attention;
 	}
 
-	public function getAddress() {
-		return $this->address;
+	public function getStreet() {
+		return $this->street;
 	}
 
-	public function setAddress($address) {
-		$this->address = $address;
+	public function setStreet($street) {
+		$this->street = $street;
+	}
+
+	public function getCity() {
+		return $this->city;
+	}
+
+	public function setCity($city) {
+		$this->city = $city;
+	}
+
+	public function getState() {
+		return $this->state;
+	}
+
+	public function setState($state) {
+		$this->state = $state;
+	}
+
+	public function getZipcode() {
+		return $this->zipcode;
+	}
+
+	public function setZipcode($zipcode) {
+		$this->zipcode = $zipcode;
 	}
 
 	public function getContactEmail() {

@@ -509,7 +509,7 @@ table {
 
 
 /* CODE START */
-body {background: url("../images/body_bg.jpg");}
+body {background: #d4e7ee url("../images/body_bg.jpg") no-repeat;}
 
 p {padding: 0; margin: 0;}
 
@@ -572,8 +572,9 @@ table th, table td {border: 1px solid #ffffff; vertical-align: top; padding: 10p
 .summary_no {text-align: center; width: 48px;}
 .summary_received {text-align: center; width: 88px;}
 .summary_date {text-align: center; width: 168px;}
-.summary_category {text-align: center; width: 328px;}
-.summary_amount {text-align: center; width: 178px;}
+.summary_category {text-align: center; width: 258px;}
+.summary_amount {text-align: center; width: 148px;}
+.summary_approved {text-align: center; width: 88px;}
 .link:link, .link:visited {color: #ffffff; text-decoration: none;}
 .link:hover {text-decoration: underline;}
 

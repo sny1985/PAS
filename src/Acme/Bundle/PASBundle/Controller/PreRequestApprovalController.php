@@ -4,6 +4,7 @@ namespace Acme\Bundle\PASBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Acme\Bundle\PASBundle\Entity\PreRequest;
 use Acme\Bundle\PASBundle\Entity\User;
 
@@ -63,9 +64,9 @@ class PreRequestApprovalController extends Controller
 				$president_id = $preRequest->getPresidentId();
 				$secretary_id = $preRequest->getSecretaryId();
 				if ($user_id != $chair_id && $user_id != $cfo_id && $user_id != $president_id && $user_id != $secretary_id) {
-					throw $this->createNotFoundException('You are not allowed to view this request.');
+					throw new HttpException(403, 'You are not allowed to approve this request.');
 				}
-			
+
 				foreach ($users as $user) {
 					if ($user->getUid() == $preRequest->getRequester()) {
 						$requester = $user;
