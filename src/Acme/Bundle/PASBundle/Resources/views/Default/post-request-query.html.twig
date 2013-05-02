@@ -63,12 +63,14 @@
 				</tr>
 				<tr>
 					<td class="status_tag">Amount:</td>
-					<td class="status_content">{{ request.amount|number_format(2, '.', '') }}</td>
+					<td class="status_content">{{ request.amount|number_format(2, '.', '') }} {{ currencies['code'][request.curtype] }}</td>
 				</tr>
-				<tr>
-					<td class="status_tag">Currency Type:</td>
-					<td class="status_content">{{ currencies['code'][request.curtype] }}</td>
-				</tr>
+				{% if request.actualAmount > 0 %}
+					<tr>
+						<td class="status_tag">Actual Amount:</td>
+						<td class="status_content">{{ request.actualAmount|number_format(2, '.', '') }} USD</td>
+					</tr>
+				{% endif %}
 
 				{% if request.paymentMethod == 1 %}
 					<tr>
@@ -243,9 +245,22 @@
 					<input type="hidden" name="id" value="{{ id }}">
 				</form>
 			{% elseif action == 'query' %}
-				<div id="links">
-					<a href="{{ path('pas_post_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
-				</div>
+				{% if role == 'vtm' %}
+					<br />
+					<form id="post_query_form" class="bda_form" action="{{ path('pas_post_request_status', {'id': id}) }}" method="post">
+						<label for="actual_amount">Actual Amount ($US): </label>
+						<br />
+						<input type="text" id="actual_amount" name="actual_amount" required="required" />
+						<input type="hidden" name="id" value="{{ id }}">
+						<div id="buttons" class="form_item">
+							<input type="submit" value="Confirm" />
+						</div>
+					</form>
+				{% else %}
+					<div id="links">
+						<a href="{{ path('pas_post_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
+					</div>
+				{% endif %}
 			{% elseif action == 'approve' %}
 				{% if role == 'vtm' %}
 					<form id="post_approval_form" class="bda_form" action="{{ path('pas_post_approval_form', {'id': id}) }}" method="post" {{ form_enctype(form) }}>

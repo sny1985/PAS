@@ -15,6 +15,7 @@ class PostRequestStatusController extends Controller
 		$id = null;
 		$postRequest = new PostRequest();
 		$requester = null;
+		$role = "requester";
 		$selected_chair = null;
 		$status = null;
 		$this->user = $this->getUser();
@@ -52,24 +53,41 @@ class PostRequestStatusController extends Controller
 
 		// if the HTTP method is POST, handle form submission
 		if ($req->isMethod('POST')) {
+			// get sender's email address
+			$sender = $users[0]->getEmail();
+
 			// get id
 			$param = $req->request->all();
 			if (isset($param) && isset($param['id'])) {
 				$id = $param['id'];
 				$postRequest = $em->getRepository('AcmePASBundle:PostRequest')->findOneByRid($id);
-			}
+				if ($postRequest) {
+					foreach ($users as $user) {
+						if ($user->getUid() == $postRequest->getRequester()) {
+							$requester = $user;
+						}
+						if ($user->getUid() == $postRequest->getChairId()) {
+							$selected_chair = $user;
+						}
+					}
 
-			foreach ($users as $user) {
-				if ($user->getUid() == $postRequest->getRequester()) {
-					$requester = $user;
-				}
-				if ($user->getUid() == $postRequest->getChairId()) {
-					$selected_chair = $user;
+					if (isset($param['actual_amount'])) {
+						$postRequest->setActualAmount($param['actual_amount']);
+						$em->flush();
+
+						// send notice email to requester
+						$message = \Swift_Message::newInstance()
+									->setSubject('Payment Approval Notice Email')
+									->setFrom($sender)
+									->setTo($requester->getEmail())
+									->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Payment Approval', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
+						$this->get('mailer')->send($message);
+
+						// redirect to prevent resubmission
+						return $this->redirect($this->generateUrl('pas_success', array('form' => 'post approval')));
+					}
 				}
 			}
-
-			// get sender's email address
-			$sender = $users[0]->getEmail();
 
 			// send notice email to requester
 			$message = \Swift_Message::newInstance()
@@ -126,6 +144,9 @@ class PostRequestStatusController extends Controller
 			}
 		}
 
-		return $this->render('AcmePASBundle:Default:post-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => 'requester', 'request' => $postRequest, 'action' => $action, 'status' => $status));
+		if ($this->user->getRole() == "vtm")
+			$role = "vtm";
+
+		return $this->render('AcmePASBundle:Default:post-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => $role, 'request' => $postRequest, 'action' => $action, 'status' => $status));
 	}
 }

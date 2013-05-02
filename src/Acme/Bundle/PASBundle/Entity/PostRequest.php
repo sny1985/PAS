@@ -47,6 +47,14 @@ class PostRequest
 	protected $amount;
 
 	/**
+	* @ORM\Column(type="decimal", scale=2)
+	* @Assert\NotNull(message="Actual Amount should not be null.")
+	* @Assert\Type(type="numeric", message="The value {{ value }} is not a valid {{ type }}.")
+	* @Assert\Range(min="0")
+	*/
+	protected $actualAmount;
+
+	/**
 	* @ORM\Column(name="ctid", type="smallint")
 	* @Assert\NotNull(message="Currency Type should not be null.")
 	* @Assert\Range(min="0")
@@ -278,6 +286,14 @@ class PostRequest
 
 	public function setAmount($amount) {
 		$this->amount = $amount;
+	}
+
+	public function getActualAmount() {
+		return $this->actualAmount;
+	}
+
+	public function setActualAmount($actualAmount) {
+		$this->actualAmount = $actualAmount;
 	}
 
 	public function getCurtype() {

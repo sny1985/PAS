@@ -112,7 +112,6 @@ class PreRequestController extends Controller
 				$action = $post['action'];
 				if (isset($action) && $action == 'edit') {
 					$oldRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($preRequest->getPrid());
-var_dump($oldRequest);
 					$oldRequest->setCategory($preRequest->getCategory());
 					$oldRequest->setExplanation($preRequest->getExplanation());
 					$oldRequest->setAmount($preRequest->getAmount());

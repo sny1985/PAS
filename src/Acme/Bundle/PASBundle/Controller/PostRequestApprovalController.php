@@ -125,7 +125,6 @@ class PostRequestApprovalController extends Controller
 								->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $secretary, 'role' => 'secretary', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
 					$this->get('mailer')->send($message);
 				}
-
 			} else {
 				$form->bind($req);
 				// validate the data and update database
@@ -165,13 +164,12 @@ class PostRequestApprovalController extends Controller
 					$em->flush();
 
 					if ($sendEmail) {
-						// send notice email to requester
+						// send notice email to vtm
 						$message = \Swift_Message::newInstance()
 									->setSubject('Payment Approval Notice Email')
 									->setFrom($sender)
-									->setTo($requester->getEmail())
-									->setCc($vtm->getEmail())
-									->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Payment Approval', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
+									->setTo($vtm->getEmail())
+									->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $vtm, 'role' => 'vtm', 'type' => 'Payment Approval', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
 						$this->get('mailer')->send($message);
 					}
 				}

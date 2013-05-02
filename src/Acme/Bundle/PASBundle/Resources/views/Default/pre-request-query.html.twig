@@ -71,11 +71,7 @@
 				</tr>
 				<tr>
 					<td class="status_tag">Amount:</td>
-					<td class="status_content">{{ request.amount|number_format(2, '.', '') }}</td>
-				</tr>
-				<tr>
-					<td class="status_tag">Currency Type:</td>
-					<td class="status_content">{{ currencies['code'][request.curtype] }}</td>
+					<td class="status_content">{{ request.amount|number_format(2, '.', '') }} {{ currencies['code'][request.curtype] }}</td>
 				</tr>
 				<tr>
 					<td class="status_tag">Budget:</td>

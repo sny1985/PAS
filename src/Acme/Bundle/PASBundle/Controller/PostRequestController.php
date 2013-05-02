@@ -81,6 +81,7 @@ class PostRequestController extends Controller
 						->add('category', 'choice', array('choices' => $category_array, 'empty_value' => 'Choose one category', 'label' => 'Budget Category (class):'))
 						->add('explanation', 'textarea', array('label' => 'Explanation of the Expense:', 'required' => false))
 						->add('amount', 'money', array('currency' => false, 'label' => 'Amount:'))
+						->add('actualAmount', 'hidden', array('data' => 0))
 						->add('curtype', 'choice', array('choices' => $currency_array['code'], 'empty_value' => 'Choose one type', 'label' => 'Currency Type:', 'preferred_choices' => array('empty_value')))
 						->add('preApproval', 'choice', array('choices' => array(0 => 'No', 1 => 'Yes'), 'empty_value' => false, 'expanded' => true, 'label' => 'Pre Approved?', 'preferred_choices' => array($preApproval)))
 						->add('preApprovalNo', 'text', array('label' => 'Pre-approval Number:', 'required' => false))
