@@ -8,8 +8,9 @@ function SelectYear() {
 
 function SelectLevel(amount) {
 	var $unPreApproved = $("#form_preApproval_1");
-	if ($unPreApproved.prop("checked"))
+	if ($unPreApproved.length && $unPreApproved.prop("checked")) {
 		return;
+	}
 
 	// reset
 	var $level = $("#level");
@@ -26,25 +27,25 @@ function SelectLevel(amount) {
 	if (amount <= 10000) {
 		level = 1;
 		// change level
-		$("#form_level option:nth-child(3)").prop("selected", false);
-		$("#form_level option:nth-child(2)").prop("selected", true);
+		$("#form_level").val($("#form_level option:nth-child(2)").val());
 		// show chair
-		$("select option:selected", $chair).removeAttr("selected");
-		$("select", $chair).attr("required", "required"); // HOW TO MAKE IT REQUIRED ???
+//		$("select", $chair).prop("required", true); // HOW TO MAKE IT REQUIRED ???
 		$chair.show();
 		// clear cfo, president & secretary
 		$("select", $cfo).val($("select option:first", $cfo).val());
 		$("select", $president).val($("select option:first", $president).val());
 		$("select", $secretary).val($("select option:first", $secretary).val());
-		if ($unPreApproved.length && !$unPreApproved.prop("checked")) $cfo.show();
+		if ($unPreApproved.length && !$unPreApproved.prop("checked")) {
+			$("select", $cfo).val($("select option:last", $cfo).val());
+			$cfo.show();
+		}
 	} else {
 		level = 2;
 		// change level
-		$("#form_level option:nth-child(2)").prop("selected", false);
-		$("#form_level option:nth-child(3)").prop("selected", true);
+		$("#form_level").val($("#form_level option:nth-child(3)").val());
 		// clear chair
 		$("select", $chair).val($("select option:first", $chair).val());
-		$("select", $chair).attr("required", false);
+//		$("select", $chair).prop("required", false);
 		// select first element and show
 		$("select", $cfo).val($("select option:last", $cfo).val());
 		$cfo.show();
@@ -153,6 +154,7 @@ function SelectPreApproved() {
 		$invoice.prop("required", true);
 		$("#chair select").removeProp('required');
 		$preApproved.show();
+		$("select", $cfo).val($("select option:last", $cfo).val());
 		$cfo.show();
 	} else if (isPreApproved == '0') {
 		$("#form_prid").val("").removeProp("required");

@@ -292,6 +292,9 @@ class PostRequest
 	}
 
 	public function getPreApprovalNo() {
+		if ($this->prid)
+			$this->preApprovalNo = sprintf("%08d", $this->prid);
+
 		return $this->preApprovalNo;
 	}
 

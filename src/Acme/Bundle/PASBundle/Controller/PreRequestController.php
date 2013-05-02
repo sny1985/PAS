@@ -88,7 +88,7 @@ class PreRequestController extends Controller
 						->add('curtype', 'choice', array('choices' => $currency_array['code'], 'empty_value' => 'Choose one type', 'label' => 'Currency Type:', 'preferred_choices' => array('empty_value')))
 						->add('budget', 'hidden', array('data' => null))
 						->add('level', 'choice', array('choices' => array(1 => 'Below or equal to US$10,000: by the Chair', 2 => 'Above US$10,000: by Secretary, President and CFO '), 'empty_value' => 'Choose one level', 'label' => 'Approval Level:', 'preferred_choices' => array('empty_value')))
-						->add('chairId', 'choice', array('choices' => $chair_array, 'empty_value' => false, 'label' => 'Chair:'))
+						->add('chairId', 'choice', array('choices' => $chair_array, 'label' => 'Chair:'))
 						->add('chairApproved', 'hidden', array('data' => 0))
 						->add('chairComment', 'hidden', array('data' => null))
 						->add('secretaryId', 'choice', array('choices' => $secretary_array, 'empty_value' => false, 'label' => 'Secretary:', 'required' => false))

@@ -102,7 +102,7 @@ class PostRequestController extends Controller
 						->add('chairId', 'choice', array('choices' => $chair_array, 'empty_value' => false, 'label' => 'Chair:', 'required' => false))
 						->add('chairApproved', 'hidden', array('data' => 0))
 						->add('chairComment', 'hidden', array('data' => null))
-						->add('secretaryId', 'choice', array('choices' => $secretary_array, 'empty_value' => false, 'label' => 'Secretary:', 'required' => false))
+						->add('secretaryId', 'choice', array('choices' => $secretary_array, 'label' => 'Secretary:'))
 						->add('secretaryApproved', 'hidden', array('data' => 0))
 						->add('secretaryComment', 'hidden', array('data' => null))
 						->add('cfoId', 'choice', array('choices' => $cfo_array, 'empty_value' => false, 'label' => 'CFO:', 'required' => false))
