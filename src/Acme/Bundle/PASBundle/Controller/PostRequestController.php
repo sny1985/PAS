@@ -98,6 +98,7 @@ class PostRequestController extends Controller
 						->add('routingNumber', 'text', array('label' => 'Routing Number:', 'required' => false))
 						->add('contactEmail', 'text', array('label' => 'Contact Email (if known):', 'required' => false))
 						->add('invoice', 'file', array('label' => 'Invoice:','required' => false))
+						->add('budget', 'hidden', array('data' => null))
 						->add('level', 'choice', array('choices' => array(1 => 'Below or equal to US$10,000: by the Chair', 2 => 'Above US$10,000: by Secretary, President and CFO '), 'empty_value' => 'Choose one level', 'label' => 'Approval Level:', 'preferred_choices' => array('empty_value'), 'required' => false))
 						->add('chairId', 'choice', array('choices' => $chair_array, 'empty_value' => false, 'label' => 'Chair:', 'required' => false))
 						->add('chairApproved', 'hidden', array('data' => 0))
@@ -146,6 +147,7 @@ class PostRequestController extends Controller
 					$oldRequest->setRoutingNumber($postRequest->getRoutingNumber());
 					$oldRequest->setContactEmail($postRequest->getContactEmail());
 					$oldRequest->setInvoicePath($postRequest->getInvoicePath());
+					$oldRequest->setBudget($postRequest->getBudget());
 					$oldRequest->setLevel($postRequest->getLevel());
 					$oldRequest->setChairId($postRequest->getChairId());
 					$oldRequest->setCfoId($postRequest->getCfoId());

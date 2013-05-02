@@ -163,6 +163,10 @@
 						<td class="status_content">No</td>
 					</tr>
 					<tr>
+						<td class="status_tag">Budget:</td>
+						<td class="status_content">{{ request.budget|split('-')[1] }}</td>
+					</tr>
+					<tr>
 						<td class="status_tag">Level:</td>
 						<td class="status_content">
 							{% if request.level == 1 %}

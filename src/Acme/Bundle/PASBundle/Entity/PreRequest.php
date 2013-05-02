@@ -54,7 +54,7 @@ class PreRequest
 	protected $curtype;
 
 	/**
-	* @ORM\Column(type="string")
+	* @ORM\Column(type="string", length=64)
 	* @Assert\NotNull(message="Budget should not be null.")
 	*/
 	protected $budget;

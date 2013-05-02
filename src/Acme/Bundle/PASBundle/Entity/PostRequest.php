@@ -148,6 +148,11 @@ class PostRequest
 	protected $invoicePath;
 
 	/**
+	* @ORM\Column(type="string", length=64, nullable=true)
+	*/
+	protected $budget;
+
+	/**
 	* @ORM\Column(type="smallint", nullable=true)
 	*/
 	protected $level;
@@ -430,6 +435,14 @@ class PostRequest
 		$this->invoicePath = $path;
 	}
 
+	public function getBudget() {
+		return $this->budget;
+	}
+
+	public function setBudget($budget) {
+		$this->budget = $budget;
+	}
+
 	public function getLevel() {
 		return $this->level;
 	}
@@ -558,7 +571,7 @@ class PostRequest
 			return;
 		}
 
-		$this->invoicePath = 'invoice_' . sha1(uniqid(mt_rand(), true)) . '.' . $this->invoice->guessExtension();
+		$this->invoicePath = 'invoice_' . $this->preApprovalNo . '_' . time() . '.' . $this->invoice->guessExtension(); // invoice_preapprovalno_timestamp.extension
 		$this->invoice->move(__DIR__.'/../../../../../uploads/documents', __DIR__.'/../../../../../uploads/documents/' . $this->invoicePath);
 		$this->invoice = null;
 	}

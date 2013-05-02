@@ -84,6 +84,11 @@ function ConvertCurrency() {
 }
 
 function SelectBudget(data) {
+	var $unPreApproved = $("#form_preApproval_1");
+	if ($unPreApproved.length && $unPreApproved.prop("checked")) {
+		return;
+	}
+
 	var $bc = $("#form_budget");
 
 	if (data) {
@@ -150,6 +155,7 @@ function SelectPreApproved() {
 	// show the correct div(s)
 	var isPreApproved = $("input[type=radio]:checked").val();
 	if (isPreApproved == '1') {
+		$("#form_budget").val("");
 		$("#form_prid").prop("required", true);
 		$invoice.prop("required", true);
 		$("#chair select").removeProp('required');

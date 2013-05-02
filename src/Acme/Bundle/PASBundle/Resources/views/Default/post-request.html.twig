@@ -151,6 +151,26 @@
 			</div>
 
 			<div id="un_pre_approved">
+				<div id="budget" class="form_item">
+					<a id="budget_btn" href="#">Click Here to Choose One Budget:</a>
+					<table id="budget_table" class="status summary">
+						<thead>
+							<tr>
+								<th class="check_category">Officer/Committee Chair/TF Chair</th>
+								<th class="check_amount">Amount (US$)</th>
+							</tr>
+						</thead>
+						<tfoot>
+						</tfoot>
+						<tbody>
+							<tr>
+								<td id="selected_category" class="check_category"></td>
+								<td id="selected_amount" class="check_amount"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
 				<div id="level" class="form_item">
 					{{ form_label(form.level) }}<br />
 					{{ form_errors(form.level) }}
@@ -205,6 +225,7 @@
 			ConvertCurrency();
 			SelectPaymentMethod();
 			SelectPreApproved();
+			SelectBudget();
 
 			$("#form_amount, #form_curtype").change(function() {
 				ConvertCurrency();
@@ -216,6 +237,13 @@
 
 			$("input[type=radio]").change(function() {
 				SelectPreApproved();
+			});
+
+			$("#budget_btn").click(function() {
+				// ADD REQUIRED ATTRIBUTE ???
+				var url = window.location.href;
+				url = url.slice(0, url.lastIndexOf("/")) + "/budget-check";
+				window.open(url, "smallwin", "width=960,height=600,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no");
 			});
 		});
 	</script>
