@@ -562,6 +562,8 @@ class PostRequest
 	public function formatPreApprovalNo() {
 		if ($this->preApprovalNo != null) {
 			$this->prid = $this->preApprovalNo;
+		} else {
+			$this->prid = null;
 		}
 	}
 

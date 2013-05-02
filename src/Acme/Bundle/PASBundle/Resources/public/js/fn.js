@@ -155,15 +155,19 @@ function SelectPreApproved() {
 	// show the correct div(s)
 	var isPreApproved = $("input[type=radio]:checked").val();
 	if (isPreApproved == '1') {
+		// clear
 		$("#form_budget").val("");
+		$("#form_level").val("");
 		$("#form_prid").prop("required", true);
 		$invoice.prop("required", true);
-		$("#chair select").removeProp('required');
+		$("#chair select").val(0).removeProp('required');
+		// show
 		$preApproved.show();
 		$("select", $cfo).val($("select option:last", $cfo).val());
 		$cfo.show();
 	} else if (isPreApproved == '0') {
 		$("#form_prid").val("").removeProp("required");
+		$("#form_preApprovalNo").val("");
 		$invoice.removeProp("required");
 		$invoice.replaceWith($invoice.val("").clone(true));
 		$unPreApproved.show();

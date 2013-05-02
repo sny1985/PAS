@@ -46,7 +46,51 @@ class PreRequestStatusController extends Controller
 				$president = $user;
 			} else if ($user->getRole() == "secretary") {
 				$secretary = $user;
+			} else if ($user->getRole() == "vtm") {
+				$vtm = $user;
 			}
+		}
+
+		// if the HTTP method is POST, handle form submission
+		if ($req->isMethod('POST')) {
+			// get id
+			$param = $req->request->all();
+			if (isset($param) && isset($param['id'])) {
+				$id = $param['id'];
+				$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
+				if ($preRequest) {
+					foreach ($users as $user) {
+						if ($user->getUid() == $preRequest->getRequester()) {
+							$requester = $user;
+						}
+						if ($user->getUid() == $preRequest->getChairId()) {
+							$selected_chair = $user;
+						}
+					}
+				}
+			}
+
+			// get sender's email address
+			$sender = $users[0]->getEmail();
+
+			// send notice email to requester
+			$message = \Swift_Message::newInstance()
+						->setSubject('Pre-Payment Request Notice Email')
+						->setFrom($sender)
+						->setTo($requester->getEmail())
+						->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
+			$this->get('mailer')->send($message);
+
+			// send notice email to vtm
+			$message = \Swift_Message::newInstance()
+						->setSubject('Pre-Payment Request Notice Email')
+						->setFrom($sender)
+						->setTo($vtm->getEmail())
+						->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $vtm, 'role' => 'vtm', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
+			$this->get('mailer')->send($message);
+
+			// redirect to prevent resubmission
+			return $this->redirect($this->generateUrl('pas_success', array('form' => 'pre request')));
 		}
 
 		// show result
@@ -82,73 +126,6 @@ class PreRequestStatusController extends Controller
 					}
 				}
 			}
-		}
-
-		// if the HTTP method is POST, handle form submission
-		if ($req->isMethod('POST')) {
-			// get id
-			$param = $req->request->all();
-			if (isset($param) && isset($param['id'])) {
-				$id = $param['id'];
-				$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
-			}
-
-			foreach ($users as $user) {
-				if ($user->getUid() == $preRequest->getRequester()) {
-					$requester = $user;
-				}
-				if ($user->getUid() == $preRequest->getChairId()) {
-					$selected_chair = $user;
-				}
-			}
-
-			// get sender's email address
-			$sender = $users[0]->getEmail();
-
-			// send notice email to requester
-			$message = \Swift_Message::newInstance()
-						->setSubject('Pre-Payment Request Notice Email')
-						->setFrom($sender)
-						->setTo($requester->getEmail())
-						->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'role' => 'requester', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
-			$this->get('mailer')->send($message);
-
-			// send notice email to approvers
-			if ($preRequest->getChairId()) {
-				$message = \Swift_Message::newInstance()
-							->setSubject('Pre-Payment Request Notice Email')
-							->setFrom($sender)
-							->setTo($selected_chair->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $selected_chair, 'role' => 'chair', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
-				$this->get('mailer')->send($message);
-			}
-			if ($preRequest->getCfoId()) {
-				$message = \Swift_Message::newInstance()
-							->setSubject('Pre-Payment Request Notice Email')
-							->setFrom($sender)
-							->setTo($cfo->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $cfo, 'role' => 'cfo', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
-				$this->get('mailer')->send($message);
-			}
-			if ($preRequest->getPresidentId()) {
-				$message = \Swift_Message::newInstance()
-							->setSubject('Pre-Payment Request Notice Email')
-							->setFrom($sender)
-							->setTo($president->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $president, 'role' => 'president', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
-				$this->get('mailer')->send($message);
-			}
-			if ($preRequest->getSecretaryId()) {
-				$message = \Swift_Message::newInstance()
-							->setSubject('Pre-Payment Request Notice Email')
-							->setFrom($sender)
-							->setTo($secretary->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $secretary, 'role' => 'secretary', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
-				$this->get('mailer')->send($message);
-			}
-
-			// redirect to prevent resubmission
-			return $this->redirect($this->generateUrl('pas_success', array('form' => 'pre request')));
 		}
 
 		return $this->render('AcmePASBundle:Default:pre-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => 'requester', 'request' => $preRequest, 'action' => $action, 'status' => $status));

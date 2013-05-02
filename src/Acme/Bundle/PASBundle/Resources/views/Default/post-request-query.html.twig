@@ -222,15 +222,17 @@
 						</td>
 					</tr>
 				{% endif %}
-				<tr>
-					<td class="status_tag">Comment:</td>
-					<td class="status_content">
-						{% if request.chairComment != false %} {{ request.chairComment }}<br /> {% endif %}
-						{% if request.cfoComment != false %} {{ request.cfoComment }}<br /> {% endif %}
-						{% if request.presidentComment != false %} {{ request.presidentComment }}<br /> {% endif %}
-						{% if request.secretaryComment != false %} {{ request.secretaryComment }}<br /> {% endif %}
-					</td>
-				</tr>
+				{% if request.chairComment != false or request.cfoComment != false or request.presidentComment != false or request.secretaryComment != false %}
+					<tr>
+						<td class="status_tag">Comment:</td>
+						<td class="status_content">
+							{% if request.chairComment != false %} {{ request.chairComment }}<br /> {% endif %}
+							{% if request.cfoComment != false %} {{ request.cfoComment }}<br /> {% endif %}
+							{% if request.presidentComment != false %} {{ request.presidentComment }}<br /> {% endif %}
+							{% if request.secretaryComment != false %} {{ request.secretaryComment }}<br /> {% endif %}
+						</td>
+					</tr>
+				{% endif %}
 			</table>
 
 			{% if action == 'submit' %}
@@ -245,23 +247,31 @@
 					<a href="{{ path('pas_post_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
 				</div>
 			{% elseif action == 'approve' %}
-				<form id="post_approval_form" class="bda_form" action="{{ path('pas_post_approval_form', {'id': id}) }}" method="post" {{ form_enctype(form) }}>
-					<div class="form_item">
-						{{ form_errors(form.approval) }}
-						{{ form_widget(form.approval) }}
-					</div>
-					<div class="form_item">
-						{{ form_label(form.comment) }}<br />
-						{{ form_errors(form.comment) }}
-						{{ form_widget(form.comment) }}
-					</div>
+				{% if role == 'vtm' %}
+					<form id="post_approval_form" class="bda_form" action="{{ path('pas_post_approval_form', {'id': id}) }}" method="post" {{ form_enctype(form) }}>
+						<div id="buttons" class="form_item">
+							<input type="submit" value="Confirm" />
+						</div>
+					</form>
+				{% else %}
+					<form id="post_approval_form" class="bda_form" action="{{ path('pas_post_approval_form', {'id': id}) }}" method="post" {{ form_enctype(form) }}>
+						<div class="form_item">
+							{{ form_errors(form.approval) }}
+							{{ form_widget(form.approval) }}
+						</div>
+						<div class="form_item">
+							{{ form_label(form.comment) }}<br />
+							{{ form_errors(form.comment) }}
+							{{ form_widget(form.comment) }}
+						</div>
 
-					{{ form_rest(form) }}
+						{{ form_rest(form) }}
 
-					<div id="buttons" class="form_item">
-						<input type="submit" value="Submit" />
-					</div>
-				</form>
+						<div id="buttons" class="form_item">
+							<input type="submit" value="Submit" />
+						</div>
+					</form>
+				{% endif %}
 			{% endif %}
 		</div>
 	{% endif %}
