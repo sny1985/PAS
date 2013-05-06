@@ -243,7 +243,7 @@
 			{% if action == 'submit' %}
 				<form id="post_request_form" class="bda_form" action="{{ path('pas_post_request_status') }}" method="post">
 					<div id="buttons" class="form_item">
-						<input type="button" value="Edit" onclick="edit({{ id }})" /><input type="submit" value="Confirm" />
+						<input type="button" value="Edit" onclick="edit({{ id }});" /><input type="submit" value="Confirm" />
 					</div>
 					<input type="hidden" name="id" value="{{ id }}">
 				</form>

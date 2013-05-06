@@ -29,12 +29,12 @@ class BudgetRequestStatusController extends Controller
 			$users = $em->getRepository('AcmePASBundle:User')->findAll();
 			// get sender's email address
 			$sender = $users[0]->getEmail();
-
-			// get CFO from database, assume only one cfo in database
-			
+			// get CFO and VTM from database, assume only one cfo & one vtm in database
 			foreach ($users as $user) {
 				if ($user->getRole() == "cfo") {
 					$cfo = $user;
+				} else if ($user->getRole() == "vtm") {
+					$vtm = $user;
 				}
 			}
 
@@ -51,6 +51,7 @@ class BudgetRequestStatusController extends Controller
 						->setSubject('BDA Expense Budget Request Notice Email')
 						->setFrom($sender)
 						->setTo($cfo->getEmail())
+						->setCc($vtm->getEmail())
 						->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $cfo, 'role' => 'cfo', 'type' => 'BDA Expense Budget Request', 'link' => $this->generateUrl('pas_budget_confirmation_form', array(), true))), 'text/html');
 			$this->get('mailer')->send($message);
 

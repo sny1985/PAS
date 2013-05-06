@@ -8,7 +8,7 @@ use Acme\Bundle\PASBundle\Entity\PostRequest;
 use Acme\Bundle\PASBundle\Entity\PreRequest;
 use Acme\Bundle\PASBundle\Entity\User;
 
-class XLSExportingController extends Controller
+class PaymentExportingController extends Controller
 {
 	public function exportAction(Request $req)
 	{
@@ -58,7 +58,7 @@ class XLSExportingController extends Controller
 						->setCellValue("A3", "Pre-approval No.")
 						->setCellValue("B3", "Abstract")
 						->setCellValue("C3", "Amount (Requested Currency)")
-						->setCellValue("D3", "Amount (US$)");
+						->setCellValue("D3", "Amount (USD)");
 
 			$row = 4;
 

@@ -63,9 +63,13 @@ pas_success:
     pattern: /success
     defaults: { _controller: AcmePASBundle:Success:success }
 
-pas_xls_exporting:
-    pattern: /xls-export
-    defaults: { _controller: AcmePASBundle:XLSExporting:export }
+pas_budget_exporting:
+    pattern: /budget-export
+    defaults: { _controller: AcmePASBundle:BudgetExporting:export }
+
+pas_payment_exporting:
+    pattern: /payment-export
+    defaults: { _controller: AcmePASBundle:PaymentExporting:export }
 
 pas_user:
     pattern: /user

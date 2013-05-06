@@ -66,7 +66,7 @@
 			{% endfor %}
 
 			<div id="buttons" class="form_item">
-				<input type="submit" value="Approve" />
+				<input type="button" value="Export" onclick="budgetExport();" /><input type="submit" value="Approve" />
 			</div>
 		</form>
 	</div>
@@ -82,5 +82,11 @@
 				SelectYear();
 			});
 		});
+		
+		function budgetExport() {
+			var url = window.location.href;
+			url = url.slice(0, url.lastIndexOf('/'));
+			window.location.replace(url + "/budget-export");
+		}
 	</script>
 {% endblock %}

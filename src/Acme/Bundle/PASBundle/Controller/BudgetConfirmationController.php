@@ -121,6 +121,8 @@ class BudgetConfirmationController extends Controller
 		if ($req->isMethod('POST')) {
 			// get sender's email address
 			$sender = $em->getRepository('AcmePASBundle:User')->findOneByUid(0)->getEmail();
+			// get vtm
+			$vtm = $em->getRepository('AcmePASBundle:User')->findOneByRole("vtm");
 
 			foreach ($unapproved_array as $unapproved) {
 				$q = $em->createQuery("update AcmePASBundle:BudgetRequest br set br.approved = 1 where br.bid = $unapproved")->execute();
@@ -130,6 +132,7 @@ class BudgetConfirmationController extends Controller
 							->setSubject('BDA Expense Budget Approval Notice Email')
 							->setFrom($sender)
 							->setTo($user[0]->getEmail())
+							->setCc($vtm->getEmail())
 							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $user[0], 'role' => 'requester', 'type' => 'BDA Expense Budget Approval', 'link' => $this->generateUrl('pas_budget_request_status', array('action' => 'query', 'id' => $unapproved), true))), 'text/html');
 					// show submission result
 					$this->get('mailer')->send($message);
