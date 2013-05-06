@@ -18,20 +18,20 @@
 				<br /><br />
 				{% if type == "BDA Expense Budget Request" %}
 					{% if role == "requester" %}
-						Your {{ type }} is submitted successfully.
+						Your {{ type }} has been submitted successfully.
 					{% else %}
-						A new {{ type }} is submitted.
+						A new {{ type }} has been submitted.
 					{% endif %}
 				{% elseif type == "BDA Expense Budget Approval" %}
-					Your BDA Expense Budget Request is approved.
+					Your BDA Expense Budget Request has been approved.
 				{% elseif type == "Pre-Payment Request" or type == "Payment Request" %}
 					{% if role == "requester" %}
-						Your {{ type }} is submitted successfully.
+						Your {{ type }} has been submitted successfully.
 					{% else %}
-						A new {{ type }} is submitted. You are asked to approve it.
+						A new {{ type }} has been submitted. You are asked to approve it.
 					{% endif %}
 				{% elseif type == "Pre-Payment Approval" or type == "Payment Approval" %}
-					The status of your {{ type }} is changed.
+					The status of your {{ type }} has been changed.
 				{% endif %}
 				<br /><br />
 				Please check the details at the following link:<br />

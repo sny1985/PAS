@@ -93,6 +93,13 @@
 			$("#form_amount, #form_curtype").change(function() {
 				ConvertCurrency();
 			});
+
+			$("#home_btn").click(function(e) {
+				var res = window.confirm("Leave this form?");
+				if (res == false) {
+					e.preventDefault();
+				}
+			});
 		});
 	</script>
 {% endblock %}

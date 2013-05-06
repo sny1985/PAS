@@ -156,7 +156,8 @@ class PostRequest
 	protected $invoicePath;
 
 	/**
-	* @ORM\Column(type="string", length=64, nullable=true)
+	* @ORM\Column(type="string", length=64)
+	* @Assert\NotNull(message="Budget should not be null.")
 	*/
 	protected $budget;
 

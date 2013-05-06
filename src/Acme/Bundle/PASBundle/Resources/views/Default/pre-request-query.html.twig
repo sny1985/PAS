@@ -23,7 +23,7 @@
 		</div>
 	{% else %}
 		<div id="main">
-			{% if role == 'requester' %}
+			{% if action == 'query' %}
 				{% if status == 0 %}
 					<h4>This pre-payment request is waiting for approval.</h4>
 				{% elseif status == 1 %}
@@ -31,6 +31,9 @@
 				{% else %}
 					<h4>This pre-payment request is pending.</h4>
 				{% endif %}
+				<br />
+			{% elseif action == 'submit' %}
+				<h4>Is all information correct?</h4>
 				<br />
 			{% endif %}
 
@@ -81,9 +84,9 @@
 					<td class="status_tag">Level:</td>
 					<td class="status_content">
 						{% if request.level == 1 %}
-							Below or equal to US$10,000
+							Below or equal to 10,000 USD
 						{% elseif request.level == 2 %}
-							Above US$10,000
+							Above 10,000 USD
 						{% endif %}
 					</td>
 				</tr>

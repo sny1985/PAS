@@ -1,32 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<title>{% block title %}Blu-ray Disc Invoice Approval - Home{% endblock %}</title>
-		<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-		{% block css %}<link href="{{ asset('bundles/acmepas/css/style.css') }}" type="text/css" rel="stylesheet" />{% endblock %}
-	</head>
-	<body>
-		<div id="logout">
-			{% if app.security.getToken().getUser() != 'anon.' %}
-				Welcome {{ app.security.getToken().getUser().getUsername() }} &nbsp; 
-				<a href="{{ path('logout') }}">Log Out</a>
-			{% endif %}
+{% extends '::base.html.twig' %}
+
+{% block title %}Blu-ray Disc Invoice Approval - Home{% endblock %}
+
+{% block logout %}
+	<div id="logout">
+		{% if app.security.getToken().getUser() != 'anon.' %}
+			Welcome {{ app.security.getToken().getUser().getUsername() }} &nbsp; 
+			<a id="logout_btn" href="{{ path('logout') }}">Log Out</a>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block main %}
+	<div id="main">
+		<div id="home_nav">
+			<ul>
+				<li><a href="{{ path('pas_budget_request_form') }}">Budget Request</a></li>
+				<li><a href="{{ path('pas_budget_confirmation_form') }}">Budget Confirmation</a></li>
+				<li><a href="{{ path('pas_pre_request_form') }}">Pre-payment Request</a></li>
+				<li><a href="{{ path('pas_post_request_form') }}">Payment Request</a></li>
+			</ul>
 		</div>
-		<div id="content">
-			<div id="logo">
-				<img src="{{ asset('bundles/acmepas/images/logo.png') }}" width="113" height="60" alt="logo" />
-			</div>
-			<div id="main">
-				<div id="home_nav">
-					<ul>
-						<li><a href="{{ path('pas_budget_request_form') }}">Budget Request</a></li>
-						<li><a href="{{ path('pas_budget_confirmation_form') }}">Budget Confirmation</a></li>
-						<li><a href="{{ path('pas_pre_request_form') }}">Pre-payment Request</a></li>
-						<li><a href="{{ path('pas_post_request_form') }}">Payment Request</a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</body>
-</html>
+	</div>
+{% endblock %}

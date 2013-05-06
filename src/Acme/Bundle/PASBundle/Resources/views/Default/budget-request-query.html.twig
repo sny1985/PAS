@@ -13,6 +13,11 @@
 		</div>
 	{% else %}
 		<div id="main">
+			{% if action == 'submit' %}
+				<h4>Is all information correct?</h4>
+				<br />
+			{% endif %}
+
 			<table id="budget_status">
 				<tr>
 					<td class="status_tag">Budget Holder:</td>

@@ -8,13 +8,15 @@
 	</head>
 	<body>
 		{% block body %}
-			<div id="logout">
-				{% if app.security.getToken().getUser() != 'anon.' %}
-					Welcome {{ app.security.getToken().getUser().getUsername() }} &nbsp; 
-					<a href="{{ path('pas_homepage') }}">Home</a> &nbsp; 
-					<a href="{{ path('logout') }}">Log Out</a>
-				{% endif %}
-			</div>
+			{% block logout %}
+				<div id="logout">
+					{% if app.security.getToken().getUser() != 'anon.' %}
+						Welcome {{ app.security.getToken().getUser().getUsername() }} &nbsp; 
+						<a id="home_btn" href="{{ path('pas_homepage') }}">Home</a> &nbsp; 
+						<a id="logout_btn" href="{{ path('logout') }}">Log Out</a>
+					{% endif %}
+				</div>
+			{% endblock %}
 			<div id="content">
 				<div id="logo">
 					<img src="{{ asset('bundles/acmepas/images/logo.png') }}" width="113" height="60" alt="logo" />
@@ -25,8 +27,16 @@
 		{% endblock %}
 		
 		{% block javascripts %}
-			<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-			<script src="{{ asset('bundles/acmepas/js/fn.js') }}"></script>
+			<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+			<script type="text/javascript" src="{{ asset('bundles/acmepas/js/fn.js') }}"></script>
+			<script type="text/javascript">
+				$("#logout_btn").click(function(e) {
+					var res = window.confirm("Leave this form?");
+					if (res == false) {
+						e.preventDefault();
+					}
+				});
+			</script>
 		{% endblock %}
 	</body>
 </html>
