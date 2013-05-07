@@ -170,7 +170,7 @@ class PostRequestApprovalController extends Controller
 									->setFrom($sender)
 									->setTo($vtm->getEmail())
 									->setCc($vtm->getEmail())
-									->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $vtm, 'role' => 'vtm', 'type' => 'Payment Approval', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
+									->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Payment Approval', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
 						$this->get('mailer')->send($message);
 					}
 				}
