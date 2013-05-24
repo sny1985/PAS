@@ -259,7 +259,7 @@
 							<input type="submit" value="Confirm" />
 						</div>
 					</form>
-				{% else %}
+				{% elseif app.security.getToken().getUser().getUsername() == requester.username %}
 					<div id="links">
 						<a href="{{ path('pas_post_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
 					</div>

@@ -168,7 +168,7 @@ class PostRequestApprovalController extends Controller
 						$message = \Swift_Message::newInstance()
 									->setSubject('Payment Approval Notice Email')
 									->setFrom($sender)
-									->setTo($vtm->getEmail())
+									->setTo($requester->getEmail())
 									->setCc($vtm->getEmail())
 									->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Payment Approval', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
 						$this->get('mailer')->send($message);

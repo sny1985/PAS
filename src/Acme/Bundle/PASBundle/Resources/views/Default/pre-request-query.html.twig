@@ -157,9 +157,13 @@
 				</form>
 			{% elseif action == 'query' %}
 				<div id="links">
-					<a href="{{ path('pas_pre_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
+					{% if app.security.getToken().getUser().getUsername() == requester.username %}
+						<a href="{{ path('pas_pre_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
+						{% if status == 1 %}
+							<a href="{{ path('pas_post_request_form', {'prid': id}) }}">Submit Payment Request</a> &nbsp; 
+						{% endif %}
+					{% endif %}
 					{% if status == 1 %}
-						<a href="{{ path('pas_post_request_form', {'prid': id}) }}">Submit Payment Request</a> &nbsp; 
 						<a href="{{ path('pas_payment_exporting', {'id': id}) }}">Export Expense Budget Progress</a>
 					{% endif %}
 				</div>
