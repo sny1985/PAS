@@ -548,7 +548,7 @@ ul li {color: #ff0000;} /* error messages */
 /* form */
 .bda_form {margin-bottom: 40px}
 .form_item {padding: 10px 10px 10px 0;}
-.bda_form label, #budget_btn {background-color: #0b759e; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; padding: 5px 8px;}
+.bda_form label {background-color: #0b759e; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; padding: 5px 8px;}
 .bda_form input, .bda_form select {margin-top: 10px;}
 .bda_form input[type=text], .bda_form input[type=email], .bda_form input[type=file] {width: 320px;}
 .bda_form input[type=radio] {margin: 0 5px;}
@@ -557,7 +557,6 @@ ul li {color: #ff0000;} /* error messages */
 #fiscalyear {margin-bottom: 10px;}
 #usd_amount {display: none;}
 #form_preApproval {margin-top: 20px;}
-#budget_btn {color: #ffffff; text-decoration: none; margin-bottom: 10px; display: inline-block;}
 #pre_approved, #un_pre_approved, #check, #wire, #chair, #secretary, #cfo, #president {display: none;}
 #buttons {width: 200px; padding: 0; margin: 20px auto;}
 #buttons input[type=button], #buttons input[type=submit] {width: 100px;}
@@ -600,7 +599,7 @@ table th, table td {border: 1px solid #ffffff; vertical-align: top; padding: 10p
 .check_selected {text-align: center; width: ;}
 
 /* budget table */
-#budget_table {display: none;}
+#budget_table {margin-top: 10px; display: none;}
 .budget_no {text-align: center; width: 68px;}
 .budget_category {text-align: center; width: 348px;}
 .budget_amount {text-align: center; width: 288px;}

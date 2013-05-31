@@ -152,7 +152,7 @@
 
 			<div id="un_pre_approved">
 				<div id="budget" class="form_item">
-					<a id="budget_btn" href="#">Click Here to Choose One Budget:</a>
+					<label for="budget_btn">Budget:</label> <button id="budget_btn">Click to choose one</button>
 					<table id="budget_table" class="status summary">
 						<thead>
 							<tr>
@@ -239,7 +239,8 @@
 				SelectPreApproved();
 			});
 
-			$("#budget_btn").click(function() {
+			$("#budget_btn").click(function(e) {
+				e.preventDefault();
 				// ADD REQUIRED ATTRIBUTE ???
 				var url = window.location.href;
 				url = url.slice(0, url.lastIndexOf("/")) + "/budget-check";

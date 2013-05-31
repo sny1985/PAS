@@ -118,7 +118,7 @@ class PostRequest
 
 	/**
 	* @ORM\Column(type="string", length=80, nullable=true)
-	* @Assert\Email(message="The email '{{ value }}' is not a valid email.", checkMX=true)
+	* @Assert\Email(message="The email '{{ value }}' is not a valid email.")
 	*/
 	protected $contactEmail;
 

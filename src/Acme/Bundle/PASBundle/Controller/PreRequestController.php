@@ -84,7 +84,7 @@ class PreRequestController extends Controller
 						->add('requester', 'choice', array('choices' => array($this->user->getUid() => $this->user->getUsername()), 'empty_value' => false, 'label' => 'Requester:'))
 						->add('category', 'choice', array('choices' => $category_array, 'empty_value' => 'Choose one category', 'label' => 'Budget Category (class):'))
 						->add('explanation', 'textarea', array('label' => 'Explanation of the Expense:', 'required' => false))
-						->add('amount', 'money', array('currency' => false, 'label' => 'Amount:'))
+						->add('amount', 'money', array('currency' => false, 'label' => 'Amount (e.g. 200 or 199.99):'))
 						->add('curtype', 'choice', array('choices' => $currency_array['code'], 'empty_value' => 'Choose one type', 'label' => 'Currency Type:', 'preferred_choices' => array('empty_value')))
 						->add('budget', 'hidden', array('data' => null))
 						->add('level', 'choice', array('choices' => array(1 => 'Below or equal to 10,000 USD: by the Chair', 2 => 'Above 10,000 USD: by Secretary, President and CFO '), 'empty_value' => 'Choose one level', 'label' => 'Approval Level:', 'preferred_choices' => array('empty_value')))

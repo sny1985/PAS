@@ -65,7 +65,7 @@ class BudgetRequestController extends Controller
 						->add('endyear', 'choice', array('choices' => $year_array, 'empty_value' => 'Choose one month', 'preferred_choices' => array('empty_value')))
 						->add('abstract', 'textarea', array('label' => 'Abstract of activity:', 'required' => false))
 						->add('details', 'textarea', array('label' => 'Details:', 'required' => false))
-						->add('amount', 'money', array('currency' => false, 'label' => 'Amount:'))
+						->add('amount', 'money', array('currency' => false, 'label' => 'Amount (e.g. 200 or 199.99):'))
 						->add('curtype', 'choice', array('choices' => $currency_array['code'], 'empty_value' => 'Choose one type', 'label' => 'Currency Type:', 'preferred_choices' => array('empty_value')))
 						->add('date', 'hidden', array('data' => date('d-m-Y')))
 						->add('approved', 'hidden', array('data' => 0))
