@@ -65,7 +65,7 @@ function ConvertCurrency() {
 
 		// use JSON to get converted currency
 		if (amount && curtype) {
-			$.get("../../library/currency_converter.php", {"amount": amount, "curtype": curtype})
+			$.get("currency_converter.php", {"amount": amount, "curtype": curtype})
 			.done(function(response) {
 				$("#usd_amount span").html(response.usd.toFixed(2));
 				if (curtype != "USD") {
