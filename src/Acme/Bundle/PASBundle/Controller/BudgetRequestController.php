@@ -21,16 +21,17 @@ class BudgetRequestController extends Controller
 		$this->user = $this->getUser();
 
 		// get category list from database
-		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
-		foreach ($categories as $key => $value) {
-			$category_array[$key + 1] = $value->getName();
+		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findBy(array(), array('name' => 'ASC'));
+		$category_array = array();
+		foreach ($categories as $category) {
+			$category_array[$category->getBcid()] = $category->getName();
 		}
 
 		// get currency type list from database
-		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
-		foreach ($currencies as $key => $value) {
-			$currency_array['name'][$key + 1] = $value->getName();
-			$currency_array['code'][$key + 1] = $value->getCode();
+		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findBy(array(), array('code' => 'ASC'));
+		foreach ($currencies as $currency) {
+			$currency_array['name'][$currency->getCtid()] = $currency->getName();
+			$currency_array['code'][$currency->getCtid()] = $currency->getCode();
 		}
 
 		// if there is a query and the action is query, then show record; otherwise edit the record in the form

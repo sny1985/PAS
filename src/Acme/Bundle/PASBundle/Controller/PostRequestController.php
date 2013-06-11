@@ -19,17 +19,17 @@ class PostRequestController extends Controller
 		$this->user = $this->getUser();
 
 		// get category list from database
-		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
+		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findBy(array(), array('name' => 'ASC'));
 		$category_array = array();
-		foreach ($categories as $key => $value) {
-			$category_array[$key + 1] = $value->getName();
+		foreach ($categories as $category) {
+			$category_array[$category->getBcid()] = $category->getName();
 		}
 
 		// get currency type list from database
-		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
-		foreach ($currencies as $key => $value) {
-			$currency_array['name'][$key + 1] = $value->getName();
-			$currency_array['code'][$key + 1] = $value->getCode();
+		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findBy(array(), array('code' => 'ASC'));
+		foreach ($currencies as $currency) {
+			$currency_array['name'][$currency->getCtid()] = $currency->getName();
+			$currency_array['code'][$currency->getCtid()] = $currency->getCode();
 		}
 
 		// get chairs, secretary, CFO & president from database
@@ -73,7 +73,6 @@ class PostRequestController extends Controller
 				}
 			}
 		}
-
 		// create form
 		$form = $this->createFormBuilder($postRequest)
 						->add('rid', 'hidden')
@@ -98,7 +97,8 @@ class PostRequestController extends Controller
 						->add('swiftCode', 'text', array('label' => 'Swift Code:', 'required' => false))
 						->add('routingNumber', 'text', array('label' => 'Routing Number:', 'required' => false))
 						->add('contactEmail', 'text', array('label' => 'Contact Email (if known):', 'required' => false))
-						->add('invoice', 'file', array('label' => 'Invoice:','required' => false))
+						->add('invoice', 'file', array('label' => 'Invoice:', 'required' => false))
+						->add('invoicePath', 'hidden', array('data' => $postRequest->getInvoicePath()))
 						->add('budget', 'hidden', array('data' => null))
 						->add('level', 'choice', array('choices' => array(1 => 'Below or equal to 10,000 USD: by the Chair', 2 => 'Above 10,000 USD: by Secretary, President and CFO '), 'empty_value' => 'Choose one level', 'label' => 'Approval Level:', 'preferred_choices' => array('empty_value'), 'required' => false))
 						->add('chairId', 'choice', array('choices' => $chair_array, 'empty_value' => false, 'label' => 'Chair:', 'required' => false))

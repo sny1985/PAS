@@ -585,7 +585,9 @@ class PostRequest
 	}
 
 	public function uploadFiles() {
-		// ??? CHANGE DESIGN TO UPLOAD MULTIPLE FILES AT THE SAME TIME
+		/* only one file is allowed to upload */
+
+		// if no files are uploaded, leave it blank
 		if (null === $this->invoice) {
 			return;
 		}

@@ -46,6 +46,9 @@ function SelectLevel(amount) {
 		// clear chair
 		$("select", $chair).val($("select option:first", $chair).val());
 //		$("select", $chair).prop("required", false);
+		if ($unPreApproved.length && !$unPreApproved.prop("checked")) {
+			$chair.show();
+		}
 		// select first element and show
 		$("select", $cfo).val($("select option:last", $cfo).val());
 		$cfo.show();
@@ -159,7 +162,7 @@ function SelectPreApproved() {
 		$("#form_budget").val("N/A");
 		$("#form_level").val("");
 		$("#form_prid").prop("required", true);
-		$invoice.prop("required", true);
+// 		$invoice.prop("required", true);
 		$("#chair select").val(0).removeProp('required');
 		// show
 		$preApproved.show();
@@ -169,8 +172,8 @@ function SelectPreApproved() {
 		$("#form_budget").val("");
 		$("#form_prid").val("").removeProp("required");
 		$("#form_preApprovalNo").val("");
-		$invoice.removeProp("required");
-		$invoice.replaceWith($invoice.val("").clone(true));
+// 		$invoice.removeProp("required");
+// 		$invoice.replaceWith($invoice.val("").clone(true));
 		$unPreApproved.show();
 		ConvertCurrency();
 	}

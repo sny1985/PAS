@@ -4,7 +4,7 @@
 
 {% block main %}
 	<div id="heading">
-		<h3>Payment request form</h3>
+		<h3>Payment Request Form</h3>
 	</div>
 
 	<div id="main">
@@ -142,12 +142,6 @@
 					{{ form_errors(form.preApprovalNo) }}
 					{{ form_widget(form.preApprovalNo) }}
 				</div>
-
-				<div id="invoices" class="form_item">
-					{{ form_label(form.invoice) }}<br />
-					{{ form_errors(form.invoice) }}
-					{{ form_widget(form.invoice) }}
-				</div>
 			</div>
 
 			<div id="un_pre_approved">
@@ -204,6 +198,18 @@
 				{{ form_errors(form.cfoId) }}
 				{{ form_widget(form.cfoId) }}
 				{{ form_row(form.cfoApproved) }}
+			</div>
+
+			<div id="invoices" class="form_item">
+				{{ form_label(form.invoice) }}<br />
+				{% if form.vars.value.invoicePath != '' %}
+					<br />Uploaded file: {{ form.vars.value.invoicePath }}<br />
+				{% endif %}
+				{{ form_errors(form.invoice) }}
+				{{ form_widget(form.invoice) }}
+				{% if form.vars.value.invoicePath != '' %}
+					*Choose a new file to replace current one.
+				{% endif %}
 			</div>
 
 			<input type="hidden" name="action" value="{% if action != false %}{{ action }}{% endif %}">
