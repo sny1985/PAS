@@ -147,6 +147,13 @@ class PostRequest
 	*/
 	protected $routingNumber;
 
+	/**
+	* @ORM\Column(type="smallint", nullable=true)
+	* @Assert\NotNull(message="Has-Invoice should not be null.")
+	* @Assert\Range(min="0", max="1")
+	*/
+	protected $hasInvoice;
+
 	// ???
 	protected $invoice;
 
@@ -434,6 +441,14 @@ class PostRequest
 
 	public function setRoutingNumber($no) {
 		$this->routingNumber = $no;
+	}
+
+	public function getHasInvoice() {
+		return $this->hasInvoice;
+	}
+	
+	public function setHasInvoice($hasInvoice) {
+		$this->hasInvoice = $hasInvoice;
 	}
 
 	public function getInvoice() {

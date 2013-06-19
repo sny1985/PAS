@@ -12,7 +12,6 @@ class BudgetExportingController extends Controller
 	public function exportAction(Request $req)
 	{
 		$em = $this->getDoctrine()->getManager();
-		$id = null;
 
 		// get category list from database
 		$users = $em->getRepository('AcmePASBundle:User')->findAll();

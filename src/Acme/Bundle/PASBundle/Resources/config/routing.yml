@@ -63,6 +63,10 @@ pas_success:
     pattern: /success
     defaults: { _controller: AcmePASBundle:Success:success }
 
+pas_currency_rate:
+    pattern: /currency_rate
+    defaults: { _controller: AcmePASBundle:CurrencyRate:getRate }
+
 pas_budget_exporting:
     pattern: /budget-export
     defaults: { _controller: AcmePASBundle:BudgetExporting:export }

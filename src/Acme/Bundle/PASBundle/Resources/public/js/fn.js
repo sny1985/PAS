@@ -1,11 +1,3 @@
-function SelectYear() {
-	// reset
-	$(".summary").hide();
-
-	var selected = $("#fiscalyear option:selected").val();
-	$("#" + selected).show();
-}
-
 function SelectLevel(amount) {
 	var $unPreApproved = $("#form_preApproval_1");
 	if ($unPreApproved.length && $unPreApproved.prop("checked")) {
@@ -156,7 +148,7 @@ function SelectPreApproved() {
 	var $invoice = $("#form_invoice");
 
 	// show the correct div(s)
-	var isPreApproved = $("input[type=radio]:checked").val();
+	var isPreApproved = $("#form_preApproval input[type=radio]:checked").val();
 	if (isPreApproved == '1') {
 		// clear
 		$("#form_budget").val("N/A");
@@ -176,5 +168,15 @@ function SelectPreApproved() {
 // 		$invoice.replaceWith($invoice.val("").clone(true));
 		$unPreApproved.show();
 		ConvertCurrency();
+	}
+}
+
+function SelectHasInvoice() {
+	var $invoices = $("#invoices");
+	var hasInvoice = $("#form_hasInvoice input[type=radio]:checked").val();
+	if (hasInvoice == '1') {
+		$invoices.show();
+	} else {
+		$invoices.hide();
 	}
 }

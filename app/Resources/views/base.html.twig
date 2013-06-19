@@ -4,39 +4,41 @@
 		<meta charset="UTF-8" />
 		<title>{% block title %}Welcome!{% endblock %}</title>
 		<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-		{% block css %}<link href="{{ asset('bundles/acmepas/css/style.css') }}" type="text/css" rel="stylesheet" />{% endblock %}
+{% block css %}
+		<link href="{{ asset('bundles/acmepas/css/style.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
 	</head>
 	<body>
-		{% block body %}
-			{% block logout %}
-				<div id="logout">
-					{% if app.security.getToken().getUser() != 'anon.' %}
-						Welcome {{ app.security.getToken().getUser().getUsername() }} &nbsp; 
-						<a id="home_btn" href="{{ path('pas_homepage') }}">Home</a> &nbsp; 
-						<a id="logout_btn" href="{{ path('logout') }}">Log Out</a>
-					{% endif %}
-				</div>
-			{% endblock %}
-			<div id="content">
-				<div id="logo">
-					<img src="{{ asset('bundles/acmepas/images/logo.png') }}" width="113" height="60" alt="logo" />
-				</div>
-				{% block main %}
-				{% endblock %}
+{% block body %}
+{% block logout %}
+		<div id="logout">
+{% if app.security.getToken().getUser() != 'anon.' %}
+			Welcome {{ app.security.getToken().getUser().getUsername() }} &nbsp; 
+			<a id="home_btn" href="{{ path('pas_homepage') }}">Home</a> &nbsp; 
+			<a id="logout_btn" href="{{ path('logout') }}">Log Out</a>
+{% endif %}
+		</div>
+{% endblock %}
+		<div id="content">
+			<div id="logo">
+				<img src="{{ asset('bundles/acmepas/images/logo.png') }}" width="113" height="60" alt="logo" />
 			</div>
-		{% endblock %}
+{% block main %}
+{% endblock %}
+		</div>
+{% endblock %}
 		
-		{% block javascripts %}
-			<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-			<script type="text/javascript" src="{{ asset('bundles/acmepas/js/fn.js') }}"></script>
-			<script type="text/javascript">
-				$("#logout_btn").click(function(e) {
-					var res = window.confirm("Leave this form?");
-					if (res == false) {
-						e.preventDefault();
-					}
-				});
-			</script>
-		{% endblock %}
+{% block javascripts %}
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script type="text/javascript" src="{{ asset('bundles/acmepas/js/fn.js') }}"></script>
+		<script type="text/javascript">
+			$("#logout_btn").click(function(e) {
+				var res = window.confirm("Leave this form?");
+				if (res == false) {
+					e.preventDefault();
+				}
+			});
+		</script>
+{% endblock %}
 	</body>
 </html>

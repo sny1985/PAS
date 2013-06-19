@@ -1,81 +1,77 @@
 {% extends '::base.html.twig' %}
 
 {% block title %}
-	{% if role == 'requester' %}
-		Payment Request Status
-	{% else %}
-		Payment Approval Form
-	{% endif %}
+{% if role == 'requester' %}Payment Request Status
+{% else %}Payment Approval Form
+{% endif %}
 {% endblock %}
 
 {% block main %}
-	<div id="heading">
-		{% if role == 'requester' %}
-			<h3>Payment Request Status</h3>
-		{% else %}
-			<h3>Payment Approval Form</h3>
-		{% endif %}
-	</div>
+			<div id="heading">
+{% if role == 'requester' %}
+				<h3>Payment Request Status</h3>
+{% else %}
+				<h3>Payment Approval Form</h3>
+{% endif %}
+			</div>
 
-	{% if id == false or request == false %}
-		<div id="main">
-			<h4>No Payment Request found for id {{ id }}</h4>
-		</div>
-	{% else %}
-		<div id="main">
-			{% if action == 'query' %}
-				{% if status == 0 %}
-					<h4>Your payment request is waiting for approval.</h4>
-				{% elseif status == 1 %}
-					<h4>Your payment request is approved.</h4>
-				{% else %}
-					<h4>Your payment request is pending.</h4>
-				{% endif %}
+{% if id == false or request == false %}
+			<div id="main">
+				<h4>No Payment Request found for id {{ id }}</h4>
+			</div>
+{% else %}
+			<div id="main">
+{% if action == 'query' %}
+{% if status == 0 %}
+				<h4>Your payment request is waiting for approval.</h4>
+{% elseif status == 1 %}
+				<h4>Your payment request is approved.</h4>
+{% else %}
+				<h4>Your payment request is pending.</h4>
+{% endif %}
 				<br />
-			{% elseif action == 'submit' %}
+{% elseif action == 'submit' %}
 				<h4>Is all information correct?</h4>
 				<br />
-			{% endif %}
-
-			<table id="postrequest_status" class="status">
-				<tr>
-					<td class="status_tag">Requester:</td>
-					<td class="status_content">{{ requester.username }}</td>
-				</tr>
-				<tr>
-					<td class="status_tag">Requester's Email:</td>
-					<td class="status_content">{{ requester.email }}</td>
-				</tr>
-				<tr>
-					<td class="status_tag">Request Date:</td>
-					<td class="status_content">{{ request.date|date("m/d/Y") }}</td>
-				</tr>
-				<tr>
-					<td class="status_tag">Budget Category:</td>
-					<td class="status_content">{{ categories[request.category] }}</td>
-				</tr>
-				<tr>
-					<td class="status_tag">Explanation of the Expense:</td>
-					<td class="status_content">
-						{% if request.explanation == null %}
+{% endif %}
+				<table id="postrequest_status" class="status">
+					<tr>
+						<td class="status_tag">Requester:</td>
+						<td class="status_content">{{ requester.username }}</td>
+					</tr>
+					<tr>
+						<td class="status_tag">Requester's Email:</td>
+						<td class="status_content">{{ requester.email }}</td>
+					</tr>
+					<tr>
+						<td class="status_tag">Request Date:</td>
+						<td class="status_content">{{ request.date|date("m/d/Y") }}</td>
+					</tr>
+					<tr>
+						<td class="status_tag">Budget Category:</td>
+						<td class="status_content">{{ categories[request.category] }}</td>
+					</tr>
+					<tr>
+						<td class="status_tag">Explanation of the Expense:</td>
+						<td class="status_content">
+{% if request.explanation == null %}
 							N/A
-						{% else %}
+{% else %}
 							{{ request.explanation }}
-						{% endif %}
-					</td>
-				</tr>
-				<tr>
-					<td class="status_tag">Amount:</td>
-					<td class="status_content">{{ request.amount|number_format(2, '.', '') }} {{ currencies['code'][request.curtype] }}</td>
-				</tr>
-				{% if request.actualAmount > 0 %}
+{% endif %}
+						</td>
+					</tr>
+					<tr>
+						<td class="status_tag">Amount:</td>
+						<td class="status_content">{{ request.amount|number_format(2, '.', '') }} {{ currencies['code'][request.curtype] }}</td>
+					</tr>
+{% if request.actualAmount > 0 %}
 					<tr>
 						<td class="status_tag">Actual Amount:</td>
 						<td class="status_content">{{ request.actualAmount|number_format(2, '.', '') }} USD</td>
 					</tr>
-				{% endif %}
-
-				{% if request.paymentMethod == 1 %}
+{% endif %}
+{% if request.paymentMethod == 1 %}
 					<tr>
 						<td class="status_tag">Payment Method:</td>
 						<td class="status_content">Check</td>
@@ -104,8 +100,7 @@
 						<td class="status_tag">Zip Code:</td>
 						<td class="status_content">{{ request.zipcode }}</td>
 					</tr>
-					
-				{% elseif request.paymentMethod == 2 %}
+{% elseif request.paymentMethod == 2 %}
 					<tr>
 						<td class="status_tag">Payment Method:</td>
 						<td class="status_content">Wire</td>
@@ -130,14 +125,12 @@
 						<td class="status_tag">Routing Number:</td>
 						<td class="status_content">{{ request.routingNumber }}</td>
 					</tr>
-				{% endif %}
-			
-				<tr>
-					<td class="status_tag">Contact Email:</td>
-					<td class="status_content">{{ request.contactEmail }}</td>
-				</tr>
-			
-				{% if request.preApproval == 1 %}
+{% endif %}
+					<tr>
+						<td class="status_tag">Contact Email:</td>
+						<td class="status_content">{{ request.contactEmail }}</td>
+					</tr>
+{% if request.preApproval == 1 %}
 					<tr>
 						<td class="status_tag">Pre-approved:</td>
 						<td class="status_content">Yes</td>
@@ -153,16 +146,16 @@
 					<tr>
 						<td class="status_tag">Approvers:</td>
 						<td class="status_content">
-							{% if request.cfoApproved == 1 %}
-								{{ cfo.username }} approved
-							{% elseif request.cfoApproved == 2 %}
-								{{ cfo.username }} changed request's status to pending
-							{% else %}
-								waiting for {{ cfo.username }}'s approval
-							{% endif %}
+{% if request.cfoApproved == 1 %}
+							{{ cfo.username }} approved
+{% elseif request.cfoApproved == 2 %}
+							{{ cfo.username }} changed request's status to pending
+{% else %}
+							waiting for {{ cfo.username }}'s approval
+{% endif %}
 						</td>
 					</tr>
-				{% else %}
+{% else %}
 					<tr>
 						<td class="status_tag">Pre-approved:</td>
 						<td class="status_content">No</td>
@@ -174,135 +167,139 @@
 					<tr>
 						<td class="status_tag">Level:</td>
 						<td class="status_content">
-							{% if request.level == 1 %}
-								Below or equal to 10,000 USD
-							{% elseif request.level == 2 %}
-								Above 10,000 USD
-							{% endif %}
+{% if request.level == 1 %}
+							Below or equal to 10,000 USD
+{% elseif request.level == 2 %}
+							Above 10,000 USD
+{% endif %}
 						</td>
 					</tr>
 					<tr>
 						<td class="status_tag">Approvers:</td>
 						<td class="status_content">
-							{% if request.chairId != 0 %}
-								{% if request.chairApproved == 1 %}
-									{{ chair.username }} approved
-								{% elseif request.chairApproved == 2 %}
-									{{ chair.username }} changed request's status to pending
-								{% else %}
-									waiting for {{ chair.username }}'s approval
-								{% endif %}
-								<br />
-							{% endif %}
-							{% if request.cfoId != 0 %}
-								{% if request.cfoApproved == 1 %}
-									{{ cfo.username }} approved
-								{% elseif request.cfoApproved == 2 %}
-									{{ cfo.username }} changed request's status to pending
-								{% else %}
-									waiting for {{ cfo.username }}'s approval
-								{% endif %}
-								<br />
-							{% endif %}
-							{% if request.presidentId != 0 %}
-								{% if request.presidentApproved == 1 %}
-									{{ president.username }} approved
-								{% elseif request.presidentApproved == 2 %}
-									{{ president.username }} changed request's status to pending
-								{% else %}
-									waiting for {{ president.username }}'s approval
-								{% endif %}
-								<br />
-							{% endif %}
-							{% if request.secretaryId != 0 %}
-								{% if request.secretaryApproved == 1 %}
-									{{ secretary.username }} approved
-								{% elseif request.secretaryApproved == 2 %}
-									{{ secretary.username }} changed request's status to pending
-								{% else %}
-									waiting for {{ secretary.username }}'s approval
-								{% endif %}
-								<br />
-							{% endif %}
+{% if request.chairId != 0 %}
+{% if request.chairApproved == 1 %}
+							{{ chair.username }} approved
+{% elseif request.chairApproved == 2 %}
+							{{ chair.username }} changed request's status to pending
+{% else %}
+							waiting for {{ chair.username }}'s approval
+{% endif %}
+							<br />
+{% endif %}
+{% if request.cfoId != 0 %}
+{% if request.cfoApproved == 1 %}
+							{{ cfo.username }} approved
+{% elseif request.cfoApproved == 2 %}
+							{{ cfo.username }} changed request's status to pending
+{% else %}
+							waiting for {{ cfo.username }}'s approval
+{% endif %}
+							<br />
+{% endif %}
+{% if request.presidentId != 0 %}
+{% if request.presidentApproved == 1 %}
+							{{ president.username }} approved
+{% elseif request.presidentApproved == 2 %}
+							{{ president.username }} changed request's status to pending
+{% else %}
+							waiting for {{ president.username }}'s approval
+{% endif %}
+							<br />
+{% endif %}
+{% if request.secretaryId != 0 %}
+{% if request.secretaryApproved == 1 %}
+							{{ secretary.username }} approved
+{% elseif request.secretaryApproved == 2 %}
+							{{ secretary.username }} changed request's status to pending
+{% else %}
+							waiting for {{ secretary.username }}'s approval
+{% endif %}
+							<br />
+{% endif %}
 						</td>
 					</tr>
-				{% endif %}
-				{% if request.chairComment != false or request.cfoComment != false or request.presidentComment != false or request.secretaryComment != false %}
+{% endif %}
+{% if request.chairComment != false or request.cfoComment != false or request.presidentComment != false or request.secretaryComment != false %}
 					<tr>
 						<td class="status_tag">Comment:</td>
 						<td class="status_content">
-							{% if request.chairComment != false %} {{ request.chairComment }}<br /> {% endif %}
-							{% if request.cfoComment != false %} {{ request.cfoComment }}<br /> {% endif %}
-							{% if request.presidentComment != false %} {{ request.presidentComment }}<br /> {% endif %}
-							{% if request.secretaryComment != false %} {{ request.secretaryComment }}<br /> {% endif %}
+{% if request.chairComment != false %}
+							{{ request.chairComment }}<br />
+{% endif %}
+{% if request.cfoComment != false %}
+							{{ request.cfoComment }}<br />
+{% endif %}
+{% if request.presidentComment != false %}
+							{{ request.presidentComment }}<br />
+{% endif %}
+{% if request.secretaryComment != false %}
+							{{ request.secretaryComment }}<br />
+{% endif %}
 						</td>
 					</tr>
-				{% endif %}
-			</table>
-
-			{% if action == 'submit' %}
+{% endif %}
+				</table>
+{% if action == 'submit' %}
 				<form id="post_request_form" class="bda_form" action="{{ path('pas_post_request_status') }}" method="post">
 					<div id="buttons" class="form_item">
 						<input type="button" value="Edit" onclick="edit({{ id }});" /><input type="submit" value="Confirm" />
 					</div>
 					<input type="hidden" name="id" value="{{ id }}">
 				</form>
-			{% elseif action == 'query' %}
-				{% if role == 'vtm' %}
+{% elseif action == 'query' %}
+{% if role == 'vtm' %}
+				<br />
+				<form id="post_query_form" class="bda_form" action="{{ path('pas_post_request_status', {'id': id}) }}" method="post">
+					<label for="actual_amount">Actual Amount ($US): </label>
 					<br />
-					<form id="post_query_form" class="bda_form" action="{{ path('pas_post_request_status', {'id': id}) }}" method="post">
-						<label for="actual_amount">Actual Amount ($US): </label>
-						<br />
-						<input type="text" id="actual_amount" name="actual_amount" required="required" />
-						<input type="hidden" name="id" value="{{ id }}">
-						<div id="buttons" class="form_item">
-							<input type="submit" value="Confirm" />
-						</div>
-					</form>
-				{% elseif app.security.getToken().getUser().getUsername() == requester.username %}
-					<div id="links">
-						<a href="{{ path('pas_post_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
+					<input type="text" id="actual_amount" name="actual_amount" required="required" />
+					<input type="hidden" name="id" value="{{ id }}">
+					<div id="buttons" class="form_item">
+						<input type="submit" value="Confirm" />
 					</div>
-				{% endif %}
-			{% elseif action == 'approve' %}
-				{% if role == 'vtm' %}
-					<form id="post_approval_form" class="bda_form" action="{{ path('pas_post_approval_form', {'id': id}) }}" method="post" {{ form_enctype(form) }}>
-						<div id="buttons" class="form_item">
-							<input type="submit" value="Confirm" />
-						</div>
-					</form>
-				{% else %}
-					<form id="post_approval_form" class="bda_form" action="{{ path('pas_post_approval_form', {'id': id}) }}" method="post" {{ form_enctype(form) }}>
-						<div class="form_item">
-							{{ form_errors(form.approval) }}
-							{{ form_widget(form.approval) }}
-						</div>
-						<div class="form_item">
-							{{ form_label(form.comment) }}<br />
-							{{ form_errors(form.comment) }}
-							{{ form_widget(form.comment) }}
-						</div>
-
-						{{ form_rest(form) }}
-
-						<div id="buttons" class="form_item">
-							<input type="submit" value="Submit" />
-						</div>
-					</form>
-				{% endif %}
-			{% endif %}
-		</div>
-	{% endif %}
+				</form>
+{% elseif app.security.getToken().getUser().getUsername() == requester.username %}
+				<div id="links">
+					<a href="{{ path('pas_post_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
+				</div>
+{% endif %}
+{% elseif action == 'approve' %}
+{% if role == 'vtm' %}
+				<form id="post_approval_form" class="bda_form" action="{{ path('pas_post_approval_form', {'id': id}) }}" method="post" {{ form_enctype(form) }}>
+					<div id="buttons" class="form_item">
+						<input type="submit" value="Confirm" />
+					</div>
+				</form>
+{% else %}
+				<form id="post_approval_form" class="bda_form" action="{{ path('pas_post_approval_form', {'id': id}) }}" method="post" {{ form_enctype(form) }}>
+					<div class="form_item">
+						{{ form_errors(form.approval) }}
+						{{ form_widget(form.approval) }}
+					</div>
+					<div class="form_item">
+						{{ form_label(form.comment) }}<br />
+						{{ form_errors(form.comment) }}
+						{{ form_widget(form.comment) }}
+					</div>
+					{{ form_rest(form) }}
+					<div id="buttons" class="form_item">
+						<input type="submit" value="Submit" />
+					</div>
+				</form>
+{% endif %}
+{% endif %}
+			</div>
+{% endif %}
 {% endblock %}
 
 {% block javascripts %}
-	{{ parent() }}
-
-	<script type="text/javascript">
-		function edit(id) {
-			var url = window.location.href;
-			url = url.slice(0, url.lastIndexOf('/'));
-			window.location.replace(url + "/post-request?id=" + id + "&action=" + "edit");
-		}
-	</script>
+{{ parent() }}
+		<script type="text/javascript">
+			function edit(id) {
+				var url = window.location.href;
+				url = url.slice(0, url.lastIndexOf('/'));
+				window.location.replace(url + "/post-request?id=" + id + "&action=" + "edit");
+			}
+		</script>
 {% endblock%}

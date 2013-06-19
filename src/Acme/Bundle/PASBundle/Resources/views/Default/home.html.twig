@@ -3,23 +3,23 @@
 {% block title %}Blu-ray Disc Payment Approval - Home{% endblock %}
 
 {% block logout %}
-	<div id="logout">
-		{% if app.security.getToken().getUser() != 'anon.' %}
+		<div id="logout">
+{% if app.security.getToken().getUser() != 'anon.' %}
 			Welcome {{ app.security.getToken().getUser().getUsername() }} &nbsp; 
 			<a id="logout_btn" href="{{ path('logout') }}">Log Out</a>
-		{% endif %}
-	</div>
+{% endif %}
+		</div>
 {% endblock %}
 
 {% block main %}
-	<div id="main">
-		<div id="home_nav">
-			<ul>
-				<li><a href="{{ path('pas_budget_request_form') }}">Budget Request</a></li>
-				<li><a href="{{ path('pas_budget_confirmation_form') }}">Budget Confirmation</a></li>
-				<li><a href="{{ path('pas_pre_request_form') }}">Pre-payment Request</a></li>
-				<li><a href="{{ path('pas_post_request_form') }}">Payment Request</a></li>
-			</ul>
-		</div>
-	</div>
+			<div id="main">
+				<div id="home_nav">
+					<ul>
+						<li><a href="{{ path('pas_budget_request_form') }}">Latest Estimation / Budget Request</a></li>
+						<li><a href="{{ path('pas_budget_confirmation_form') }}">Budget Confirmation</a></li>
+						<li><a href="{{ path('pas_pre_request_form') }}">Pre-payment Request</a></li>
+						<li><a href="{{ path('pas_post_request_form') }}">Payment Request</a></li>
+					</ul>
+				</div>
+			</div>
 {% endblock %}

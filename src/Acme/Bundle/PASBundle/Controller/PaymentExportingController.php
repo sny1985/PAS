@@ -99,6 +99,6 @@ class PaymentExportingController extends Controller
 			return $response;
 		}
 
-		return $this->render('AcmePASBundle:Default:xls.html.twig', array('id' => $id));
+		return $this->render('AcmePASBundle:Default:failure.html.twig', array('id' => $id));
 	}
 }

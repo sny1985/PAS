@@ -3,90 +3,84 @@
 {% block title %}Budget Confirmation Page - Summary{% endblock %}
 
 {% block main %}
-	<div id="heading">
-		<h3>Budget Summary</h3>
-	</div>
+			<div id="heading">
+				<h3>Budget Summary</h3>
+			</div>
+			<div id="main">
+				<form id="budget_confirmation_form" action="{{ path('pas_budget_confirmation_form') }}" method="post" form_enctype="">
+					<select id="fiscalyear">
+						<option value="">Choose One Fiscal Year</option>
+{% for i in 2012.."now"|date("Y")+1 %}
+						<option value="{{ i }}"{% if year == i %} selected{% endif %}>{{ i }}</option>
+{% endfor %}
+					</select>
+					<input type="button" value="Export" onclick="budgetExport();" />
 
-	<div id="main">
-		<form id="budget_confirmation_form" action="{{ path('pas_budget_confirmation_form') }}" method="post" form_enctype="">
-			<select id="fiscalyear">
-				<option value="">Choose One Fiscal Year</option>
-				{% for year in years %}
-					<option value="{{ year }}" {% if loop.index == loop.last %}selected{% endif %} >{{ year }}</option>
-				{% endfor %}
-			</select>
-			<input type="button" value="Export" onclick="budgetExport();" />
-			{% for year in years %}
-				<table id="{{ year }}" class="status summary">
-					<thead>
-						<tr>
-							<th class="summary_no">No.</th>
-							<th class="summary_received">Received</th>
-							<th class="summary_date">Last Received Date</th>
-							<th class="summary_category">Officer/Committee Chair/TF Chair</th>
-							<th class="summary_amount">Amount (USD)</th>
-							<th class="summary_approved">Approved?</th>
-						</tr>
-					</thead>
-					<tfoot>
-						<tr>
-							<td class="summary_no">Total</td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td class="summary_amount">{{ requests[year]['sum'] }}</td>
-						</tr>
-					</tfoot>
-					<tbody>
-						{% for category in categories %}
+					<table id="{{ year }}" class="status summary">
+						<thead>
+							<tr>
+								<th class="summary_no">No.</th>
+								<th class="summary_date">Last Received Date</th>
+								<th class="summary_category">Officer/Committee Chair/TF Chair</th>
+								<th class="summary_amount">Amount (USD)</th>
+								<th class="summary_approved">Approve</th>
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<td class="summary_no">Total</td>
+								<td></td>
+								<td></td>
+								<td class="summary_amount">{{ requests['sum'] }}</td>
+								<td></td>
+							</tr>
+						</tfoot>
+						<tbody>
+{% for category in categories %}
 							<tr>
 								<td class="summary_no">{{ loop.index }}</td>
-								{% set received = 0 %}
-								{% for cat in requests[year]['categories'] %}
-									{% if cat == loop.parent.loop.index %}
-										<td class="summary_received"><input type="checkbox" name="received[]" value="{{ loop.index }}" {% if requests[year][cat]['lastdate'] %}checked{% endif %} disabled /></td>
-										<td class="summary_date">{{ requests[year][cat]['lastdate']|date("m/d/Y") }}</td>
-										<td class="summary_category"><a class="link" href="{{ path('pas_budget_confirmation_form', {'cid': loop.parent.loop.index, 'year': year}) }}">{{ categories[cat] }}</a></td>
-										<td class="summary_amount">{{ requests[year][cat]['amount'] }}</td>
-										<td class="summary_approved">{% if requests[year][cat]['approved'] == 1 %}Yes{% else %}No{% endif %}</td>
-										{% set received = 1 %}
-									{% endif %}
-								{% endfor %}
-								{% if received != 1 %}
-									<td class="summary_received"><input type="checkbox" name="received[]" value="{{ loop.index }}" disabled="true" /></td>
-									<td class="summary_date"></td>
-									<td class="summary_category"><a class="link" href="{{ path('pas_budget_confirmation_form', {'cid': loop.index, 'year': year}) }}">{{ categories[loop.index] }}</a></td>
-									<td class="summary_amount"></td>
-									<td class="summary_approved"></td>
-								{% endif %}
+{% set received = 0 %}
+{% for cat in requests['categories'] %}
+{% if cat == loop.parent.loop.index %}
+								<td class="summary_date">{{ requests[cat]['lastdate']|date("m/d/Y") }}</td>
+								<td class="summary_category"><a class="link" href="{{ path('pas_budget_confirmation_form', {'cid': loop.parent.loop.index, 'year': year}) }}">{{ categories[cat] }}</a></td>
+								<td class="summary_amount">{{ requests[cat]['amount'] }}</td>
+								<td class="summary_approved">{% if requests[cat]['approved'] == 1 %}Approved{% else %}No{% endif %}</td>
+{% set received = 1 %}
+{% endif %}
+{% endfor %}
+{% if received != 1 %}
+								<td class="summary_date"></td>
+								<td class="summary_category"><a class="link" href="{{ path('pas_budget_confirmation_form', {'cid': loop.index, 'year': year}) }}">{{ categories[loop.index] }}</a></td>
+								<td class="summary_amount"></td>
+								<td class="summary_approved"></td>
+{% endif %}
 							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			{% endfor %}
+{% endfor %}
+						</tbody>
+					</table>
 
-			<div id="buttons" class="form_item">
-				<input type="submit" value="Approve" />
+					<div id="buttons" class="form_item">
+						<input type="submit" value="Approve" />
+					</div>
+				</form>
 			</div>
-		</form>
-	</div>
 {% endblock %}
 
 {% block javascripts %}
-	{{ parent() }}
-
-	<script type="text/javascript">
-		$(function() {
-			SelectYear();
-			$("#fiscalyear").change(function (){
-				SelectYear();
-			});
-		});
-		
-		function budgetExport() {
+{{ parent() }}
+		<script type="text/javascript">
 			var url = window.location.href;
 			url = url.slice(0, url.lastIndexOf('/'));
-			window.location.replace(url + "/budget-export");
-		}
-	</script>
+
+			$(function() {
+				$("#fiscalyear").change(function (){
+					window.location.replace(url + "/budget-confirm?year=" + $(this).val());
+				});
+			});
+
+			function budgetExport() {
+				window.location.replace(url + "/budget-export");
+			}
+		</script>
 {% endblock %}

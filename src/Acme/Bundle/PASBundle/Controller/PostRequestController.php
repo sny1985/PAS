@@ -14,6 +14,7 @@ class PostRequestController extends Controller
 	{
 		$action = "submit";
 		$em = $this->getDoctrine()->getManager();
+		$hasInvoice = 0;
 		$postRequest = new PostRequest();
 		$preApproval = 0;
 		$this->user = $this->getUser();
@@ -97,6 +98,7 @@ class PostRequestController extends Controller
 						->add('swiftCode', 'text', array('label' => 'Swift Code:', 'required' => false))
 						->add('routingNumber', 'text', array('label' => 'Routing Number:', 'required' => false))
 						->add('contactEmail', 'text', array('label' => 'Contact Email (if known):', 'required' => false))
+						->add('hasInvoice', 'choice', array('choices' => array(0 => 'No', 1 => 'Yes'), 'empty_value' => false, 'expanded' => true, 'label' => 'Has Invoice?', 'preferred_choices' => array($hasInvoice)))
 						->add('invoice', 'file', array('label' => 'Invoice:', 'required' => false))
 						->add('invoicePath', 'hidden', array('data' => $postRequest->getInvoicePath()))
 						->add('budget', 'hidden', array('data' => null))
@@ -147,6 +149,7 @@ class PostRequestController extends Controller
 					$oldRequest->setSwiftCode($postRequest->getSwiftCode());
 					$oldRequest->setRoutingNumber($postRequest->getRoutingNumber());
 					$oldRequest->setContactEmail($postRequest->getContactEmail());
+					$oldRequest->setHasInvoice($postRequest->getHasInvoice());
 					$oldRequest->setInvoicePath($postRequest->getInvoicePath());
 					$oldRequest->setBudget($postRequest->getBudget());
 					$oldRequest->setLevel($postRequest->getLevel());

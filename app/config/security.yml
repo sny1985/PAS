@@ -44,7 +44,7 @@ security:
     access_control:
         - { path: ^/user, roles: ROLE_ADMIN }
         - { path: ^/budget-request, roles: ROLE_REQUESTER }
-        - { path: ^/budget-confirm, roles: ROLE_CFO }
+        - { path: ^/budget-confirm, roles: ROLE_APPROVER }
         - { path: ^/pre-request, roles: ROLE_REQUESTER }
         - { path: ^/budget-check, roles: ROLE_REQUESTER }
         - { path: ^/pre-approve, roles: ROLE_APPROVER }

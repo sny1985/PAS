@@ -27,6 +27,13 @@ class BudgetRequest
 	protected $holder;
 
 	/**
+	* @ORM\Column(type="smallint")
+	* @Assert\NotNull(message="Request Type should not be null.")
+	* @Assert\Range(min="0", max="1")
+	*/
+	protected $requestType;
+
+	/**
 	* @ORM\Column(name="bcid", type="smallint")
 	* @Assert\NotNull(message="Budget Category should not be null.")
 	* @Assert\Range(min="0")
@@ -114,6 +121,14 @@ class BudgetRequest
 
 	public function setHolder($holder) {
 		$this->holder = $holder;
+	}
+
+	public function getRequestType() {
+		return $this->requestType;
+	}
+
+	public function setRequestType($requestType) {
+		$this->requestType = $requestType;
 	}
 
 	public function getCategory() {

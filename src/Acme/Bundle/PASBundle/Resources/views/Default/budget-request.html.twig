@@ -1,105 +1,93 @@
 {% extends '::base.html.twig' %}
 
-{% block title %}Budget Request Form{% endblock %}
+{% block title %}Latest Estimation / Budget Request Form{% endblock %}
 
 {% block main %}
-	<div id="heading">
-		<h3>Budget Request Form</h3>
-	</div>
-
-	<div id="main">
-		<h4>To request budget, please fill out this form.</h4>
-		<form id="budget_request_form" class="bda_form" action="{{ path('pas_budget_request_form') }}" method="post" {{ form_enctype(form) }}>
-			{{ form_errors(form) }}
-
-			{{ form_row(form.bid) }}
-
-			<div id="holder" class="form_item">
-				{{ form_label(form.holder) }}<br />
-				{{ form_errors(form.holder) }}
-				{{ form_widget(form.holder) }}
+			<div id="heading">
+				<h3>Latest Estimation / Budget Request Form</h3>
 			</div>
-
-			<div id="category" class="form_item">
-				{{ form_label(form.category) }}<br />
-				{{ form_errors(form.category) }}
-				{{ form_widget(form.category) }}
+			<div id="main">
+				<h4>To submit latest estimation or request budget, please fill out this form item by item.</h4>
+				<br />
+				<form id="budget_request_form" class="bda_form" action="{{ path('pas_budget_request_form') }}" method="post" {{ form_enctype(form) }}>
+				{{ form_errors(form) }}
+				{{ form_row(form.bid) }}
+					<div id="holder" class="form_item">
+						{{ form_label(form.holder) }}<br />
+						{{ form_errors(form.holder) }}
+						{{ form_widget(form.holder) }}
+					</div>
+					<div id="request_type" class="form_item">
+						{{ form_label(form.requestType) }}<br />
+						{{ form_errors(form.requestType) }}
+						{{ form_widget(form.requestType) }}
+					</div>
+					<div id="category" class="form_item">
+						{{ form_label(form.category) }}<br />
+						{{ form_errors(form.category) }}
+						{{ form_widget(form.category) }}
+					</div>
+					<div id="startdate" class="form_item">
+						{{ form_label(form.startmonth) }}<br />
+						{{ form_errors(form.startmonth) }}
+						{{ form_widget(form.startmonth) }}
+						{{ form_errors(form.startyear) }}
+						{{ form_widget(form.startyear) }}
+					</div>
+					<div id="enddate" class="form_item">
+						{{ form_label(form.endmonth) }}<br />
+						{{ form_errors(form.endmonth) }}
+						{{ form_widget(form.endmonth) }}
+						{{ form_errors(form.endyear) }}
+						{{ form_widget(form.endyear) }}
+					</div>
+					<div id="abstract" class="form_item">
+						{{ form_label(form.abstract) }}<br />
+						{{ form_errors(form.abstract) }}
+						{{ form_widget(form.abstract) }}
+					</div>
+					<div id="details" class="form_item">
+						{{ form_label(form.details) }}<br />
+						{{ form_errors(form.details) }}
+						{{ form_widget(form.details) }}
+					</div>
+					<div id="amount" class="form_item">
+						{{ form_label(form.amount) }}<br />
+						{{ form_errors(form.amount) }}
+						{{ form_widget(form.amount) }}
+					</div>
+					<div id="curtype" class="form_item">
+						{{ form_label(form.curtype) }}<br />
+						{{ form_errors(form.curtype) }}
+						{{ form_widget(form.curtype) }}
+					</div>
+					<div id="usd_amount" class="form_item">
+						$<span></span> USD
+					</div>
+				{{ form_row(form.approved) }}
+					<input type="hidden" name="action" value="{% if action != false %}{{ action }}{% endif %}">
+					{{ form_rest(form) }}
+					<div id="buttons" class="form_item">
+						<input type="submit" value="Submit" />
+					</div>
+				</form>
 			</div>
-
-			<div id="startdate" class="form_item">
-				{{ form_label(form.startmonth) }}<br />
-				{{ form_errors(form.startmonth) }}
-				{{ form_widget(form.startmonth) }}
-				{{ form_errors(form.startyear) }}
-				{{ form_widget(form.startyear) }}
-			</div>
-
-			<div id="enddate" class="form_item">
-				{{ form_label(form.endmonth) }}<br />
-				{{ form_errors(form.endmonth) }}
-				{{ form_widget(form.endmonth) }}
-				{{ form_errors(form.endyear) }}
-				{{ form_widget(form.endyear) }}
-			</div>
-
-			<div id="abstract" class="form_item">
-				{{ form_label(form.abstract) }}<br />
-				{{ form_errors(form.abstract) }}
-				{{ form_widget(form.abstract) }}
-			</div>
-
-			<div id="details" class="form_item">
-				{{ form_label(form.details) }}<br />
-				{{ form_errors(form.details) }}
-				{{ form_widget(form.details) }}
-			</div>
-
-			<div id="amount" class="form_item">
-				{{ form_label(form.amount) }}<br />
-				{{ form_errors(form.amount) }}
-				{{ form_widget(form.amount) }}
-			</div>
-
-			<div id="curtype" class="form_item">
-				{{ form_label(form.curtype) }}<br />
-				{{ form_errors(form.curtype) }}
-				{{ form_widget(form.curtype) }}
-			</div>
-
-			<div id="usd_amount" class="form_item">
-				$<span></span> USD
-			</div>
-
-			{{ form_row(form.approved) }}
-
-			<input type="hidden" name="action" value="{% if action != false %}{{ action }}{% endif %}">
-
-			{{ form_rest(form) }}
-
-			<div id="buttons" class="form_item">
-				<input type="submit" value="Submit" />
-			</div>
-		</form>
-	</div>
 {% endblock %}
 
 {% block javascripts %}
-	{{ parent() }}
-
-	<script type="text/javascript">
-		$(function() {
-			ConvertCurrency();
-
-			$("#form_amount, #form_curtype").change(function() {
+{{ parent() }}
+		<script type="text/javascript">
+			$(function() {
 				ConvertCurrency();
+				$("#form_amount, #form_curtype").change(function() {
+					ConvertCurrency();
+				});
+				$("#home_btn").click(function(e) {
+					var res = window.confirm("Leave this form?");
+					if (res == false) {
+						e.preventDefault();
+					}
+				});
 			});
-
-			$("#home_btn").click(function(e) {
-				var res = window.confirm("Leave this form?");
-				if (res == false) {
-					e.preventDefault();
-				}
-			});
-		});
-	</script>
+		</script>
 {% endblock %}

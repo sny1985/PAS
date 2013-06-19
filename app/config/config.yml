@@ -55,3 +55,8 @@ doctrine:
 swiftmailer:
     transport:  "sendmail"
     spool:     { type: memory }
+
+services:
+    currency_converter:
+        class:     Acme\Bundle\PASBundle\Services\CurrencyConverter
+        arguments: [ @doctrine ]

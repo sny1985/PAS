@@ -18,6 +18,7 @@ class BudgetRequestController extends Controller
 		$budgetRequest = new BudgetRequest();
 		$em = $this->getDoctrine()->getManager();
 		$id = null;
+		$requestType = 2;
 		$this->user = $this->getUser();
 
 		// get category list from database
@@ -59,6 +60,7 @@ class BudgetRequestController extends Controller
 		$form = $this->createFormBuilder($budgetRequest)
 						->add('bid', 'hidden')
 						->add('holder', 'choice', array('choices' => array($this->user->getUid() => $this->user->getUsername()), 'empty_value' => false, 'label' => 'Budget Holder:'))
+						->add('requestType', 'choice', array('choices' => array(1 => 'Latest Estimation Request', 2 => 'Budget Request'), 'empty_value' => 'Choose one request type', 'label' => 'Request Type:', 'preferred_choices' => array('empty_value')))
 						->add('category', 'choice', array('choices' => $category_array, 'empty_value' => 'Choose one category', 'label' => 'Budget Category (class):', 'preferred_choices' => array('empty_value')))
 						->add('startmonth', 'choice', array('choices' => $month_array, 'empty_value' => 'Choose one month', 'label' => 'Starting Date of Activity:', 'preferred_choices' => array('empty_value')))
 						->add('startyear', 'choice', array('choices' => $year_array, 'empty_value' => 'Choose one month', 'preferred_choices' => array('empty_value')))
@@ -87,6 +89,7 @@ class BudgetRequestController extends Controller
 				if (isset($action) && $action == 'edit') {
 					// update database
 					$oldRequest = $em->getRepository('AcmePASBundle:BudgetRequest')->findOneByBid($budgetRequest->getBid());
+					$oldRequest->setRequestType($budgetRequest->getRequestType());
 					$oldRequest->setCategory($budgetRequest->getCategory());
 					$oldRequest->setStartdate($budgetRequest->getStartdate());
 					$oldRequest->setEnddate($budgetRequest->getEnddate());
