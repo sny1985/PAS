@@ -36,7 +36,7 @@ class BudgetRequestController extends Controller
 		}
 
 		// if there is a query and the action is query, then show record; otherwise edit the record in the form
-			$param = $req->query->all();
+		$param = $req->query->all();
 		if (isset($param) && isset($param['id']) && isset($param['action'])) {
 			$id = $param['id'];
 			$action = $param['action'];
@@ -46,7 +46,7 @@ class BudgetRequestController extends Controller
 				if ($budgetRequest && $budgetRequest->getHolder() != $this->user->getUid()) {
 					throw new HttpException(403, 'You are not allowed to change this request.');
 				}
-			
+
 				if ($action == 'edit') {
 					$budgetRequest->getActivityDuration();
 				}

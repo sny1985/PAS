@@ -18,12 +18,15 @@ class BudgetConfirmationController extends Controller
 		$cc = $this->get('currency_converter');
 		$content = null;
 		$em = $this->getDoctrine()->getManager();
+		$type = 2;
 		$this->user = $this->getUser();
+		$year = date('Y');
 
 		// get category list from database
-		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
-		foreach ($categories as $key => $value) {
-			$category_array[$key + 1] = $value->getName();
+		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findBy(array(), array('name' => 'ASC'));
+		$category_array = array();
+		foreach ($categories as $category) {
+			$category_array[$category->getBcid()] = $category->getName();
 		}
 
 		// get currency type list from database and get the rate to USD
@@ -38,16 +41,17 @@ class BudgetConfirmationController extends Controller
 		// if there is only a year in query, show summary; if there is a cid as well, show details
 		$param = $req->query->all();
 		if (isset($param)) {
+			if (isset($param['type'])) {
+				$type = $param['type'];
+			}
 			if (isset($param['year'])) {
 				$year = $param['year'];
-			} else {
-				$year = date('Y');
 			}
 
 			// get the budget requests in specific year
 			$start = new \DateTime($year . '-01-01');
 			$end = new \DateTime($year . '-12-31');
-			$budgetRequests = $em->createQuery('SELECT br FROM AcmePASBundle:BudgetRequest br WHERE br.startdate >= :start and br.startdate <= :end')->setParameters(array('start' => $start, 'end' => $end))->getResult();
+			$budgetRequests = $em->createQuery('SELECT br FROM AcmePASBundle:BudgetRequest br WHERE br.startdate >= :start and br.startdate <= :end and br.requestType = :type')->setParameters(array('start' => $start, 'end' => $end, 'type' => $type))->getResult();
 
 			if (isset($param['cid']) && isset($param['year'])) {
 				$cid = $param['cid'];
@@ -62,17 +66,17 @@ class BudgetConfirmationController extends Controller
 					}
 				}
 
-				$content = $this->renderView('AcmePASBundle:Default:budget-confirm-details.html.twig', array('cid' => $cid, 'categories' => $category_array, 'year' => $year, 'requests' => $budgets, 'sum' => $sum));
+				$content = $this->renderView('AcmePASBundle:Default:budget-confirm-details.html.twig', array('cid' => $cid, 'categories' => $category_array, 'type' => $type, 'year' => $year, 'requests' => $budgets, 'sum' => $sum));
 			} else {
 				$budgets = array();
 				$budgets["sum"] = 0;
-				$budgets["categories"] = array();
-				$unapproved_array = array();
+				$budgets["categories"] = array_keys($category_array);
+				$cat = array();
 				foreach ($budgetRequests as $request) {
 					// record categories
 					$category = $request->getCategory();
-					if (array_search($category, $budgets["categories"]) == false) {
-						array_push($budgets["categories"], $category);
+					if (array_search($category, $cat) == false) {
+						array_push($cat, $category);
 					}
 					// find the date of last request in each category
 					if (!isset($budgets[$category]['lastdate']) || ($budgets[$category]['lastdate']->format('U') < $request->getDate()->format('U'))) {
@@ -89,35 +93,56 @@ class BudgetConfirmationController extends Controller
 					// find out if approved or not
 					$budgets[$category]['approved'] = $request->getApproved();
 					// find unapproved requests
-					if (!$request->getApproved()) {
-						array_push($unapproved_array, $request->getBid());
-					}
 				}
 
-				$content = $this->renderView('AcmePASBundle:Default:budget-confirm-summary.html.twig', array('categories' => $category_array, 'year' => $year, 'requests' => $budgets));
+				$content = $this->renderView('AcmePASBundle:Default:budget-confirm-summary.html.twig', array('categories' => $category_array, 'type' => $type, 'year' => $year, 'requests' => $budgets));
 			}
 		}
 		
 		// update approved field of unapproved records, and send emails to these just approved requesters
-		// APPROVE BUDGETS ONLY IN SELECTED FY ???
 		if ($req->isMethod('POST')) {
-			// get sender's email address
-			$sender = $em->getRepository('AcmePASBundle:User')->findOneByUid(0)->getEmail();
-			// get vtm
+			$to_approve = array();
+			$post = $req->request->all();
+
+			if (isset($post['year'])) {
+				$year = $post['year'];
+			}
+			$start = new \DateTime($year . '-01-01');
+			$end = new \DateTime($year . '-12-31');
+
+			if (isset($post['categories_to_approve'])) {
+				foreach ($post['categories_to_approve'] as $bcid) {
+					$budgetRequests = $em->createQuery('SELECT br FROM AcmePASBundle:BudgetRequest br WHERE br.category = :bcid and br.startdate >= :start and br.startdate <= :end and br.requestType = 2 and br.approved = 0')->setParameters(array('bcid' => $bcid, 'start' => $start, 'end' => $end))->getResult();
+					foreach ($budgetRequests as $budgetRequest) {
+						array_push($to_approve, $budgetRequest);
+					}
+				}
+			} else if (isset($post['requests_to_approve'])) {
+				foreach ($post['requests_to_approve'] as $bid) {
+					$budgetRequests = $em->createQuery('SELECT br FROM AcmePASBundle:BudgetRequest br WHERE br.bid = :bid and br.startdate >= :start and br.startdate <= :end and br.requestType = 2 and br.approved = 0')->setParameters(array('bid' => $bid, 'start' => $start, 'end' => $end))->getResult();
+					foreach ($budgetRequests as $budgetRequest) {
+						array_push($to_approve, $budgetRequest);
+					}
+				}
+			}
+
+			$sender = $em->getRepository('AcmePASBundle:User')->findOneByUid("0");
+			$admin = $em->getRepository('AcmePASBundle:User')->findOneByRole("admin");
 			$vtm = $em->getRepository('AcmePASBundle:User')->findOneByRole("vtm");
 
-			foreach ($unapproved_array as $unapproved) {
-				$q = $em->createQuery("update AcmePASBundle:BudgetRequest br set br.approved = 1 where br.bid = $unapproved")->execute();
+			// approve all selected requests and send notice email
+			foreach ($to_approve as $unapproved) {
+				$q = $em->createQuery("UPDATE AcmePASBundle:BudgetRequest br SET br.approved = 1 WHERE br.bid = :bid")->setParameters(array('bid' => $unapproved->getBid()))->execute();
 
-				$user = $em->createQuery("select u from AcmePASBundle:User u, AcmePASBundle:BudgetRequest br where u.uid = br.holder and br.bid = $unapproved")->execute();
+				$user = $em->createQuery("select u from AcmePASBundle:User u, AcmePASBundle:BudgetRequest br where u.uid = br.holder and br.bid = :bid")->setParameters(array('bid' => $unapproved))->execute();
 				$message = \Swift_Message::newInstance()
 							->setSubject('BDA Expense Budget Approval Notice Email')
-							->setFrom($sender)
+							->setFrom($sender->getEmail())
 							->setTo($user[0]->getEmail())
 							->setCc($vtm->getEmail())
-							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $user[0], 'role' => 'requester', 'type' => 'BDA Expense Budget Approval', 'link' => $this->generateUrl('pas_budget_request_status', array('action' => 'query', 'id' => $unapproved), true))), 'text/html');
-					// show submission result
-					$this->get('mailer')->send($message);
+							->setCc($admin->getEmail())
+							->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $user[0], 'role' => 'requester', 'type' => 'BDA Expense Budget Approval', 'link' => $this->generateUrl('pas_budget_request_status', array('action' => 'query', 'id' => $unapproved->getBid()), true))), 'text/html');
+				$this->get('mailer')->send($message);
 			}
 
 			// redirect to success page

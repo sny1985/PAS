@@ -168,9 +168,6 @@
 					<a href="{{ path('pas_post_request_form', {'prid': id}) }}">Submit Payment Request</a> &nbsp; 
 {% endif %}
 {% endif %}
-{% if status == 1 %}
-					<a href="{{ path('pas_payment_exporting', {'id': id}) }}">Export Expense Budget Progress</a>
-{% endif %}
 				</div>
 {% elseif action == 'approve' %}
 {% if role == 'vtm' %}
@@ -205,9 +202,7 @@
 {{ parent() }}
 		<script type="text/javascript">
 			function edit(id) {
-				var url = window.location.href;
-				url = url.slice(0, url.lastIndexOf('/'));
-				window.location.replace(url + "/pre-request?id=" + id + "&action=" + "edit");
+				window.location.replace("pre-request?id=" + id + "&action=" + "edit");
 			}
 		</script>
 {% endblock%}

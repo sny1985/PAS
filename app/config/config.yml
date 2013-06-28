@@ -60,3 +60,7 @@ services:
     currency_converter:
         class:     Acme\Bundle\PASBundle\Services\CurrencyConverter
         arguments: [ @doctrine ]
+
+    notice_mailer:
+        class:     Acme\Bundle\PASBundle\Services\NoticeMailer
+        arguments: [ @doctrine ]

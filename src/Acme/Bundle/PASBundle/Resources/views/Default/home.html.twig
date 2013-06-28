@@ -15,10 +15,16 @@
 			<div id="main">
 				<div id="home_nav">
 					<ul>
-						<li><a href="{{ path('pas_budget_request_form') }}">Latest Estimation / Budget Request</a></li>
+						<h3>Budget Request</h3>
+						<li><a href="{{ path('pas_budget_request_form') }}">Estimation/Budget Request</a></li>
 						<li><a href="{{ path('pas_budget_confirmation_form') }}">Budget Confirmation</a></li>
+						<li><a href="{{ path('pas_budget_requests_list') }}">Budget Requests List</a></li>
+						<h3>Pre-payment Request</h3>
 						<li><a href="{{ path('pas_pre_request_form') }}">Pre-payment Request</a></li>
+						<li><a href="{{ path('pas_pre_requests_list') }}">Pre-payment Requests List</a></li>
+						<h3>Payment Request</h3>
 						<li><a href="{{ path('pas_post_request_form') }}">Payment Request</a></li>
+						<li><a href="{{ path('pas_post_requests_list') }}">Payment Requests List</a></li>
 					</ul>
 				</div>
 			</div>

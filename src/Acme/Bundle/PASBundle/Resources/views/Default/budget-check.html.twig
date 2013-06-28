@@ -9,15 +9,16 @@
 				<h3>Budget Check Page</h3>
 			</div>
 			<div id="main">
-				<form id="budget_check_form">
-					<select id="fiscalyear">
-						<option value="">Choose One Fiscal Year</option>
-{% for year in years %}
-						<option value="{{ year }}" {% if loop.index == loop.last %}selected{% endif %} >{{ year }}</option>
+				<form id="budget_check_form" class="bda_form">
+					<div class="form_item">
+						<label for="fiscalyear">Choose Fiscal Year: </label><br />
+						<select id="fiscalyear">
+							<option value="0" disabled="disabled">Choose One Fiscal Year</option>
+{% for i in 2012.."now"|date("Y")+1 %}
+							<option value="{{ i }}"{% if year == i %} selected="selected"{% endif %}>{{ i }}</option>
 {% endfor %}
-					</select>
-
-{% for year in years %}
+						</select>
+					</div>
 					<table id="{{ year }}" class="status summary">
 						<thead>
 							<tr>
@@ -29,24 +30,23 @@
 						</thead>
 						<tfoot>
 							<tr>
-								<td class="check_no">Total</td>
+								<td class="check_no"></td>
 								<td></td>
-								<td class="check_amount">{{ budgets[year]['sum'] }}</td>
+								<td class="check_amount">Total Amount: {{ budgets['sum'] }}</td>
 								<td></td>
 							</tr>
 						</tfoot>
 						<tbody>
-{% for cat in budgets[year]['categories'] %}
+{% for cat in budgets['categories'] %}
 							<tr>
 								<td class="check_no">{{ loop.index }}</td>
 								<td class="check_category">{{ categories[cat] }}</td>
-								<td class="check_amount">{{ budgets[year][cat]['amount'] }}</td>
+								<td class="check_amount">{{ budgets[cat]['amount'] }}</td>
 								<td class="check_selected"><input type="radio" name="selected_budget" value="{{ year }}-{{ cat }}" required="required" /></td>
 							</tr>
 {% endfor %}
 						</tbody>
 					</table>
-{% endfor %}
 					<div id="buttons" class="form_item">
 						<input type="submit" value="Done" />
 					</div>
@@ -58,9 +58,8 @@
 {{ parent() }}
 		<script type="text/javascript">
 			$(function() {
-				SelectYear();
 				$("#fiscalyear").change(function (){
-					SelectYear();
+					window.location.replace("budget-check?year=" + $(this).val());
 				});
 				$("#budget_check_form").submit(function(event) {
 					event.preventDefault();

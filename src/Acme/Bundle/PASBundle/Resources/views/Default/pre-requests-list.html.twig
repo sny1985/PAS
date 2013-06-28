@@ -1,0 +1,61 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Pre-payment Requests List{% endblock %}
+
+{% block main %}
+			<div id="heading">
+				<h3>Pre-payment Requests List</h3>
+			</div>
+			<div id="main">
+				<form class="bda_form">
+					<div class="form_item">
+						<label for="fiscalyear">Choose Fiscal Year: </label><br />
+						<select id="fiscalyear">
+							<option value="0" disabled="disabled">Choose One Fiscal Year</option>
+{% for i in 2012.."now"|date("Y")+1 %}
+							<option value="{{ i }}"{% if year == i %} selected="selected"{% endif %}>{{ i }}</option>
+{% endfor %}
+						</select>
+					</div>
+					<table id="{{ year }}" class="status list">
+						<thead>
+							<tr>
+								<th class="list_no">Request No.</th>
+								<th class="list_amount">Amount</th>
+								<th class="list_date">Submission Date</th>
+								<th class="list_status">Status</th>
+								<th class="list_link">Link</th>
+							</tr>
+						</thead>
+						<tbody>
+{% for req in requests %}
+							<tr>
+								<td class="list_no">{{ req.prid }}</td>
+								<td class="list_amount">{{ req.amount|number_format(2, '.') }} {{ currencies['code'][req.curtype] }}</td>
+								<td class="list_date">{{ req.date|date("m/d/Y") }}</td>
+								<td class="list_status">
+{% if (req.chairId != 0 and req.chairApproved != 1) or (req.cfoId != 0 and req.cfoApproved != 1) or (req.presidentId != 0 and req.presidentApproved != 1) or (req.secretaryId != 0 and req.secretaryApproved != 1) %}
+									Waiting for approval
+{% else %}
+									Approved
+{% endif %}
+								</td>
+								<td class="list_link"><a href="{{ path('pas_pre_request_status', {'id': req.prid, 'action': 'query'}) }}">Review</a></td>
+							</tr>
+{% endfor %}
+						</tbody>
+					</table>
+				</form>
+			</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+		<script type="text/javascript">
+			$(function() {
+				$("#fiscalyear").change(function (){
+					window.location.replace("pre-requests-list?year=" + $(this).val());
+				});
+			});
+		</script>
+{% endblock %}

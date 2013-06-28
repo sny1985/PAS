@@ -63,14 +63,18 @@
 					</tr>
 					<tr>
 						<td class="status_tag">Amount:</td>
-						<td class="status_content">{{ request.amount|number_format(2, '.', '') }} {{ currencies['code'][request.curtype] }}</td>
+						<td class="status_content">{{ request.amount|number_format(2, '.', ',') }} {{ currencies['code'][request.curtype] }}</td>
 					</tr>
-{% if request.actualAmount > 0 %}
 					<tr>
 						<td class="status_tag">Actual Amount:</td>
-						<td class="status_content">{{ request.actualAmount|number_format(2, '.', '') }} USD</td>
-					</tr>
+						<td class="status_content">
+{% if request.actualAmount > 0 %}
+							{{ request.actualAmount|number_format(2, '.', ',') }} USD
+{% else %}
+							N/A
 {% endif %}
+						</td>
+					</tr>
 {% if request.paymentMethod == 1 %}
 					<tr>
 						<td class="status_tag">Payment Method:</td>
@@ -137,7 +141,7 @@
 					</tr>
 					<tr>
 						<td class="status_tag">Pre-request No.:</td>
-						<td class="status_content">{{ "%08d"|format(request.prid) }}</td>
+						<td class="status_content"><a href="{{ path('pas_pre_request_status', {'id': request.prid, 'action': 'query'}) }}">{{ "%08d"|format(request.prid) }}</a></td>
 					</tr>
 					<tr>
 						<td class="status_tag">Invoice:</td>
@@ -297,9 +301,7 @@
 {{ parent() }}
 		<script type="text/javascript">
 			function edit(id) {
-				var url = window.location.href;
-				url = url.slice(0, url.lastIndexOf('/'));
-				window.location.replace(url + "/post-request?id=" + id + "&action=" + "edit");
+				window.location.replace("post-request?id=" + id + "&action=" + "edit");
 			}
 		</script>
 {% endblock%}

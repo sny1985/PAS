@@ -26,6 +26,10 @@
 						<td class="status_content">{{ requester.email }}</td>
 					</tr>
 					<tr>
+						<td class="status_tag">Request Type:</td>
+						<td class="status_content">{% if categories[request.requestType] == 1 %}Latest Estimation{% else %}Budget Request{% endif %}</td>
+					</tr>
+					<tr>
 						<td class="status_tag">Budget Category:</td>
 						<td class="status_content">{{ categories[request.category] }}</td>
 					</tr>
@@ -59,7 +63,7 @@
 					</tr>
 					<tr>
 						<td class="status_tag">Amount:</td>
-						<td class="status_content">{{ request.amount|number_format(2, '.', '') }}</td>
+						<td class="status_content">{{ request.amount|number_format(2, '.', ',') }}</td>
 					</tr>
 					<tr>
 						<td class="status_tag">Currency Type:</td>
@@ -97,9 +101,7 @@
 {% block javascripts %}
 		<script type="text/javascript">
 			function edit(id) {
-				var url = window.location.href;
-				url = url.slice(0, url.lastIndexOf('/'));
-				window.location.replace(url + "/budget-request?id=" + id + "&action=" + "edit");
+				window.location.replace("budget-request?id=" + id + "&action=" + "edit");
 			}
 		</script>
 {% endblock%}

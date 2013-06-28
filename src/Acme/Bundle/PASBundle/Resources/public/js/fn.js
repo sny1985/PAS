@@ -1,3 +1,20 @@
+function GetCurrentPath() {
+	var url = window.location.href;
+	url = url.slice(0, url.lastIndexOf('/'));
+	return url;
+}
+
+function ChangeAllCheckboxes() {
+	$("#select_all").change(function (){
+		$all = $("input[type='checkbox']");
+		if ($(this).is(":checked")) {
+			$all.prop('checked', true);
+		} else {
+			$all.prop('checked', false);
+		}
+	});
+}
+
 function SelectLevel(amount) {
 	var $unPreApproved = $("#form_preApproval_1");
 	if ($unPreApproved.length && $unPreApproved.prop("checked")) {
@@ -60,9 +77,8 @@ function ConvertCurrency() {
 
 		// use JSON to get converted currency
 		if (amount && curtype) {
-			$.get("./currency_converter.php", {"amount": amount, "curtype": curtype})
-			.done(function(response) {
-				$("#usd_amount span").html(response.usd.toFixed(2));
+			$.get("currency_rate", {"amount": amount, "curtype": curtype}).done(function(response) {
+				$("#usd_amount span").html(response.amount.toFixed(2));
 				if (curtype != "USD") {
 					$("#usd_amount").show();
 				} else {

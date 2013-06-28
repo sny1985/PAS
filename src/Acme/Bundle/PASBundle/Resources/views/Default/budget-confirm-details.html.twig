@@ -18,43 +18,71 @@
 				<h3>Budget Details: {{ categories[cid] }}</h3>
 			</div>
 			<div id="main">
-				<table id="budget_details">
-					<thead>
-						<tr>
-							<th class="details_no">No.</th>
-							<th class="details_schedule">Starting Date of Activity</th>
-							<th class="details_schedule">Ending Date of Activity</th>
-							<th class="details_abstract">Abstract of Activity</th>
-							<th class="details_details">Details</th>
-							<th class="details_amount">Amount (USD)</th>
-						</tr>
-					</thead>
-					<tfoot>
-						<tr>
-							<td class="details_no">Total</td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td class="details_amount"></td>
-						</tr>
-					</tfoot>
-					<tbody>
+				<form id="budget_confirmation_form" class="bda_form" action="{{ path('pas_budget_confirmation_form') }}" method="post" form_enctype="">
+					<input type="hidden" name="year" value="{{ year }}" />
+					<table id="budget_details">
+						<thead>
+							<tr>
+								<th class="details_no">No.</th>
+								<th class="details_schedule">Starting Date of Activity</th>
+								<th class="details_schedule">Ending Date of Activity</th>
+								<th class="details_abstract">Abstract of Activity</th>
+								<th class="details_details">Details</th>
+								<th class="details_amount">Amount (USD)</th>
+								<th class="details_approve">Approve</th>
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<td class="details_no"></td>
+								<td class="details_schedule"></td>
+								<td class="details_schedule"></td>
+								<td class="details_abstract"></td>
+								<td class="details_details"></td>
+								<td class="details_amount">Total Amount: {{ sum|number_format(2, '.', ',') }}</td>
+								<td class="details_approve">Select All<br /><input type="checkbox" id="select_all" value="all" /></td>
+							</tr>
+						</tfoot>
+						<tbody>
 {% for req in requests %}
-						<tr>
-							<td class="details_no">{{ loop.index }}</td>
-							<td class="details_schedule">{{ req.startdate|date("m/d/Y") }}</td>
-							<td class="details_schedule">{{ req.enddate|date("m/d/Y") }}</td>
-							<td class="details_abstract">{{ req.abstract }}</td>
-							<td class="details_details">{{ req.details }}</td>
-							<td class="details_amount">{{ req.amount }}</td>
-						</tr>
+							<tr>
+								<td class="details_no">{{ loop.index }}</td>
+								<td class="details_schedule">{{ req.startdate|date("m/d/Y") }}</td>
+								<td class="details_schedule">{{ req.enddate|date("m/d/Y") }}</td>
+								<td class="details_abstract">{{ req.abstract }}</td>
+								<td class="details_details">{{ req.details }}</td>
+								<td class="details_amount">{{ req.amount|number_format(2, '.', ',') }}</td>
+								<td class="details_approve">{% if req.approved == 1 %}Approved{% else %}<input type="checkbox" name="requests_to_approve[]" value="{{ req.bid }}" />{% endif %}</td>
+							</tr>
 {% endfor %}
-					</tbody>
-				</table>
+						</tbody>
+					</table>
+					<br />
+					<div class="form_item" style="float: right;">
+						<input type="submit" value="Approve Selected Budgets" />
+					</div>
+					<div class="form_item" style="float: right;">
+						<input id="budgests_export" type="button" value="Export FY{{ year }}-{{ categories[cid] }} Budgets Report" onclick="budgetExport();" />
+					</div>
+					<div class="clearfix">
+					</div>
+				</form>
 				<div id="links">
 					<a href="{{ path('pas_budget_confirmation_form', {'year': year}) }}">Back</a> &nbsp; 
 				</div>
 			</div>
 {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+		<script type="text/javascript">
+			$(function() {
+				ChangeAllCheckboxes();
+			});
+
+			function budgetExport() {
+				window.location.replace("budget-export?type={{ type }}&year={{ year }}&cid={{ cid }}");
+			}
+		</script>
 {% endblock %}

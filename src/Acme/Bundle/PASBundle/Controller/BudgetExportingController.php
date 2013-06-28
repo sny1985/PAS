@@ -6,18 +6,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Acme\Bundle\PASBundle\Entity\BudgetRequest;
 use Acme\Bundle\PASBundle\Entity\User;
+use Acme\Bundle\PASBundle\Services\CurrencyConverter;
 
 class BudgetExportingController extends Controller
 {
 	public function exportAction(Request $req)
 	{
+		$cc = $this->get('currency_converter');
+		$cid = 0;
 		$em = $this->getDoctrine()->getManager();
+		$type = 2;
+		$year = date('Y');
 
-		// get category list from database
+		// get user list from database
 		$users = $em->getRepository('AcmePASBundle:User')->findAll();
 		$user_array = array();
-		foreach ($users as $user) {
-			$user_array[$user->getUid()] = $user->getUsername();
+		foreach ($users as $key => $value) {
+			$user_array[$key + 1] = $value->getUserName();
 		}
 
 		// get category list from database
@@ -27,23 +32,36 @@ class BudgetExportingController extends Controller
 			$category_array[$key + 1] = $value->getName();
 		}
 
-		// get currency type list from database and get the rate to USD
+		// get currency list from database and get the rate to USD
 		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
 		foreach ($currencies as $key => $value) {
 			$currency_array['name'][$key + 1] = $value->getName();
 			$currency_array['code'][$key + 1] = $value->getCode();
-			// get rate from google
-			$currency_array['rate'][$key + 1] = 1;
-			$url = "http://www.google.com/ig/calculator?hl=en&q=1" . $value->getCode() . "=?USD";
-			$result = file_get_contents($url);
-			$result = json_decode(preg_replace('/(\w+):/i', '"\1":', $result));
-			if ($result->icc == true) {
-				$rs = explode(' ', $result->rhs);
-				$currency_array['rate'][$key + 1] = (double)$rs[0];
+			$cc->updateRate($value->getCode());
+			$currency_array['rate'][$key + 1] = $value->getRate();
+		}
+
+		$param = $req->query->all();
+		if (isset($param)) {
+			if (isset($param['type'])) {
+				$type = $param['type'];
+			}
+
+			if (isset($param['year'])) {
+				$year = $param['year'];
+			}
+
+			if (isset($param['cid'])) {
+				$cid = $param['cid'];
 			}
 		}
 
-		$budgetRequests = $em->getRepository('AcmePASBundle:BudgetRequest')->findAll();
+		// get the budget requests in specific year
+		$start = new \DateTime($year . '-01-01');
+		$end = new \DateTime($year . '-12-31');
+		$budgetRequests = $em->createQuery('SELECT br FROM AcmePASBundle:BudgetRequest br WHERE br.startdate >= :start and br.startdate <= :end and br.requestType = :type')->setParameters(array('start' => $start, 'end' => $end, 'type' => $type))->getResult();
+
+		$title = "FY " . $year .  ($type == 1 ? " Estimation" : " Budget Request") . " Report - " . ($cid == 0 ? "summary" : $category_array[$cid] . " details");
 
 		// create new PHPExcel object
 		$excelObj = $this->get('xls.service_xls5')->excelObj;
@@ -52,11 +70,10 @@ class BudgetExportingController extends Controller
 		$excelObj->getProperties()
 					->setCreator("Blu-ray Disc Association")
 					->setLastModifiedBy("Blu-ray Disc Association")
-					->setTitle("Expense Budget Report")
-					->setSubject("Expense Budget Report")
-					->setDescription("Expense Budget Report")
-					->setKeywords("office 2005 openxml php")
-					->setCategory("Expense Budget Report");
+					->setTitle($title)
+					->setSubject($title)
+					->setDescription($title)
+					->setCategory("Report");
 
 		// add table header
 		$excelObj->setActiveSheetIndex(0)
@@ -69,7 +86,7 @@ class BudgetExportingController extends Controller
 					->setCellValue("G1", "Details")
 					->setCellValue("H1", "Amount")
 					->setCellValue("I1", "Currency Type")
-					->setCellValue("J1", "Actual Amount (USD)")
+					->setCellValue("J1", "Amount (USD)")
 					->setCellValue("K1", "Submission Date")
 					->setCellValue("L1", "Approved?");
 
@@ -77,6 +94,9 @@ class BudgetExportingController extends Controller
 
 		// fill data
 		foreach ($budgetRequests as $budget) {
+			if ($cid != 0 && $budget->getCategory() != $cid) {
+				continue;
+			}
 			$excelObj->getActiveSheet()->setCellValue("A$row", $budget->getBid());
 			$excelObj->getActiveSheet()->setCellValue("B$row", $user_array[$budget->getHolder()]);
 			$excelObj->getActiveSheet()->setCellValue("C$row", $category_array[$budget->getCategory()]);
@@ -95,10 +115,13 @@ class BudgetExportingController extends Controller
 		// set active sheet index to the first sheet, so Excel opens this as the first sheet
 		$excelObj->setActiveSheetIndex(0);
 
+		$title = str_replace(' ', '_', $title);
+		$filename = $title . "_" . date('mdY');
+
 		// create the response and redirect output to a client’s web browser (Excel5)
 		$response = $this->get('xls.service_xls5')->getResponse();
 		$response->headers->set('Content-Type', 'application/vnd.ms-excel; charset=utf-8');
-		$response->headers->set("Content-Disposition", "attachment;filename=expense_budget_report_" . date('mdY') . ".xls");
+		$response->headers->set("Content-Disposition", "attachment;filename=" . $filename . ".xls");
 		$response->headers->set("Cache-Control", "max-age=0");
 		return $response;
 	}

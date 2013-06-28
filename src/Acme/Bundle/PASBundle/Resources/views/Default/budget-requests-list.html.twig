@@ -1,0 +1,69 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Budget Requests List{% endblock %}
+
+{% block main %}
+			<div id="heading">
+				<h3>Budget Requests List</h3>
+			</div>
+			<div id="main">
+				<form class="bda_form">
+					<div class="form_item" style="float: left;">
+						<label for="type">Choose Type: </label><br />
+						<select id="type">
+							<option value="0" disabled="disabled">Choose One Fiscal Year</option>
+							<option value="1"{% if type == 1 %} selected="selected"{% endif %}>Estimation</option>
+							<option value="2"{% if type != 1 %} selected="selected"{% endif %}>Budget Requests</option>
+						</select>
+					</div>
+					<div class="form_item" style="float: left;">
+						<label for="fiscalyear">Choose Fiscal Year: </label><br />
+						<select id="fiscalyear">
+							<option value="0" disabled="disabled">Choose One Fiscal Year</option>
+{% for i in 2012.."now"|date("Y")+1 %}
+							<option value="{{ i }}"{% if year == i %} selected="selected"{% endif %}>{{ i }}</option>
+{% endfor %}
+						</select>
+					</div>
+					<div class="clearfix">
+					</div>
+					<table id="{{ year }}" class="status list">
+						<thead>
+							<tr>
+								<th class="list_no">Request No.</th>
+								<th class="list_amount">Amount</th>
+								<th class="list_date">Submission Date</th>
+								<th class="list_status">Status</th>
+								<th class="list_link">Link</th>
+							</tr>
+						</thead>
+						<tbody>
+{% for req in requests %}
+							<tr>
+								<td class="list_no">{{ req.bid }}</td>
+								<td class="list_amount">{{ req.amount|number_format(2, '.') }} {{ currencies['code'][req.curtype] }}</td>
+								<td class="list_date">{{ req.date|date("m/d/Y") }}</td>
+								<td class="list_status">{% if req.approved == 1 %}Approved{% else %}Waiting for approval{% endif %}</td>
+								<td class="list_link"><a href="{{ path('pas_budget_request_status', {'id': req.bid, 'action': 'query'}) }}">Review</a></td>
+							</tr>
+{% endfor %}
+						</tbody>
+					</table>
+				</form>
+			</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+		<script type="text/javascript">
+			$(function() {
+				$("#type").change(function (){
+					window.location.replace("budget-requests-list?type=" + $(this).val() + "&year={{ year }}");
+				});
+				$("#fiscalyear").change(function (){
+					window.location.replace("budget-requests-list?type={{ type }}&year=" + $(this).val());
+				});
+				ChangeAllCheckboxes();
+			});
+		</script>
+{% endblock %}

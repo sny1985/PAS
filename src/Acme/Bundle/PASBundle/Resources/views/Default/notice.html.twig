@@ -1,0 +1,44 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}{{ type }} Notice Email{% endblock %}
+
+{% block body %}
+	{% block main %}
+		<div id="heading">
+			<h3>{{ type }} Notice</h3>
+		</div>
+
+		<div id="main">
+			<p>
+				{% if receiver == false %}
+					To whom it may concern,
+				{% else %}
+					Dear {{ receiver.username }},
+				{% endif %}
+				<br /><br />
+				{% if type == "BDA Expense Budget Request" %}
+					{% if role == "requester" %}
+						Your {{ type }} has been submitted successfully.
+					{% else %}
+						A new {{ type }} has been submitted.
+					{% endif %}
+				{% elseif type == "BDA Expense Budget Approval" %}
+					Your BDA Expense Budget Request has been approved.
+				{% elseif type == "Pre-Payment Request" or type == "Payment Request" %}
+					{% if role == "requester" %}
+						Your {{ type }} has been submitted successfully.
+					{% else %}
+						A new {{ type }} has been submitted. You are asked to approve it.
+					{% endif %}
+				{% elseif type == "Pre-Payment Approval" or type == "Payment Approval" %}
+					The status of your {{ type }} has been changed.
+				{% endif %}
+				<br /><br />
+				Please check the details at the following link:<br />
+				<a href="{{ link }}" class="link">{{ link }}</a>
+			</p>
+		</div>
+	{% endblock %}
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

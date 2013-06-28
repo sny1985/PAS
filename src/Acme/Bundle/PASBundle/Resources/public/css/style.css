@@ -538,9 +538,9 @@ ul li {color: #ff0000;} /* error messages */
 #logout a:hover {text-decoration: underline;}
 
 /* home */
-#home_nav {width: 300px; margin: 0 auto;}
+#home_nav {width: 400px; margin: 0 auto;}
 #home_nav ul {list-style-type: none; margin: 0; padding: 0;}
-#home_nav li {background-color: #0b759e; font-size: 1.5em; text-align: center; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; width: 250px; margin: 20px; padding: 5px; display: block;}
+#home_nav li {background-color: #0b759e; font-size: 1.5em; text-align: center; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; width: 350px; margin: 20px; padding: 5px; display: block;}
 #home_nav li a:link, #home_nav li a:visited {color: #ffffff; text-align: center; text-decoration: none;}
 #home_nav li a:hover {text-decoration: underline;}
 
@@ -579,11 +579,12 @@ table th, table td {border: 1px solid #ffffff; vertical-align: top; padding: 10p
 .link:hover {text-decoration: underline;}
 
 /* budgets details table*/
-.details_no {text-align: center; width: 38px;}
-.details_schedule {text-align: center; width: 98px;}
-.details_abstract {width: 224px;}
-.details_details {width: 224px;}
-.details_amount {text-align: center; width: 108px;}
+.details_no {text-align: center; width: 20px;}
+.details_schedule {text-align: center; width: 80px;}
+.details_abstract {width: 200px;}
+.details_details {width: 200px;}
+.details_amount {text-align: center; width: 100px;}
+.details_approve {text-align: center; width: 70px;}
 
 #budgets_select {margin: 10px auto;}
 #budgets_selected th, #budgets_selected td {vertical-align: top; padding: 8px 20px;}
@@ -603,6 +604,9 @@ table th, table td {border: 1px solid #ffffff; vertical-align: top; padding: 10p
 .budget_category {text-align: center; width: 348px;}
 .budget_amount {text-align: center; width: 288px;}
 .budget_cid {display: none;}
+
+/* list table */
+.list td {text-align: center;}
 
 #prerequest_status, #postrequest_status, #notice {padding: 20px;}
 #links {margin: 40px auto;}

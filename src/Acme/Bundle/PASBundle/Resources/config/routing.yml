@@ -31,6 +31,10 @@ pas_budget_confirmation_form:
     pattern: /budget-confirm
     defaults: { _controller: AcmePASBundle:BudgetConfirmation:budgetConfirm }
 
+pas_budget_requests_list:
+    pattern: /budget-requests-list
+    defaults: { _controller: AcmePASBundle:BudgetRequestsList:budgetRequestsList }
+
 pas_budget_check_form:
     pattern: /budget-check
     defaults: { _controller: AcmePASBundle:BudgetCheck:budgetCheck }
@@ -47,6 +51,10 @@ pas_pre_approval_form:
     pattern: /pre-approve
     defaults: { _controller: AcmePASBundle:PreRequestApproval:preApprove }
 
+pas_pre_requests_list:
+    pattern: /pre-requests-list
+    defaults: { _controller: AcmePASBundle:PreRequestsList:preRequestsList }
+
 pas_post_request_form:
     pattern: /post-request
     defaults: { _controller: AcmePASBundle:PostRequest:postRequest }
@@ -58,6 +66,10 @@ pas_post_request_status:
 pas_post_approval_form:
     pattern: /post-approve
     defaults: { _controller: AcmePASBundle:PostRequestApproval:postApprove }
+
+pas_post_requests_list:
+    pattern: /post-requests-list
+    defaults: { _controller: AcmePASBundle:PostRequestsList:postRequestsList }
 
 pas_success:
     pattern: /success
