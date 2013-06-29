@@ -28,17 +28,11 @@ class PreRequestController extends Controller
 		// get currency type list from database
 		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findBy(array(), array('code' => 'ASC'));
 		foreach ($currencies as $currency) {
-			$currency_array['name'][$currency->getCtid()] = $currency->getName();
-			$currency_array['code'][$currency->getCtid()] = $currency->getCode();
-			// get rate from google
-			$currency_array['rate'][$currency->getCtid()] = 1;
-			$url = "http://www.google.com/ig/calculator?hl=en&q=1" . $currency->getCode() . "=?USD";
-			$result = file_get_contents($url);
-			$result = json_decode(preg_replace('/(\w+):/i', '"\1":', $result));
-			if ($result->icc == true) {
-				$rs = explode(' ', $result->rhs);
-				$currency_array['rate'][$currency->getCtid()] = (double)$rs[0];
-			}
+			$currency_array['name'][$key + 1] = $value->getName();
+			$currency_array['code'][$key + 1] = $value->getCode();
+			$cc->updateRate($value->getCode());
+			$currency_array['rate'][$key + 1] = $value->getRate();
+
 		}
 
 		// get chairs, secretary, CFO & president from database

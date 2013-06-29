@@ -11,6 +11,7 @@ class PostRequestStatusController extends Controller
 {
 	public function postRequestReviewAction(Request $req)
 	{
+		$action = null;
 		$em = $this->getDoctrine()->getManager();
 		$id = null;
 		$postRequest = new PostRequest();
@@ -34,42 +35,24 @@ class PostRequestStatusController extends Controller
 			$currency_array['code'][$key + 1] = $value->getCode();
 		}
 
-		// get chairs, secretary, CFO & president from database
-		$chairs = array();
-		$users = $em->getRepository('AcmePASBundle:User')->findAll();
-		foreach ($users as $user) {
-			if ($user->getRole() == "chair") {
-				array_push($chairs, $user);
-			} else if ($user->getRole() == "cfo") {
-				$cfo = $user;
-			} else if ($user->getRole() == "president") {
-				$president = $user;
-			} else if ($user->getRole() == "secretary") {
-				$secretary = $user;
-			} else if ($user->getRole() == "vtm") {
-				$vtm = $user;
-			}
-		}
+		// get secretary, CFO, president and VTM from database
+		$sender = $em->getRepository('AcmePASBundle:User')->findOneByUid("0");
+		$admin = $em->getRepository('AcmePASBundle:User')->findOneByRole("admin");
+		$cfo = $em->getRepository('AcmePASBundle:User')->findOneByRole("cfo");
+		$president = $em->getRepository('AcmePASBundle:User')->findOneByRole("president");
+		$secretary = $em->getRepository('AcmePASBundle:User')->findOneByRole("secretary");
+		$vtm = $em->getRepository('AcmePASBundle:User')->findOneByRole("vtm");
 
 		// if the HTTP method is POST, handle form submission
 		if ($req->isMethod('POST')) {
-			// get sender's email address
-			$sender = $users[0]->getEmail();
-
 			// get id
 			$param = $req->request->all();
 			if (isset($param) && isset($param['id'])) {
 				$id = $param['id'];
 				$postRequest = $em->getRepository('AcmePASBundle:PostRequest')->findOneByRid($id);
 				if ($postRequest) {
-					foreach ($users as $user) {
-						if ($user->getUid() == $postRequest->getRequester()) {
-							$requester = $user;
-						}
-						if ($user->getUid() == $postRequest->getChairId()) {
-							$selected_chair = $user;
-						}
-					}
+					$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($postRequest->getRequester());
+					$selected_chair = $em->getRepository('AcmePASBundle:User')->findOneByUid($postRequest->getChairId());
 
 					if (isset($param['actual_amount'])) {
 						$postRequest->setActualAmount($param['actual_amount']);
@@ -78,8 +61,9 @@ class PostRequestStatusController extends Controller
 						// send notice email to requester
 						$message = \Swift_Message::newInstance()
 									->setSubject('Payment Approval Notice Email')
-									->setFrom($sender)
+									->setFrom($sender->getEmail())
 									->setTo($requester->getEmail())
+									->setCc($admin->getEmail())
 									->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Payment Approval', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
 						$this->get('mailer')->send($message);
 
@@ -92,16 +76,18 @@ class PostRequestStatusController extends Controller
 			// send notice email to requester
 			$message = \Swift_Message::newInstance()
 						->setSubject('Payment Request Notice Email')
-						->setFrom($sender)
+						->setFrom($sender->getEmail())
 						->setTo($requester->getEmail())
+						->setCc($admin->getEmail())
 						->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
 			$this->get('mailer')->send($message);
 
 			// send notice email to vtm
 			$message = \Swift_Message::newInstance()
 						->setSubject('Payment Request Notice Email')
-						->setFrom($sender)
+						->setFrom($sender->getEmail())
 						->setTo($vtm->getEmail())
+						->setCc($admin->getEmail())
 						->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $vtm, 'role' => 'vtm', 'type' => 'Payment Request', 'link' => $this->generateUrl('pas_post_approval_form', array('id' => $id), true))), 'text/html');
 			$this->get('mailer')->send($message);
 
@@ -113,8 +99,10 @@ class PostRequestStatusController extends Controller
 		$param = $req->query->all();
 		if (isset($param) && isset($param['id'])) {
 			$id = $param['id'];
-			if (isset($param['action']))
+			if (isset($param['action'])) {
 				$action = $param['action'];
+			}
+		
 			$postRequest = $em->getRepository('AcmePASBundle:PostRequest')->findOneByRid($id);
 			if ($postRequest) {
 				$level = $postRequest->getLevel();
@@ -132,15 +120,9 @@ class PostRequestStatusController extends Controller
 						$status = 0;
 					}
 				}
-
-				foreach ($users as $user) {
-					if ($user->getUid() == $postRequest->getRequester()) {
-						$requester = $user;
-					}
-					if ($user->getUid() == $postRequest->getChairId()) {
-						$selected_chair = $user;
-					}
-				}
+		
+				$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($postRequest->getRequester());
+				$selected_chair = $em->getRepository('AcmePASBundle:User')->findOneByUid($postRequest->getChairId());
 			}
 		}
 

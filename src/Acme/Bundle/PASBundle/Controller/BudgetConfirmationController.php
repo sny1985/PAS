@@ -101,6 +101,10 @@ class BudgetConfirmationController extends Controller
 		
 		// update approved field of unapproved records, and send emails to these just approved requesters
 		if ($req->isMethod('POST')) {
+			if ($this->user->getRole() != 'cfo') {
+				throw new HttpException(403, 'Sorry, only CFO can approve budget request.');
+			}
+			
 			$to_approve = array();
 			$post = $req->request->all();
 

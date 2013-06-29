@@ -141,7 +141,7 @@
 					</tr>
 					<tr>
 						<td class="status_tag">Pre-request No.:</td>
-						<td class="status_content"><a href="{{ path('pas_pre_request_status', {'id': request.prid, 'action': 'query'}) }}">{{ "%08d"|format(request.prid) }}</a></td>
+						<td class="status_content"><a class="link" href="{{ path('pas_pre_request_status', {'id': request.prid, 'action': 'query'}) }}">{{ "%08d"|format(request.prid) }}</a></td>
 					</tr>
 					<tr>
 						<td class="status_tag">Invoice:</td>

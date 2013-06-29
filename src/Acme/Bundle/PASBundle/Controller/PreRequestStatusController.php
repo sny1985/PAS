@@ -16,6 +16,7 @@ class PreRequestStatusController extends Controller
 		$id = null;
 		$preRequest = new PreRequest();
 		$requester = null;
+		$role = "requester";
 		$selected_chair = null;
 		$status = null;
 		$this->user = $this->getUser();
@@ -34,22 +35,13 @@ class PreRequestStatusController extends Controller
 			$currency_array['code'][$key + 1] = $value->getCode();
 		}
 
-		// get chairs, secretary, CFO & president from database
-		$chairs = array();
-		$users = $em->getRepository('AcmePASBundle:User')->findAll();
-		foreach ($users as $user) {
-			if ($user->getRole() == "chair") {
-				array_push($chairs, $user);
-			} else if ($user->getRole() == "cfo") {
-				$cfo = $user;
-			} else if ($user->getRole() == "president") {
-				$president = $user;
-			} else if ($user->getRole() == "secretary") {
-				$secretary = $user;
-			} else if ($user->getRole() == "vtm") {
-				$vtm = $user;
-			}
-		}
+		// get secretary, CFO, president and VTM from database
+		$sender = $em->getRepository('AcmePASBundle:User')->findOneByUid("0");
+		$admin = $em->getRepository('AcmePASBundle:User')->findOneByRole("admin");
+		$cfo = $em->getRepository('AcmePASBundle:User')->findOneByRole("cfo");
+		$president = $em->getRepository('AcmePASBundle:User')->findOneByRole("president");
+		$secretary = $em->getRepository('AcmePASBundle:User')->findOneByRole("secretary");
+		$vtm = $em->getRepository('AcmePASBundle:User')->findOneByRole("vtm");
 
 		// if the HTTP method is POST, handle form submission
 		if ($req->isMethod('POST')) {
@@ -59,33 +51,26 @@ class PreRequestStatusController extends Controller
 				$id = $param['id'];
 				$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
 				if ($preRequest) {
-					foreach ($users as $user) {
-						if ($user->getUid() == $preRequest->getRequester()) {
-							$requester = $user;
-						}
-						if ($user->getUid() == $preRequest->getChairId()) {
-							$selected_chair = $user;
-						}
-					}
+					$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($preRequest->getRequester());
+					$selected_chair = $em->getRepository('AcmePASBundle:User')->findOneByUid($preRequest->getChairId());
 				}
 			}
-
-			// get sender's email address
-			$sender = $users[0]->getEmail();
 
 			// send notice email to requester
 			$message = \Swift_Message::newInstance()
 						->setSubject('Pre-Payment Request Notice Email')
-						->setFrom($sender)
+						->setFrom($sender->getEmail())
 						->setTo($requester->getEmail())
+						->setCc($admin->getEmail())
 						->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
 			$this->get('mailer')->send($message);
 
 			// send notice email to vtm
 			$message = \Swift_Message::newInstance()
 						->setSubject('Pre-Payment Request Notice Email')
-						->setFrom($sender)
+						->setFrom($sender->getEmail())
 						->setTo($vtm->getEmail())
+						->setCc($admin->getEmail())
 						->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $vtm, 'role' => 'vtm', 'type' => 'Pre-Payment Request', 'link' => $this->generateUrl('pas_pre_approval_form', array('id' => $id), true))), 'text/html');
 			$this->get('mailer')->send($message);
 
@@ -97,8 +82,10 @@ class PreRequestStatusController extends Controller
 		$param = $req->query->all();
 		if (isset($param) && isset($param['id'])) {
 			$id = $param['id'];
-			if (isset($param['action']))
+			if (isset($param['action'])) {
 				$action = $param['action'];
+			}
+
 			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
 			if ($preRequest) {
 				$level = $preRequest->getLevel();
@@ -117,14 +104,8 @@ class PreRequestStatusController extends Controller
 					}
 				}
 
-				foreach ($users as $user) {
-					if ($user->getUid() == $preRequest->getRequester()) {
-						$requester = $user;
-					}
-					if ($user->getUid() == $preRequest->getChairId()) {
-						$selected_chair = $user;
-					}
-				}
+				$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($preRequest->getRequester());
+				$selected_chair = $em->getRepository('AcmePASBundle:User')->findOneByUid($preRequest->getChairId());
 			}
 		}
 
