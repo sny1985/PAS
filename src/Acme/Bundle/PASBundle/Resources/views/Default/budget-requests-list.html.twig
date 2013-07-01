@@ -44,7 +44,7 @@
 								<td class="list_amount">{{ req.amount|number_format(2, '.') }} {{ currencies['code'][req.curtype] }}</td>
 								<td class="list_date">{{ req.date|date("m/d/Y") }}</td>
 								<td class="list_status">{% if req.approved == 1 %}Approved{% else %}Waiting for approval{% endif %}</td>
-								<td class="list_link"><a href="{{ path('pas_budget_request_status', {'id': req.bid, 'action': 'query'}) }}">Review</a></td>
+								<td class="list_link"><a class="link" href="{{ path('pas_budget_request_status', {'id': req.bid, 'action': 'query'}) }}">Review</a></td>
 							</tr>
 {% endfor %}
 						</tbody>

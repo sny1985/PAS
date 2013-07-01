@@ -23,9 +23,35 @@ class User implements AdvancedUserInterface, \Serializable
 	/**
 	* @ORM\Column(type="string", length=80, unique=true)
 	* @Assert\NotNull(message="User name should not be null.")
-	* @Assert\Length(max="80", maxMessage="The name cannot be longer than {{ limit }} characters length.")
+	* @Assert\Length(max="80", maxMessage="The username cannot be longer than {{ limit }} characters length.")
 	*/
 	private $username;
+
+	/**
+	* @ORM\Column(type="string", length=40)
+	* @Assert\NotNull(message="Fist name should not be null.")
+	* @Assert\Length(max="40", maxMessage="The first name cannot be longer than {{ limit }} characters length.")
+	*/
+	private $firstname;
+
+	/**
+	* @ORM\Column(type="string", length=40)
+	* @Assert\Length(max="40", maxMessage="The middle name cannot be longer than {{ limit }} characters length.")
+	*/
+	private $middlename;
+
+	/**
+	* @ORM\Column(type="string", length=40)
+	* @Assert\NotNull(message="Last name should not be null.")
+	* @Assert\Length(max="40", maxMessage="The last name cannot be longer than {{ limit }} characters length.")
+	*/
+	private $lastname;
+
+	/**
+	* @ORM\Column(type="string", length=10)
+	* @Assert\Length(max="40", maxMessage="The title cannot be longer than {{ limit }} characters length.")
+	*/
+	private $title;
 
 	/**
 	* @ORM\Column(type="string", length=32)
@@ -81,6 +107,38 @@ class User implements AdvancedUserInterface, \Serializable
 	
 	public function setUsername($username) {
 		$this->username = $username;
+	}
+
+	public function getFirstname() {
+		return $this->firstname;
+	}
+
+	public function setFirstname($firstname) {
+		$this->firstname = $firstname;
+	}
+
+	public function getMiddlename() {
+		return $this->middlename;
+	}
+
+	public function setMiddlename($middlename) {
+		$this->middlename = $middlename;
+	}
+
+	public function getLastname() {
+		return $this->lastname;
+	}
+
+	public function setLastname($lastname) {
+		$this->lastname = $lastname;
+	}
+
+	public function getTitle() {
+		return $this->title;
+	}
+
+	public function setTitle($title) {
+		$this->title = $title;
 	}
 
 	/**

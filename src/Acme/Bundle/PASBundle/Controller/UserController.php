@@ -26,9 +26,13 @@ class UserController extends Controller
 		// create form
 		$form = $this->createFormBuilder($user)
 						->add('uid', 'hidden')
-						->add('username', 'text', array('label' => "Username:"))
-						->add('password', 'text', array('label' => "Password:"))
-						->add('email', 'email', array('label' => "Email Address:"))
+						->add('username', 'text', array('label' => 'Username:'))
+						->add('firstname', 'text', array('label' => 'First Name:'))
+						->add('middlename', 'text', array('label' => 'Middle Name:', 'required' => false))
+						->add('lastname', 'text', array('label' => 'Last Name:'))
+						->add('title', 'text', array('label' => 'Title:', 'required' => false))
+						->add('password', 'text', array('label' => 'Password:'))
+						->add('email', 'email', array('label' => 'Email Address:'))
 						->add('role', 'choice', array('choices' => $role_array, 'empty_value' => 'Choose one role', 'label' => 'Role:', 'preferred_choices' => array('empty_value')))
 						->getForm();
 
@@ -46,6 +50,10 @@ class UserController extends Controller
 					// update database
 					$oldUser = $em->getRepository('AcmePASBundle:User')->findOneByUid($id);
 					$oldUser->setUsername($user->getUsername());
+					$oldUser->setUsername($user->getFirstname());
+					$oldUser->setUsername($user->getMiddlename());
+					$oldUser->setUsername($user->getLastname());
+					$oldUser->setUsername($user->getTitle());
 					$oldUser->setSalt($user->getSalt());
 					$oldUser->setPassword($user->getPassword());
 					$oldUser->setEmail($user->getEmail());
@@ -58,7 +66,7 @@ class UserController extends Controller
 					$em->flush();
 				}
 
-				return $this->redirect($this->generateUrl('pas_user')	);
+				return $this->redirect($this->generateUrl('pas_user'));
 			}
 		}
 

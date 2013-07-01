@@ -29,7 +29,7 @@ class BudgetRequest
 	/**
 	* @ORM\Column(type="smallint")
 	* @Assert\NotNull(message="Request Type should not be null.")
-	* @Assert\Range(min="0", max="1")
+	* @Assert\Range(min="1", max="2")
 	*/
 	protected $requestType;
 

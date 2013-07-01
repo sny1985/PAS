@@ -40,7 +40,7 @@
 									Approved
 {% endif %}
 								</td>
-								<td class="list_link"><a href="{{ path('pas_pre_request_status', {'id': req.prid, 'action': 'query'}) }}">Review</a></td>
+								<td class="list_link"><a class="link" href="{{ path('pas_pre_request_status', {'id': req.prid, 'action': 'query'}) }}">Review</a></td>
 							</tr>
 {% endfor %}
 						</tbody>

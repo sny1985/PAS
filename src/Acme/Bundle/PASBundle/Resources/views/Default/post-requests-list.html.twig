@@ -41,8 +41,8 @@
 									Approved
 {% endif %}
 								</td>
-								<td class="list_link"><a href="{{ path('pas_post_request_status', {'id': req.rid, 'action': 'query'}) }}">Review</a></td>
-								<td class="list_export">{% if req.actualamount > 0 %}<a href="{{ path('pas_payment_exporting', {'id': req.rid}) }}">Export</a>{% endif %}</td>
+								<td class="list_link"><a class="link" href="{{ path('pas_post_request_status', {'id': req.rid, 'action': 'query'}) }}">Review</a></td>
+								<td class="list_export">{% if req.actualamount > 0 %}<a class="link" href="{{ path('pas_payment_exporting', {'id': req.rid}) }}">Export</a>{% endif %}</td>
 							</tr>
 {% endfor %}
 						</tbody>
