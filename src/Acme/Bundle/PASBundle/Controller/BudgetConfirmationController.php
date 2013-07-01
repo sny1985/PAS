@@ -91,7 +91,13 @@ class BudgetConfirmationController extends Controller
 					// calculate total amount of all categories
 					$budgets['sum'] += $multiply;
 					// find out if approved or not
-					$budgets[$category]['approved'] = $request->getApproved();
+					if (!isset($budgets[$category]['approved'])) {
+						$budgets[$category]['approved'] = 1;
+					}
+					if (!$request->getApproved()) {
+						$budgets[$category]['approved'] = 0;
+					}
+					
 					// find unapproved requests
 				}
 
