@@ -5,15 +5,17 @@ namespace Acme\Bundle\PASBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Acme\Bundle\PASBundle\Entity\BudgetApplication;
+use Acme\Bundle\PASBundle\Entity\CurrencyType;
 use Acme\Bundle\PASBundle\Entity\PreRequest;
 use Acme\Bundle\PASBundle\Entity\User;
+use Acme\Bundle\PASBundle\Services\CurrencyConverter;
 
 class PreRequestController extends Controller
 {
 	public function preRequestAction(Request $req)
 	{
 		$action = "submit";
+		$cc = $this->get('currency_converter');
 		$em = $this->getDoctrine()->getManager();
 		$preRequest = new PreRequest();
 		$this->user = $this->getUser();
@@ -27,12 +29,11 @@ class PreRequestController extends Controller
 		
 		// get currency type list from database
 		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findBy(array(), array('code' => 'ASC'));
-		foreach ($currencies as $currency) {
+		foreach ($currencies as $key => $value) {
 			$currency_array['name'][$key + 1] = $value->getName();
 			$currency_array['code'][$key + 1] = $value->getCode();
 			$cc->updateRate($value->getCode());
 			$currency_array['rate'][$key + 1] = $value->getRate();
-
 		}
 
 		// get chairs, secretary, CFO & president from database
