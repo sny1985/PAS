@@ -12,27 +12,40 @@
 						<label for="fiscalyear">Choose Fiscal Year: </label><br />
 						<select id="fiscalyear">
 							<option value="0" disabled="disabled">Choose One Fiscal Year</option>
-{% for i in 2012.."now"|date("Y")+1 %}
-							<option value="{{ i }}"{% if year == i %} selected="selected"{% endif %}>{{ i }}</option>
+{% for i in 2013.."now"|date("Y")+1 %}
+							<option value="{{ i }}" {% if year == i %}selected="selected"{% endif %}>{{ i }}</option>
 {% endfor %}
 						</select>
 					</div>
 					<table id="{{ year }}" class="status list">
 						<thead>
 							<tr>
+{% if app.user.role == 'admin' %}
 								<th class="list_no">Request No.</th>
+{% endif %}
+								<th class="list_requester">Requester</th>
 								<th class="list_amount">Amount</th>
+								<th class="list_budget">Selected Budget</th>
+								<th class="list_invoices">Number of Invoices</th>
 								<th class="list_date">Submission Date</th>
 								<th class="list_status">Status</th>
-								<th class="list_link">Link</th>
+								<th class="list_link">Review</th>
+{% if app.user.role == 'chair' or app.user.role == 'cfo' or app.user.role == 'president' or app.user.role == 'secretary' %}
+								<th class="list_link">Approve</th>
+{% endif %}
 								<th class="list_export">Export Budget Expense Progress</th>
 							</tr>
 						</thead>
 						<tbody>
 {% for req in requests %}
 							<tr>
+{% if app.user.role == 'admin' %}
 								<td class="list_no">{{ req.rid }}</td>
+{% endif %}
+								<td class="list_requester">{{ requesters[req.requester] }}</td>
 								<td class="list_amount">{{ req.amount|number_format(2, '.') }} {{ currencies['code'][req.curtype] }}</td>
+								<td class="list_budget">{{ req.selectedBudget|split('-')[1] }}</td>
+								<td class="list_invoices">{{ req.numberOfInvoices }}</td>
 								<td class="list_date">{{ req.date|date("m/d/Y") }}</td>
 								<td class="list_status">
 {% if (req.chairId != 0 and req.chairApproved != 1) or (req.cfoId != 0 and req.cfoApproved != 1) or (req.presidentId != 0 and req.presidentApproved != 1) or (req.secretaryId != 0 and req.secretaryApproved != 1) %}
@@ -42,6 +55,9 @@
 {% endif %}
 								</td>
 								<td class="list_link"><a class="link" href="{{ path('pas_post_request_status', {'id': req.rid, 'action': 'query'}) }}">Review</a></td>
+{% if app.user.role == 'chair' or app.user.role == 'cfo' or app.user.role == 'president' or app.user.role == 'secretary' %}
+								<td class="list_link"><a class="link" href="{{ path('pas_post_approval_form', {'id': req.rid}) }}">Approve</a></td>
+{% endif %}
 								<td class="list_export">{% if req.actualamount > 0 %}<a class="link" href="{{ path('pas_payment_exporting', {'id': req.rid}) }}">Export</a>{% endif %}</td>
 							</tr>
 {% endfor %}

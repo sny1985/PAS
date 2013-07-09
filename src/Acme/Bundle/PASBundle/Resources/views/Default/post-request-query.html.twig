@@ -75,6 +75,10 @@
 {% endif %}
 						</td>
 					</tr>
+					<tr>
+						<td class="status_tag">Selected Budget:</td>
+						<td class="status_content">{{ request.selectedBudget|split('-')[1] }}</td>
+					</tr>
 {% if request.paymentMethod == 1 %}
 					<tr>
 						<td class="status_tag">Payment Method:</td>
@@ -86,7 +90,7 @@
 					</tr>
 					<tr>
 						<td class="status_tag">Attention:</td>
-						<td class="status_content">{{ request.attention }}</td>
+						<td class="status_content">{% if request.attention %}{{ request.attention }}{% else %}N/A{% endif %}</td>
 					</tr>
 					<tr>
 						<td class="status_tag">Street:</td>
@@ -132,7 +136,7 @@
 {% endif %}
 					<tr>
 						<td class="status_tag">Contact Email:</td>
-						<td class="status_content">{{ request.contactEmail }}</td>
+						<td class="status_content">{% if request.contactEmail %}{{ request.contactEmail }}{% else %}N/A{% endif %}</td>
 					</tr>
 {% if request.preApproval == 1 %}
 					<tr>
@@ -142,6 +146,10 @@
 					<tr>
 						<td class="status_tag">Pre-request No.:</td>
 						<td class="status_content"><a class="link" href="{{ path('pas_pre_request_status', {'id': request.prid, 'action': 'query'}) }}">{{ "%08d"|format(request.prid) }}</a></td>
+					</tr>
+					<tr>
+						<td class="status_tag">Number of Invoice:</td>
+						<td class="status_content">{{ request.numberOfInvoices }}</td>
 					</tr>
 					<tr>
 						<td class="status_tag">Invoice:</td>
@@ -163,10 +171,6 @@
 					<tr>
 						<td class="status_tag">Pre-approved:</td>
 						<td class="status_content">No</td>
-					</tr>
-					<tr>
-						<td class="status_tag">Budget:</td>
-						<td class="status_content">{{ request.budget|split('-')[1] }}</td>
 					</tr>
 					<tr>
 						<td class="status_tag">Level:</td>
@@ -229,20 +233,24 @@
 						<td class="status_tag">Comment:</td>
 						<td class="status_content">
 {% if request.chairComment != false %}
-							{{ request.chairComment }}<br />
+							Comment from {{ chair.username }}: {{ request.chairComment }}<br />
 {% endif %}
 {% if request.cfoComment != false %}
-							{{ request.cfoComment }}<br />
+							Comment from {{ cfo.username }}: {{ request.cfoComment }}<br />
 {% endif %}
 {% if request.presidentComment != false %}
-							{{ request.presidentComment }}<br />
+							Comment from {{ president.username }}: {{ request.presidentComment }}<br />
 {% endif %}
 {% if request.secretaryComment != false %}
-							{{ request.secretaryComment }}<br />
+							Comment from {{ secretary.username }}: {{ request.secretaryComment }}<br />
 {% endif %}
 						</td>
 					</tr>
 {% endif %}
+					<tr>
+						<td class="status_tag">Submission Date:</td>
+						<td class="status_content">{{ request.date|date("m/d/Y") }}</td>
+					</tr>
 				</table>
 {% if action == 'submit' %}
 				<form id="post_request_form" class="bda_form" action="{{ path('pas_post_request_status') }}" method="post">
@@ -263,7 +271,7 @@
 						<input type="submit" value="Confirm" />
 					</div>
 				</form>
-{% elseif app.security.getToken().getUser().getUsername() == requester.username %}
+{% elseif app.user.uid == requester.uid %}
 				<div id="links">
 					<a href="{{ path('pas_post_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
 				</div>

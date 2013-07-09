@@ -551,13 +551,14 @@ ul li {color: #ff0000;} /* error messages */
 .bda_form input, .bda_form select {margin-top: 10px;}
 .bda_form input[type=text], .bda_form input[type=email], .bda_form input[type=file] {width: 320px;}
 .bda_form input[type=radio] {margin: 0 5px;}
+.bda_form input[type=checkbox] {margin: 0;}
 .bda_form textarea {width: 500px; height: 100px; margin-top: 10px;}
 
 #fiscalyear {margin-bottom: 10px;}
 #usd_amount {display: none;}
 #form_preApproval, #form_hasInvoice {margin-top: 20px;}
-#pre_approved, #un_pre_approved, #check, #wire, #chair, #secretary, #cfo, #president, #invoices {display: none;}
-#buttons {width: 200px; padding: 0; margin: 20px auto;}
+#pre_approved, #un_pre_approved, #check, #wire, #chair, #secretary, #cfo, #president {display: none;}
+#buttons {text-align: center; width: 200px; padding: 0; margin: 20px auto;}
 #buttons input[type=button], #buttons input[type=submit] {width: 100px;}
 
 /* table */

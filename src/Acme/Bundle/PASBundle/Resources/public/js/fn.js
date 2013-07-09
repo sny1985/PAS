@@ -87,7 +87,7 @@ function ConvertCurrency() {
 
 				// decide budget level
 				if ($("#form")) {
-					SelectLevel(response.usd);
+					SelectLevel(response.amount);
 				}
 			});
 		}
@@ -100,19 +100,19 @@ function SelectBudget(data) {
 		return;
 	}
 
-	var $bc = $("#form_budget");
+	var $bc = $("#form_selectedBudget");
 
 	if (data) {
 		$bc.val(data.year + "-" + data.category + "-" + data.amount);
 	}
 
-	if ($bc.val()) {
+	if ($unPreApproved.length && $unPreApproved.prop("checked")) {
+		$("#budget_table").hide();
+	} else {
 		var value = $bc.val().split("-");
 		$("#selected_category").html(value[1]);
 		$("#selected_amount").html(value[2]);
 		$("#budget_table").show();
-	} else {
-		$("#budget_table").hide();
 	}
 }
 
@@ -127,7 +127,6 @@ function SelectPaymentMethod() {
 	var method = $("#form_paymentMethod option:selected").val();
 	if (method == '1') {
 		$("#form_companyName").prop("required", true);
-		$("#form_attention").prop("required", true);
 		$("#form_street").prop("required", true);
 		$("#form_city").prop("required", true);
 		$("#form_state").prop("required", true);
@@ -184,15 +183,5 @@ function SelectPreApproved() {
 // 		$invoice.replaceWith($invoice.val("").clone(true));
 		$unPreApproved.show();
 		ConvertCurrency();
-	}
-}
-
-function SelectHasInvoice() {
-	var $invoices = $("#invoices");
-	var hasInvoice = $("#form_hasInvoice input[type=radio]:checked").val();
-	if (hasInvoice == '1') {
-		$invoices.show();
-	} else {
-		$invoices.hide();
 	}
 }

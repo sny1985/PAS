@@ -14,8 +14,8 @@
 						<label for="fiscalyear">Choose Fiscal Year: </label><br />
 						<select id="fiscalyear">
 							<option value="0" disabled="disabled">Choose One Fiscal Year</option>
-{% for i in 2012.."now"|date("Y")+1 %}
-							<option value="{{ i }}"{% if year == i %} selected="selected"{% endif %}>{{ i }}</option>
+{% for i in "now"|date("Y").."now"|date("Y")+1 %}
+							<option value="{{ i }}" {% if year == i %}selected="selected"{% endif %}>{{ i }}</option>
 {% endfor %}
 						</select>
 					</div>

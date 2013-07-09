@@ -54,7 +54,7 @@ class BudgetRequestController extends Controller
 		}
 
 		$month_array = array(null => 'Choose one month', 1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April', 5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August', 9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December');
-		$year_array = array(null => 'Choose one year', date('Y') => date('Y'), date('Y') + 1 => date('Y') + 1, date('Y') + 2 => date('Y') + 2);
+		$year_array = array(null => 'Choose one year', date('Y') => date('Y'), date('Y') + 1 => date('Y') + 1);
 
 		// create form
 		$form = $this->createFormBuilder($budgetRequest)

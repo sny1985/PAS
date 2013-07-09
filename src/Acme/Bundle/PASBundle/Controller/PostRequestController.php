@@ -17,6 +17,7 @@ class PostRequestController extends Controller
 		$hasInvoice = 0;
 		$postRequest = new PostRequest();
 		$preApproval = 0;
+		$selectedBudget = null;
 		$this->user = $this->getUser();
 
 		// get category list from database
@@ -59,21 +60,23 @@ class PostRequestController extends Controller
 		$param = $req->query->all();
 		// has pre approval no.
 		if (isset($param) && isset($param['prid'])) {
+			$prid = $param['prid'];
 			$postRequest->setPreApproval(1);
-			$postRequest->setPreApprovalNo(sprintf("%08d", $param['prid']));
+			$postRequest->setPreApprovalNo(sprintf("%08d", $prid));
+			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($prid);
+			$selectedBudget = $preRequest->getSelectedBudget();
 		}
 		// edit
 		if (isset($param) && isset($param['id']) && isset($param['action'])) {
 			$id = $param['id'];
 			$action = $param['action'];
 			$postRequest = $em->getRepository('AcmePASBundle:PostRequest')->findOneByRid($id);
-			if ($postRequest) {
-				// do not allow other people peek it
-				if ($postRequest->getRequester() != $this->user->getUid()) {
-					throw new HttpException(403, 'You are not allowed to change this request.');
-				}
+			// do not allow other people peek it
+			if ($postRequest->getRequester() != $this->user->getUid()) {
+				throw new HttpException(403, 'You are not allowed to change this request.');
 			}
 		}
+
 		// create form
 		$form = $this->createFormBuilder($postRequest)
 						->add('rid', 'hidden')
@@ -98,10 +101,10 @@ class PostRequestController extends Controller
 						->add('swiftCode', 'text', array('label' => 'Swift Code:', 'required' => false))
 						->add('routingNumber', 'text', array('label' => 'Routing Number:', 'required' => false))
 						->add('contactEmail', 'text', array('label' => 'Contact Email (if known):', 'required' => false))
-						->add('hasInvoice', 'choice', array('choices' => array(0 => 'No', 1 => 'Yes'), 'empty_value' => false, 'expanded' => true, 'label' => 'Has Invoice?', 'preferred_choices' => array($hasInvoice)))
+						->add('numberOfInvoices', 'text', array('label' => 'How many invoices?'))
 						->add('invoice', 'file', array('label' => 'Invoice:', 'required' => false))
-						->add('invoicePath', 'hidden', array('data' => $postRequest->getInvoicePath()))
-						->add('budget', 'hidden', array('data' => null))
+						->add('invoicePath', 'hidden', array('data' => $postRequest->getInvoicePath() != null ? $postRequest->getInvoicePath() : null))
+						->add('selectedBudget', 'hidden', array('data' => $selectedBudget))
 						->add('level', 'choice', array('choices' => array(1 => 'Below or equal to 10,000 USD: by the Chair', 2 => 'Above 10,000 USD: by Secretary, President and CFO '), 'empty_value' => 'Choose one level', 'label' => 'Approval Level:', 'preferred_choices' => array('empty_value'), 'required' => false))
 						->add('chairId', 'choice', array('choices' => $chair_array, 'empty_value' => false, 'label' => 'Chair:', 'required' => false))
 						->add('chairApproved', 'hidden', array('data' => 0))
@@ -149,7 +152,7 @@ class PostRequestController extends Controller
 					$oldRequest->setSwiftCode($postRequest->getSwiftCode());
 					$oldRequest->setRoutingNumber($postRequest->getRoutingNumber());
 					$oldRequest->setContactEmail($postRequest->getContactEmail());
-					$oldRequest->setHasInvoice($postRequest->getHasInvoice());
+					$oldRequest->setnumberOfInvoices($postRequest->getnumberOfInvoices());
 					$oldRequest->setInvoicePath($postRequest->getInvoicePath());
 					$oldRequest->setBudget($postRequest->getBudget());
 					$oldRequest->setLevel($postRequest->getLevel());

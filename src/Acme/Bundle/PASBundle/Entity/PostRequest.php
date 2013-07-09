@@ -148,11 +148,11 @@ class PostRequest
 	protected $routingNumber;
 
 	/**
-	* @ORM\Column(type="smallint", nullable=true)
-	* @Assert\NotNull(message="Has-Invoice should not be null.")
-	* @Assert\Range(min="0", max="1")
+	* @ORM\Column(type="smallint")
+	* @Assert\NotNull(message="Number of invoices should not be null.")
+	* @Assert\Range(min="1")
 	*/
-	protected $hasInvoice;
+	protected $numberOfInvoices;
 
 	// ???
 	protected $invoice;
@@ -166,7 +166,7 @@ class PostRequest
 	* @ORM\Column(type="string", length=64)
 	* @Assert\NotNull(message="Budget should not be null.")
 	*/
-	protected $budget;
+	protected $selectedBudget;
 
 	/**
 	* @ORM\Column(type="smallint", nullable=true)
@@ -443,12 +443,12 @@ class PostRequest
 		$this->routingNumber = $no;
 	}
 
-	public function getHasInvoice() {
-		return $this->hasInvoice;
+	public function getNumberOfInvoices() {
+		return $this->numberOfInvoices;
 	}
-	
-	public function setHasInvoice($hasInvoice) {
-		$this->hasInvoice = $hasInvoice;
+
+	public function setNumberOfInvoices($numberOfInvoices) {
+		$this->numberOfInvoices = $numberOfInvoices;
 	}
 
 	public function getInvoice() {
@@ -467,12 +467,12 @@ class PostRequest
 		$this->invoicePath = $path;
 	}
 
-	public function getBudget() {
-		return $this->budget;
+	public function getSelectedBudget() {
+		return $this->selectedBudget;
 	}
 
-	public function setBudget($budget) {
-		$this->budget = $budget;
+	public function setSelectedBudget($selectedBudget) {
+		$this->selectedBudget = $selectedBudget;
 	}
 
 	public function getLevel() {
@@ -607,7 +607,7 @@ class PostRequest
 			return;
 		}
 
-		$this->invoicePath = 'invoice_' . $this->preApprovalNo . '_' . time() . '.' . $this->invoice->guessExtension(); // invoice_preapprovalno_timestamp.extension
+		$this->invoicePath = 'invoice_' . sprintf("%08d", $this->rid) . '_' . date('mdY') . '.' . $this->invoice->guessExtension(); // invoice_postrequestno_timestamp.extension
 		$this->invoice->move(__DIR__.'/../../../../../uploads/documents', __DIR__.'/../../../../../uploads/documents/' . $this->invoicePath);
 		$this->invoice = null;
 	}

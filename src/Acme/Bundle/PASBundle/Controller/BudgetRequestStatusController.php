@@ -17,20 +17,24 @@ class BudgetRequestStatusController extends Controller
 		$budgetRequest = null;
 		$em = $this->getDoctrine()->getManager();
 		$id = null;
+		$requester = null;
 		$this->user = $this->getUser();
 
 		// if the HTTP method is POST, handle form submission
 		if ($req->isMethod('POST')) {
 			// get id
 			$param = $req->request->all();
-			if (isset($param) && isset($param['id']))
+			if (isset($param) && isset($param['id'])) {
 				$id = $param['id'];
+				$budgetRequest = $em->getRepository('AcmePASBundle:BudgetRequest')->findOneByBid($id);
+				$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($budgetRequest->getHolder());
+			}
 
 			$sender = $em->getRepository('AcmePASBundle:User')->findOneByUid("0");
 			$admin = $em->getRepository('AcmePASBundle:User')->findOneByRole("admin");
 			$cfo = $em->getRepository('AcmePASBundle:User')->findOneByRole("cfo");
 			$vtm = $em->getRepository('AcmePASBundle:User')->findOneByRole("vtm");
-			
+
 			$users = $em->getRepository('AcmePASBundle:User')->findAll();
 			// get sender's email address
 			// get CFO and VTM from database, assume only one cfo & one vtm in database
@@ -48,7 +52,7 @@ class BudgetRequestStatusController extends Controller
 						->setFrom($sender->getEmail())
 						->setTo($this->user->getEmail())
 						->setCc($admin->getEmail())
-						->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $this->user, 'role' => 'requester', 'type' => 'BDA Expense Budget Request', 'link' => $this->generateUrl('pas_budget_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
+						->setBody($this->renderView('AcmePASBundle:Default:notice.html.twig', array('receiver' => $requester, 'role' => 'requester', 'type' => 'BDA Expense Budget Request', 'link' => $this->generateUrl('pas_budget_request_status', array('id' => $id, 'action' => 'query'), true))), 'text/html');
 			$this->get('mailer')->send($message);
 
 			// send notice email to CFO
@@ -74,6 +78,7 @@ class BudgetRequestStatusController extends Controller
 				$action = $param['action'];
 			}
 			$budgetRequest = $em->getRepository('AcmePASBundle:BudgetRequest')->findOneByBid($id);
+			$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($budgetRequest->getHolder());
 		}
 
 		// get category list from database
@@ -89,6 +94,6 @@ class BudgetRequestStatusController extends Controller
 			$currency_array['code'][$key + 1] = $value->getCode();
 		}
 
-		return $this->render('AcmePASBundle:Default:budget-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'requester' => $this->user, 'request' => $budgetRequest, 'action' => $action));
+		return $this->render('AcmePASBundle:Default:budget-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'requester' => $requester, 'request' => $budgetRequest, 'action' => $action));
 	}
 }

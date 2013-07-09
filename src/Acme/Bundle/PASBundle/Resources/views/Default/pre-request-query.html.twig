@@ -75,8 +75,8 @@
 						<td class="status_content">{{ request.amount|number_format(2, '.', '') }} {{ currencies['code'][request.curtype] }}</td>
 					</tr>
 					<tr>
-						<td class="status_tag">Budget:</td>
-						<td class="status_content">{{ request.budget|split('-')[1] }}</td>
+						<td class="status_tag">Selected Budget:</td>
+						<td class="status_content">{{ request.selectedBudget|split('-')[1] }}</td>
 					</tr>
 					<tr>
 						<td class="status_tag">Level:</td>
@@ -138,20 +138,24 @@
 						<td class="status_tag">Comment:</td>
 						<td class="status_content">
 {% if request.chairComment != false %}
-							{{ request.chairComment }}<br />
+							Comment from {{ chair.username }}: {{ request.chairComment }}<br />
 {% endif %}
 {% if request.cfoComment != false %}
-							{{ request.cfoComment }}<br />
+							Comment from {{ cfo.username }}: {{ request.cfoComment }}<br />
 {% endif %}
 {% if request.presidentComment != false %}
-							{{ request.presidentComment }}<br />
+							Comment from {{ president.username }}: {{ request.presidentComment }}<br />
 {% endif %}
 {% if request.secretaryComment != false %}
-							{{ request.secretaryComment }}<br />
+							Comment from {{ secretary.username }}: {{ request.secretaryComment }}<br />
 {% endif %}
 						</td>
 					</tr>
 {% endif %}
+					<tr>
+						<td class="status_tag">Submission Date:</td>
+						<td class="status_content">{{ request.date|date("m/d/Y") }}</td>
+					</tr>
 				</table>
 {% if action == 'submit' %}
 				<form id="pre_request_form" class="bda_form" action="{{ path('pas_pre_request_status') }}" method="post">
@@ -162,7 +166,7 @@
 				</form>
 {% elseif action == 'query' %}
 				<div id="links">
-{% if app.security.getToken().getUser().getUsername() == requester.username %}
+{% if app.user.uid == requester.uid %}
 					<a href="{{ path('pas_pre_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
 {% if status == 1 %}
 					<a href="{{ path('pas_post_request_form', {'prid': id}) }}">Submit Payment Request</a> &nbsp; 

@@ -65,11 +65,9 @@ class PreRequestController extends Controller
 			$id = $param['id'];
 			$action = $param['action'];
 			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
-			if ($preRequest) {
-				// do not allow other people peek it
-				if ($preRequest->getRequester() != $this->user->getUid()) {
-					throw new HttpException(403, 'You are not allowed to change this request.');
-				}
+			// do not allow other people peek it
+			if ($preRequest->getRequester() != $this->user->getUid()) {
+				throw new HttpException(403, 'You are not allowed to change this request.');
 			}
 		}
 
@@ -81,7 +79,7 @@ class PreRequestController extends Controller
 						->add('explanation', 'textarea', array('label' => 'Explanation of the Expense:', 'required' => false))
 						->add('amount', 'money', array('currency' => false, 'label' => 'Amount (e.g. 200 or 199.99):'))
 						->add('curtype', 'choice', array('choices' => $currency_array['code'], 'empty_value' => 'Choose one type', 'label' => 'Currency Type:', 'preferred_choices' => array('empty_value')))
-						->add('budget', 'hidden', array('data' => null))
+						->add('selectedBudget', 'hidden', array('data' => null))
 						->add('level', 'choice', array('choices' => array(1 => 'Below or equal to 10,000 USD: by the Chair', 2 => 'Above 10,000 USD: by Secretary, President and CFO '), 'empty_value' => 'Choose one level', 'label' => 'Approval Level:', 'preferred_choices' => array('empty_value')))
 						->add('chairId', 'choice', array('choices' => $chair_array, 'label' => 'Chair:'))
 						->add('chairApproved', 'hidden', array('data' => 0))
@@ -111,7 +109,7 @@ class PreRequestController extends Controller
 					$oldRequest->setExplanation($preRequest->getExplanation());
 					$oldRequest->setAmount($preRequest->getAmount());
 					$oldRequest->setCurtype($preRequest->getCurtype());
-					$oldRequest->setBudget($preRequest->getBudget());
+					$oldRequest->setSelectedBudget($preRequest->getSelectedBudget());
 					$oldRequest->setLevel($preRequest->getLevel());
 					$oldRequest->setChairId($preRequest->getChairId());
 					$oldRequest->setCfoId($preRequest->getCfoId());

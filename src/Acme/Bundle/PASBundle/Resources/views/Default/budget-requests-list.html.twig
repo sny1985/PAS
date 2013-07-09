@@ -30,7 +30,10 @@
 					<table id="{{ year }}" class="status list">
 						<thead>
 							<tr>
+{% if app.user.role == 'admin' %}
 								<th class="list_no">Request No.</th>
+{% endif %}
+								<th class="list_requester">Budget Holder</th>
 								<th class="list_amount">Amount</th>
 								<th class="list_date">Submission Date</th>
 								<th class="list_status">Status</th>
@@ -40,7 +43,10 @@
 						<tbody>
 {% for req in requests %}
 							<tr>
+{% if app.user.role == 'admin' %}
 								<td class="list_no">{{ req.bid }}</td>
+{% endif %}
+								<td class="list_holder">{{ holders[req.holder] }}</td>
 								<td class="list_amount">{{ req.amount|number_format(2, '.') }} {{ currencies['code'][req.curtype] }}</td>
 								<td class="list_date">{{ req.date|date("m/d/Y") }}</td>
 								<td class="list_status">{% if req.approved == 1 %}Approved{% else %}Waiting for approval{% endif %}</td>

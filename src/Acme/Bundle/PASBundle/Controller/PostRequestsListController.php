@@ -15,11 +15,17 @@ class PostRequestsListController extends Controller
 		$this->user = $this->getUser();
 		$year = date('Y');
 
-		// get currency type list from database and get the rate to USD
+		// get currency type list from database
 		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
 		foreach ($currencies as $key => $value) {
 			$currency_array['name'][$key + 1] = $value->getName();
 			$currency_array['code'][$key + 1] = $value->getCode();
+		}
+
+		// get user list from database
+		$users = $em->getRepository('AcmePASBundle:User')->findAll();
+		foreach ($users as $key => $value) {
+			$user_array[$key] = $value->getUsername();
 		}
 
 		$param = $req->query->all();
@@ -35,12 +41,12 @@ class PostRequestsListController extends Controller
 			if ($this->user->getRole() == 'admin' || $this->user->getRole() == 'cfo' || $this->user->getRole() == 'vtm' || $this->user->getRole() == 'president' || $this->user->getRole() == 'secretary' || $this->user->getRole() == 'chair') {
 				$postRequests = $em->createQuery('SELECT pr FROM AcmePASBundle:PostRequest pr WHERE pr.date >= :start and pr.date <= :end')->setParameters(array('start' => $start, 'end' => $end))->getResult();
 			} else {
-				$postRequests = $em->createQuery('SELECT pr FROM AcmePASBundle:PostRequest pr WHERE pr.date >= :start and pr.date <= :end and pr.prid = :requester')->setParameters(array('start' => $start, 'end' => $end, 'requester' => $this->user->getUid()))->getResult();
+				$postRequests = $em->createQuery('SELECT pr FROM AcmePASBundle:PostRequest pr WHERE pr.date >= :start and pr.date <= :end and pr.requester = :requester')->setParameters(array('start' => $start, 'end' => $end, 'requester' => $this->user->getUid()))->getResult();
 			}
 		}
 
 //var_dump($postRequests);
 
-		return $this->render('AcmePASBundle:Default:post-requests-list.html.twig', array('currencies' => $currency_array, 'requests' => $postRequests, 'type' => $type, 'year' => $year));
+		return $this->render('AcmePASBundle:Default:post-requests-list.html.twig', array('currencies' => $currency_array, 'requesters' => $user_array, 'requests' => $postRequests, 'type' => $type, 'year' => $year));
 	}
 }

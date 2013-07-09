@@ -57,7 +57,7 @@ class PreRequest
 	* @ORM\Column(type="string", length=64)
 	* @Assert\NotNull(message="Budget should not be null.")
 	*/
-	protected $budget;
+	protected $selectedBudget;
 
 	/**
 	* @ORM\Column(type="smallint")
@@ -197,12 +197,12 @@ class PreRequest
 		$this->curtype = $curtype;
 	}
 
-	public function getBudget() {
-		return $this->budget;
+	public function getSelectedBudget() {
+		return $this->selectedBudget;
 	}
 
-	public function setBudget($budget) {
-		$this->budget = $budget;
+	public function setSelectedBudget($selectedBudget) {
+		$this->selectedBudget = $selectedBudget;
 	}
 
 	public function getLevel() {

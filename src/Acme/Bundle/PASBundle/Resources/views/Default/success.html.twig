@@ -23,7 +23,7 @@
 
 			<div id="main">
 				<h4>
-					Thank you. 
+					Thank you!<br />
 {% if form == 'budget request' %}
 					Your budget request has been submitted successfully. Please check your email for details.
 {% elseif form == 'pre request' %}
@@ -39,14 +39,19 @@
 					Your decision has been submitted successfully.
 {% endif %}
 				</h4>
-				<br />
 				<div id="links">
 {% if form == 'budget request' %}
-					<a href="{{ path('pas_budget_request_form') }}">Submit Another Request</a>
+					<a href="{{ path('pas_homepage') }}">Home</a> <a href="{{ path('pas_budget_request_form') }}">Submit Another Request</a>
+{% elseif form == 'budget approval' %}
+					<a href="{{ path('pas_homepage') }}">Home</a> <a href="{{ path('pas_budget_confirmation_form') }}">Back</a>
 {% elseif form == 'pre request' %}
-					<a href="{{ path('pas_pre_request_form') }}">Submit Another Request</a>
+					<a href="{{ path('pas_homepage') }}">Home</a> <a href="{{ path('pas_pre_request_form') }}">Submit Another Request</a>
+{% elseif form == 'pre approval' %}
+					<a href="{{ path('pas_homepage') }}">Home</a>
 {% elseif form == 'post request' %}
-					<a href="{{ path('pas_post_request_form') }}">Submit Another Request</a>
+					<a href="{{ path('pas_homepage') }}">Home</a> <a href="{{ path('pas_post_request_form') }}">Submit Another Request</a>
+{% elseif form == 'post approval' %}
+					<a href="{{ path('pas_homepage') }}">Home</a>
 {% endif %}
 				</div>
 			</div>

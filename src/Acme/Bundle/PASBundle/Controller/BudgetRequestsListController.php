@@ -15,11 +15,17 @@ class BudgetRequestsListController extends Controller
 		$this->user = $this->getUser();
 		$year = date('Y');
 
-		// get currency type list from database and get the rate to USD
+		// get currency type list from database
 		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
 		foreach ($currencies as $key => $value) {
 			$currency_array['name'][$key + 1] = $value->getName();
 			$currency_array['code'][$key + 1] = $value->getCode();
+		}
+
+		// get user list from database
+		$users = $em->getRepository('AcmePASBundle:User')->findAll();
+		foreach ($users as $key => $value) {
+			$user_array[$key] = $value->getUsername();
 		}
 
 		$param = $req->query->all();
@@ -42,6 +48,6 @@ class BudgetRequestsListController extends Controller
 			}
 		}
 
-		return $this->render('AcmePASBundle:Default:budget-requests-list.html.twig', array('currencies' => $currency_array, 'requests' => $budgetRequests, 'type' => $type, 'year' => $year));
+		return $this->render('AcmePASBundle:Default:budget-requests-list.html.twig', array('currencies' => $currency_array, 'holders' => $user_array, 'requests' => $budgetRequests, 'type' => $type, 'year' => $year));
 	}
 }

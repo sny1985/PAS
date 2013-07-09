@@ -63,11 +63,7 @@
 					</tr>
 					<tr>
 						<td class="status_tag">Amount:</td>
-						<td class="status_content">{{ request.amount|number_format(2, '.', ',') }}</td>
-					</tr>
-					<tr>
-						<td class="status_tag">Currency Type:</td>
-						<td class="status_content">{{ currencies['code'][request.curtype] }}</td>
+						<td class="status_content">{{ request.amount|number_format(2, '.', ',') }} {{ currencies['code'][request.curtype] }}</td>
 					</tr>
 					<tr>
 						<td class="status_tag">Approver:</td>
@@ -81,6 +77,10 @@
 {% endif %}
 						</td>
 					</tr>
+					<tr>
+						<td class="status_tag">Submission Date:</td>
+						<td class="status_content">{{ request.date|date("m/d/Y") }}</td>
+					</tr>
 				</table>
 {% if action == 'submit' %}
 				<form id="budget_request_form" class="bda_form" action="{{ path('pas_budget_request_status') }}" method="post">
@@ -89,7 +89,7 @@
 					</div>
 					<input type="hidden" name="id" value="{{ id }}">
 				</form>
-{% elseif action == 'query' %}
+{% elseif action == 'query' and requester.uid == app.user.uid %}
 				<div id="links">
 					<a href="{{ path('pas_budget_request_form', {'id': id, 'action': 'edit'}) }}">Edit</a>
 				</div>
