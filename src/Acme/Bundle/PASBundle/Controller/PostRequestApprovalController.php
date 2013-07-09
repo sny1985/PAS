@@ -12,28 +12,16 @@ class PostRequestApprovalController extends Controller
 {
 	public function postApproveAction(Request $req)
 	{
+		$category = null;
+		$currency = null;
 		$em = $this->getDoctrine()->getManager();
-		$id = null;
-		$sendEmail = false;
-		$postRequest = new PostRequest();
+		$id = 0;
+		$postRequest = null;
 		$requester = null;
 		$selected_chair = null;
+		$sendEmail = false;
 		$status = null;
 		$this->user = $this->getUser();
-
-		// get category list from database
-		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
-		$category_array = array();
-		foreach ($categories as $key => $value) {
-			$category_array[$key + 1] = $value->getName();
-		}
-
-		// get currency type list from database
-		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
-		foreach ($currencies as $key => $value) {
-			$currency_array['name'][$key + 1] = $value->getName();
-			$currency_array['code'][$key + 1] = $value->getCode();
-		}
 
 		$sender = $em->getRepository('AcmePASBundle:User')->findOneByUid("0");
 		$admin = $em->getRepository('AcmePASBundle:User')->findOneByRole("admin");
@@ -48,7 +36,7 @@ class PostRequestApprovalController extends Controller
 		if (isset($param) && isset($param['id'])) {
 			$id = $param['id'];
 			$postRequest = $em->getRepository('AcmePASBundle:PostRequest')->findOneByRid($id);
-			if ($postRequest) {
+			if (count($postRequest) > 0) {
 				// do not allow other people peek it
 				$user_id = $this->user->getUid();
 				$chair_id = $postRequest->getChairId();
@@ -58,6 +46,12 @@ class PostRequestApprovalController extends Controller
 				if ($user_id != $chair_id && $user_id != $cfo_id && $user_id != $president_id && $user_id != $secretary_id && $this->user->getRole() != "vtm") {
 					throw new HttpException(403, 'You are not allowed to approve this request.');
 				}
+
+				// get category list from database
+				$category = $em->getRepository('AcmePASBundle:BudgetCategory')->findOneByBcid($postRequest->getCategory());
+
+				// get currency type list from database
+				$currency = $em->getRepository('AcmePASBundle:CurrencyType')->findOneByCtid($postRequest->getCurtype());
 
 				$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($postRequest->getRequester());
 				$selected_chair = $em->getRepository('AcmePASBundle:User')->findOneByUid($postRequest->getChairId());
@@ -166,6 +160,6 @@ class PostRequestApprovalController extends Controller
 			return $this->redirect($this->generateUrl('pas_success', array('form' => 'post approval')));
 		}
 
-		return $this->render('AcmePASBundle:Default:post-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => $this->user->getRole(), 'request' => $postRequest, 'action' => 'approve', 'status' => $status, 'form' => $form->createView()));
+		return $this->render('AcmePASBundle:Default:post-request-query.html.twig', array('id' => $id, 'category' => $category, 'currency' => $currency, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => $this->user->getRole(), 'request' => $postRequest, 'action' => 'approve', 'status' => $status, 'form' => $form->createView()));
 	}
 }

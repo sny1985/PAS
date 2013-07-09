@@ -12,28 +12,16 @@ class PreRequestApprovalController extends Controller
 {
 	public function preApproveAction(Request $req)
 	{
+		$category = null;
+		$currency = null;
 		$em = $this->getDoctrine()->getManager();
-		$id = null;
-		$sendEmail = false;
-		$preRequest = new PreRequest();
+		$id = 0;
+		$preRequest = null;
 		$requester = null;
 		$selected_chair = null;
+		$sendEmail = false;
 		$status = null;
 		$this->user = $this->getUser();
-
-		// get category list from database
-		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
-		$category_array = array();
-		foreach ($categories as $key => $value) {
-			$category_array[$key + 1] = $value->getName();
-		}
-
-		// get currency type list from database
-		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
-		foreach ($currencies as $key => $value) {
-			$currency_array['name'][$key + 1] = $value->getName();
-			$currency_array['code'][$key + 1] = $value->getCode();
-		}
 
 		// get secretary, CFO, president and VTM from database
 		$sender = $em->getRepository('AcmePASBundle:User')->findOneByUid("0");
@@ -49,7 +37,7 @@ class PreRequestApprovalController extends Controller
 		if (isset($param) && isset($param['id'])) {
 			$id = $param['id'];
 			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
-			if ($preRequest) {
+			if (count($preRequest) > 0) {
 				// do not allow other people peek it
 				$user_id = $this->user->getUid();
 				$chair_id = $preRequest->getChairId();
@@ -59,6 +47,12 @@ class PreRequestApprovalController extends Controller
 				if ($user_id != $chair_id && $user_id != $cfo_id && $user_id != $president_id && $user_id != $secretary_id && $this->user->getRole() != "vtm") {
 					throw new HttpException(403, 'You are not allowed to approve this request.');
 				}
+
+				// get category list from database
+				$category = $em->getRepository('AcmePASBundle:BudgetCategory')->findOneByBcid($preRequest->getCategory());
+
+				// get currency type list from database
+				$currency = $em->getRepository('AcmePASBundle:CurrencyType')->findOneByCtid($preRequest->getCurtype());
 
 				$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($preRequest->getRequester());
 				$selected_chair = $em->getRepository('AcmePASBundle:User')->findOneByUid($preRequest->getChairId());
@@ -167,6 +161,6 @@ class PreRequestApprovalController extends Controller
 			return $this->redirect($this->generateUrl('pas_success', array('form' => 'pre approval')));
 		}
 
-		return $this->render('AcmePASBundle:Default:pre-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => $this->user->getRole(), 'request' => $preRequest, 'action' => 'approve', 'status' => $status, 'form' => $form->createView()));
+		return $this->render('AcmePASBundle:Default:pre-request-query.html.twig', array('id' => $id, 'category' => $category, 'currency' => $currency, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => $this->user->getRole(), 'request' => $preRequest, 'action' => 'approve', 'status' => $status, 'form' => $form->createView()));
 	}
 }

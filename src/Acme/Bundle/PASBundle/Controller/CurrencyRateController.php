@@ -20,8 +20,7 @@ class CurrencyRateController extends Controller
 			$amount = $param['amount'];
 			$curtype = $param['curtype'];
 		}
-		$result = json_decode($cc->updateRate($curtype)->getContent());
 
-		return new JsonResponse(array('amount' => $result->rate * $amount));
+		return new JsonResponse(array('amount' => $cc->updateRate($curtype) * $amount));
 	}
 }

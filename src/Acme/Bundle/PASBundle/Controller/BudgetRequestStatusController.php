@@ -15,8 +15,10 @@ class BudgetRequestStatusController extends Controller
 	{
 		$action = null;
 		$budgetRequest = null;
+		$category = null;
+		$currency = null;
 		$em = $this->getDoctrine()->getManager();
-		$id = null;
+		$id = 0;
 		$requester = null;
 		$this->user = $this->getUser();
 
@@ -27,7 +29,9 @@ class BudgetRequestStatusController extends Controller
 			if (isset($param) && isset($param['id'])) {
 				$id = $param['id'];
 				$budgetRequest = $em->getRepository('AcmePASBundle:BudgetRequest')->findOneByBid($id);
-				$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($budgetRequest->getHolder());
+				if (count($budgetRequest)) {
+					$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($budgetRequest->getHolder());
+				}
 			}
 
 			$sender = $em->getRepository('AcmePASBundle:User')->findOneByUid("0");
@@ -78,22 +82,16 @@ class BudgetRequestStatusController extends Controller
 				$action = $param['action'];
 			}
 			$budgetRequest = $em->getRepository('AcmePASBundle:BudgetRequest')->findOneByBid($id);
-			$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($budgetRequest->getHolder());
+			if (count($budgetRequest)) {
+				$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($budgetRequest->getHolder());
+				// get category list from database
+				$category = $em->getRepository('AcmePASBundle:BudgetCategory')->findOneByBcid($budgetRequest->getCategory());
+
+				// get currency type list from database
+				$currency = $em->getRepository('AcmePASBundle:CurrencyType')->findOneByCtid($budgetRequest->getCurtype());
+			}
 		}
 
-		// get category list from database
-		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
-		foreach ($categories as $key => $value) {
-			$category_array[$key + 1] = $value->getName();
-		}
-
-		// get currency type list from database
-		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
-		foreach ($currencies as $key => $value) {
-			$currency_array['name'][$key + 1] = $value->getName();
-			$currency_array['code'][$key + 1] = $value->getCode();
-		}
-
-		return $this->render('AcmePASBundle:Default:budget-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'requester' => $requester, 'request' => $budgetRequest, 'action' => $action));
+		return $this->render('AcmePASBundle:Default:budget-request-query.html.twig', array('id' => $id, 'category' => $category, 'currency' => $currency, 'requester' => $requester, 'request' => $budgetRequest, 'action' => $action));
 	}
 }

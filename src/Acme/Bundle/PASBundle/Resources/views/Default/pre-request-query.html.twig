@@ -18,6 +18,9 @@
 {% if id == false or request == false %}
 			<div id="main">
 				<h4>No Pre-Payment Request found for id {{ id }}</h4>
+				<div id="links">
+					<a href="{{ path('pas_homepage') }}">Home</a>
+				</div>
 			</div>
 {% else %}
 			<div id="main">
@@ -58,7 +61,7 @@
 					</tr>
 					<tr>
 						<td class="status_tag">Budget Category:</td>
-						<td class="status_content">{{ categories[request.category] }}</td>
+						<td class="status_content">{{ category.name }}</td>
 					</tr>
 					<tr>
 						<td class="status_tag">Explanation of the Expense:</td>
@@ -72,7 +75,7 @@
 					</tr>
 					<tr>
 						<td class="status_tag">Amount:</td>
-						<td class="status_content">{{ request.amount|number_format(2, '.', '') }} {{ currencies['code'][request.curtype] }}</td>
+						<td class="status_content">{{ request.amount|number_format(2, '.', '') }} {{ currency.code }}</td>
 					</tr>
 					<tr>
 						<td class="status_tag">Selected Budget:</td>

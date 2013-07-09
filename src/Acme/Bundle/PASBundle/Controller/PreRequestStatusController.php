@@ -12,28 +12,16 @@ class PreRequestStatusController extends Controller
 	public function preRequestReviewAction(Request $req)
 	{
 		$action = null;
+		$category = null;
+		$currency = null;
 		$em = $this->getDoctrine()->getManager();
-		$id = null;
-		$preRequest = new PreRequest();
+		$id = 0;
+		$preRequest = null;
 		$requester = null;
 		$role = "requester";
 		$selected_chair = null;
 		$status = null;
 		$this->user = $this->getUser();
-
-		// get category list from database
-		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
-		$category_array = array();
-		foreach ($categories as $key => $value) {
-			$category_array[$key + 1] = $value->getName();
-		}
-
-		// get currency type list from database
-		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
-		foreach ($currencies as $key => $value) {
-			$currency_array['name'][$key + 1] = $value->getName();
-			$currency_array['code'][$key + 1] = $value->getCode();
-		}
 
 		// get secretary, CFO, president and VTM from database
 		$sender = $em->getRepository('AcmePASBundle:User')->findOneByUid("0");
@@ -50,7 +38,7 @@ class PreRequestStatusController extends Controller
 			if (isset($param) && isset($param['id'])) {
 				$id = $param['id'];
 				$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
-				if ($preRequest) {
+				if (count($preRequest) > 0) {
 					$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($preRequest->getRequester());
 					$selected_chair = $em->getRepository('AcmePASBundle:User')->findOneByUid($preRequest->getChairId());
 				}
@@ -87,7 +75,13 @@ class PreRequestStatusController extends Controller
 			}
 
 			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
-			if ($preRequest) {
+			if (count($preRequest) > 0) {
+				// get category list from database
+				$category = $em->getRepository('AcmePASBundle:BudgetCategory')->findOneByBcid($preRequest->getCategory());
+
+				// get currency type list from database
+				$currency = $em->getRepository('AcmePASBundle:CurrencyType')->findOneByCtid($preRequest->getCurtype());
+
 				$level = $preRequest->getLevel();
 				if ($level == 1) {
 					$status = $preRequest->getChairApproved();
@@ -109,6 +103,6 @@ class PreRequestStatusController extends Controller
 			}
 		}
 
-		return $this->render('AcmePASBundle:Default:pre-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => 'requester', 'request' => $preRequest, 'action' => $action, 'status' => $status));
+		return $this->render('AcmePASBundle:Default:pre-request-query.html.twig', array('id' => $id, 'category' => $category, 'currency' => $currency, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => 'requester', 'request' => $preRequest, 'action' => $action, 'status' => $status));
 	}
 }

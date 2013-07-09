@@ -22,28 +22,29 @@ class CurrencyConverter
 
 		if (isset($curtype)) {
 			$currency = $em->getRepository('AcmePASBundle:CurrencyType')->findOneByCode($curtype);
+			if (count($currency) > 0) {
+				// if the data is outdated, fetch new one and update database
+				$lastUpdated = $currency->getLastUpdated();
+				$now = new \DateTime();
+				$seconds = $now->getTimestamp() - $lastUpdated->getTimestamp();
+				if ($seconds > $interval) {
+					$url = "http://www.google.com/ig/calculator?hl=en&q=1.00" . $curtype . "=?USD";
+					$result = file_get_contents($url);
+					$result = json_decode(preg_replace('/(\w+):/i', '"\1":', $result));
+					if ($result->icc == true) {
+						$rs = explode(' ', $result->rhs);
+						$rate = (float)$rs[0];
+					}
 
-			// if the data is outdated, fetch new one and update database
-			$lastUpdated = $currency->getLastUpdated();
-			$now = new \DateTime();
-			$seconds = $now->getTimestamp() - $lastUpdated->getTimestamp();
-			if ($seconds > $interval) {
-				$url = "http://www.google.com/ig/calculator?hl=en&q=1.00" . $curtype . "=?USD";
-				$result = file_get_contents($url);
-				$result = json_decode(preg_replace('/(\w+):/i', '"\1":', $result));
-				if ($result->icc == true) {
-					$rs = explode(' ', $result->rhs);
-					$rate = (float)$rs[0];
+					$currency->setRate($rate);
+					$currency->setLastUpdated(new \DateTime());
+					$em->flush();
+				} else {
+					$rate = $currency->getRate();
 				}
-
-				$currency->setRate($rate);
-				$currency->setLastUpdated(new \DateTime());
-				$em->flush();
-			} else {
-				$rate = $currency->getRate();
 			}
 		}
 
-		return new JsonResponse(array('rate' => $rate));
+		return $rate;
 	}
 }

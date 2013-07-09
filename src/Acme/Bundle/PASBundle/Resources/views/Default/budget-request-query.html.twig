@@ -9,6 +9,9 @@
 {% if request == false %}
 			<div id="main">
 				<h4>No budget request found for id {{ id }}</h4>
+				<div id="links">
+					<a href="{{ path('pas_homepage') }}">Home</a>
+				</div>
 			</div>
 {% else %}
 			<div id="main">
@@ -27,11 +30,11 @@
 					</tr>
 					<tr>
 						<td class="status_tag">Request Type:</td>
-						<td class="status_content">{% if categories[request.requestType] == 1 %}Latest Estimation{% else %}Budget Request{% endif %}</td>
+						<td class="status_content">{% if request.requestType == 1 %}Latest Estimation{% else %}Budget Request{% endif %}</td>
 					</tr>
 					<tr>
 						<td class="status_tag">Budget Category:</td>
-						<td class="status_content">{{ categories[request.category] }}</td>
+						<td class="status_content">{{ category.name }}</td>
 					</tr>
 					<tr>
 						<td class="status_tag">Starting Date of Activity:</td>
@@ -63,7 +66,7 @@
 					</tr>
 					<tr>
 						<td class="status_tag">Amount:</td>
-						<td class="status_content">{{ request.amount|number_format(2, '.', ',') }} {{ currencies['code'][request.curtype] }}</td>
+						<td class="status_content">{{ request.amount|number_format(2, '.', ',') }} {{ currency.code }}</td>
 					</tr>
 					<tr>
 						<td class="status_tag">Approver:</td>

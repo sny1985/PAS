@@ -106,13 +106,13 @@ function SelectBudget(data) {
 		$bc.val(data.year + "-" + data.category + "-" + data.amount);
 	}
 
-	if ($unPreApproved.length && $unPreApproved.prop("checked")) {
-		$("#budget_table").hide();
-	} else {
+	if ($bc.val()) {
 		var value = $bc.val().split("-");
 		$("#selected_category").html(value[1]);
 		$("#selected_amount").html(value[2]);
 		$("#budget_table").show();
+	} else {
+		$("#budget_table").hide();
 	}
 }
 

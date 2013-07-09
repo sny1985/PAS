@@ -6,34 +6,24 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Acme\Bundle\PASBundle\Entity\PostRequest;
 use Acme\Bundle\PASBundle\Entity\User;
+use Acme\Bundle\PASBundle\Services\CurrencyConverter;
 
 class PostRequestStatusController extends Controller
 {
 	public function postRequestReviewAction(Request $req)
 	{
 		$action = null;
+		$category = null;
+		$cc = $this->get('currency_converter');
+		$currency = null;
 		$em = $this->getDoctrine()->getManager();
-		$id = null;
-		$postRequest = new PostRequest();
+		$id = 0;
+		$postRequest = null;
 		$requester = null;
 		$role = "requester";
 		$selected_chair = null;
 		$status = null;
 		$this->user = $this->getUser();
-
-		// get category list from database
-		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
-		$category_array = array();
-		foreach ($categories as $key => $value) {
-			$category_array[$key + 1] = $value->getName();
-		}
-
-		// get currency type list from database
-		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
-		foreach ($currencies as $key => $value) {
-			$currency_array['name'][$key + 1] = $value->getName();
-			$currency_array['code'][$key + 1] = $value->getCode();
-		}
 
 		// get secretary, CFO, president and VTM from database
 		$sender = $em->getRepository('AcmePASBundle:User')->findOneByUid("0");
@@ -50,7 +40,7 @@ class PostRequestStatusController extends Controller
 			if (isset($param) && isset($param['id'])) {
 				$id = $param['id'];
 				$postRequest = $em->getRepository('AcmePASBundle:PostRequest')->findOneByRid($id);
-				if ($postRequest) {
+				if (count($postRequest) > 0) {
 					$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($postRequest->getRequester());
 					$selected_chair = $em->getRepository('AcmePASBundle:User')->findOneByUid($postRequest->getChairId());
 
@@ -104,7 +94,14 @@ class PostRequestStatusController extends Controller
 			}
 		
 			$postRequest = $em->getRepository('AcmePASBundle:PostRequest')->findOneByRid($id);
-			if ($postRequest) {
+			if (count($postRequest) > 0) {
+				// get category list from database
+				$category = $em->getRepository('AcmePASBundle:BudgetCategory')->findOneByBcid($postRequest->getCategory());
+
+				// get currency type list from database
+				$currency = $em->getRepository('AcmePASBundle:CurrencyType')->findOneByCtid($postRequest->getCurtype());
+				$currency->setRate($cc->updateRate($currency->getCode()));
+
 				$level = $postRequest->getLevel();
 				if ($level == 1) {
 					$status = $postRequest->getChairApproved();
@@ -129,6 +126,6 @@ class PostRequestStatusController extends Controller
 		if ($this->user->getRole() == "vtm")
 			$role = "vtm";
 
-		return $this->render('AcmePASBundle:Default:post-request-query.html.twig', array('id' => $id, 'categories' => $category_array, 'currencies' => $currency_array, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => $role, 'request' => $postRequest, 'action' => $action, 'status' => $status));
+		return $this->render('AcmePASBundle:Default:post-request-query.html.twig', array('id' => $id, 'category' => $category, 'currency' => $currency, 'chair' => $selected_chair, 'secretary' => $secretary, 'cfo' => $cfo, 'president' => $president, 'requester' => $requester, 'role' => $role, 'request' => $postRequest, 'action' => $action, 'status' => $status));
 	}
 }

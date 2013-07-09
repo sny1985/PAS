@@ -22,7 +22,7 @@ class BudgetConfirmationController extends Controller
 		$this->user = $this->getUser();
 		$year = date('Y');
 
-		// get category list from database
+		// get category list from database, in ascending order
 		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findBy(array(), array('name' => 'ASC'));
 		$category_array = array();
 		foreach ($categories as $category) {
@@ -34,8 +34,7 @@ class BudgetConfirmationController extends Controller
 		foreach ($currencies as $key => $value) {
 			$currency_array['name'][$key + 1] = $value->getName();
 			$currency_array['code'][$key + 1] = $value->getCode();
-			$cc->updateRate($value->getCode());
-			$currency_array['rate'][$key + 1] = $value->getRate();
+			$currency_array['rate'][$key + 1] = $cc->updateRate($value->getCode());
 		}
 
 		// if there is only a year in query, show summary; if there is a cid as well, show details

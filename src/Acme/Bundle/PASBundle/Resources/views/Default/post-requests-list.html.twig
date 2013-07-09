@@ -48,8 +48,10 @@
 								<td class="list_invoices">{{ req.numberOfInvoices }}</td>
 								<td class="list_date">{{ req.date|date("m/d/Y") }}</td>
 								<td class="list_status">
-{% if (req.chairId != 0 and req.chairApproved != 1) or (req.cfoId != 0 and req.cfoApproved != 1) or (req.presidentId != 0 and req.presidentApproved != 1) or (req.secretaryId != 0 and req.secretaryApproved != 1) %}
+{% if (req.chairId != 0 and req.chairApproved == 0) or (req.cfoId != 0 and req.cfoApproved == 0) or (req.presidentId != 0 and req.presidentApproved == 0) or (req.secretaryId != 0 and req.secretaryApproved == 0) %}
 									Waiting for approval
+{% elseif (req.chairId != 0 and req.chairApproved == 2) or (req.cfoId != 0 and req.cfoApproved == 2) or (req.presidentId != 0 and req.presidentApproved == 2) or (req.secretaryId != 0 and req.secretaryApproved == 2) %}
+									Pending
 {% else %}
 									Approved
 {% endif %}
@@ -58,7 +60,7 @@
 {% if app.user.role == 'chair' or app.user.role == 'cfo' or app.user.role == 'president' or app.user.role == 'secretary' %}
 								<td class="list_link"><a class="link" href="{{ path('pas_post_approval_form', {'id': req.rid}) }}">Approve</a></td>
 {% endif %}
-								<td class="list_export">{% if req.actualamount > 0 %}<a class="link" href="{{ path('pas_payment_exporting', {'id': req.rid}) }}">Export</a>{% endif %}</td>
+								<td class="list_export">{% if req.actualamount > 0 %}<a class="link" href="{{ path('pas_progress_exporting', {'id': req.rid}) }}">Export</a>{% endif %}</td>
 							</tr>
 {% endfor %}
 						</tbody>
