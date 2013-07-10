@@ -15,17 +15,23 @@ class BudgetRequestsListController extends Controller
 		$this->user = $this->getUser();
 		$year = date('Y');
 
+		// get category list from database, in ascending order
+		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
+		foreach ($categories as $category) {
+			$category_array[$category->getBcid()] = $category->getName();
+		}
+
 		// get currency type list from database
 		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
-		foreach ($currencies as $key => $value) {
-			$currency_array['name'][$key + 1] = $value->getName();
-			$currency_array['code'][$key + 1] = $value->getCode();
+		foreach ($currencies as $currency) {
+			$currency_array['name'][$currency->getCtid()] = $currency->getName();
+			$currency_array['code'][$currency->getCtid()] = $currency->getCode();
 		}
 
 		// get user list from database
 		$users = $em->getRepository('AcmePASBundle:User')->findAll();
-		foreach ($users as $key => $value) {
-			$user_array[$key] = $value->getUsername();
+		foreach ($users as $user) {
+			$user_array[$user->getUid()] = $user->getUsername();
 		}
 
 		$param = $req->query->all();
@@ -48,6 +54,6 @@ class BudgetRequestsListController extends Controller
 			}
 		}
 
-		return $this->render('AcmePASBundle:Default:budget-requests-list.html.twig', array('currencies' => $currency_array, 'holders' => $user_array, 'requests' => $budgetRequests, 'type' => $type, 'year' => $year));
+		return $this->render('AcmePASBundle:Default:budget-requests-list.html.twig', array('categories' => $category_array, 'currencies' => $currency_array, 'holders' => $user_array, 'requests' => $budgetRequests, 'type' => $type, 'year' => $year));
 	}
 }

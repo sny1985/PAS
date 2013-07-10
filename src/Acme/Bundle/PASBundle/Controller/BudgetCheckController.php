@@ -19,16 +19,16 @@ class BudgetCheckController extends Controller
 
 		// get category list from database
 		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
-		foreach ($categories as $key => $value) {
-			$category_array[$key + 1] = $value->getName();
+		foreach ($categories as $category) {
+			$category_array[$category->getBcid()] = $category->getName();
 		}
 
 		// get currency type list from database and get the rate to USD
 		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
-		foreach ($currencies as $key => $value) {
-			$currency_array['name'][$key + 1] = $value->getName();
-			$currency_array['code'][$key + 1] = $value->getCode();
-			$currency_array['rate'][$key + 1] = $cc->updateRate($value->getCode());
+		foreach ($currencies as $currency) {
+			$currency_array['name'][$currency->getCtid()] = $currency->getName();
+			$currency_array['code'][$currency->getCtid()] = $currency->getCode();
+			$currency_array['rate'][$currency->getCtid()] = $cc->updateRate($currency->getCode());
 		}
 
 		$param = $req->query->all();

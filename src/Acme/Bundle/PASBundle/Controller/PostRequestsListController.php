@@ -17,15 +17,15 @@ class PostRequestsListController extends Controller
 
 		// get currency type list from database
 		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
-		foreach ($currencies as $key => $value) {
-			$currency_array['name'][$key + 1] = $value->getName();
-			$currency_array['code'][$key + 1] = $value->getCode();
+		foreach ($currencies as $currency) {
+			$currency_array['name'][$currency->getCtid()] = $currency->getName();
+			$currency_array['code'][$currency->getCtid()] = $currency->getCode();
 		}
 
 		// get user list from database
 		$users = $em->getRepository('AcmePASBundle:User')->findAll();
-		foreach ($users as $key => $value) {
-			$user_array[$key] = $value->getUsername();
+		foreach ($users as $user) {
+			$user_array[$user->getUid()] = $user->getUsername();
 		}
 
 		$param = $req->query->all();
@@ -44,8 +44,6 @@ class PostRequestsListController extends Controller
 				$postRequests = $em->createQuery('SELECT pr FROM AcmePASBundle:PostRequest pr WHERE pr.date >= :start and pr.date <= :end and pr.requester = :requester')->setParameters(array('start' => $start, 'end' => $end, 'requester' => $this->user->getUid()))->getResult();
 			}
 		}
-
-//var_dump($postRequests);
 
 		return $this->render('AcmePASBundle:Default:post-requests-list.html.twig', array('currencies' => $currency_array, 'requesters' => $user_array, 'requests' => $postRequests, 'year' => $year));
 	}

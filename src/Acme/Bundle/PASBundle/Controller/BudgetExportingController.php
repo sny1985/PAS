@@ -21,23 +21,23 @@ class BudgetExportingController extends Controller
 		// get user list from database
 		$users = $em->getRepository('AcmePASBundle:User')->findAll();
 		$user_array = array();
-		foreach ($users as $key => $value) {
-			$user_array[$key + 1] = $value->getUserName();
+		foreach ($users as $user) {
+			$user_array[$user->getUid()] = $user->getUsername();
 		}
 
 		// get category list from database
 		$categories = $em->getRepository('AcmePASBundle:BudgetCategory')->findAll();
 		$category_array = array();
-		foreach ($categories as $key => $value) {
-			$category_array[$key + 1] = $value->getName();
+		foreach ($categories as $category) {
+			$category_array[$category->getBcid()] = $category->getName();
 		}
 
 		// get currency list from database and get the rate to USD
 		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
-		foreach ($currencies as $key => $value) {
-			$currency_array['name'][$key + 1] = $value->getName();
-			$currency_array['code'][$key + 1] = $value->getCode();
-			$currency_array['rate'][$key + 1] = $cc->updateRate($value->getCode());
+		foreach ($currencies as $currency) {
+			$currency_array['name'][$currency->getCtid()] = $currency->getName();
+			$currency_array['code'][$currency->getCtid()] = $currency->getCode();
+			$currency_array['rate'][$currency->getCtid()] = $cc->updateRate($currency->getCode());
 		}
 
 		$param = $req->query->all();
@@ -60,7 +60,7 @@ class BudgetExportingController extends Controller
 		$end = new \DateTime($year . '-12-31');
 		$budgetRequests = $em->createQuery('SELECT br FROM AcmePASBundle:BudgetRequest br WHERE br.startdate >= :start and br.startdate <= :end and br.requestType = :type')->setParameters(array('start' => $start, 'end' => $end, 'type' => $type))->getResult();
 
-		$title = "FY " . $year .  ($type == 1 ? " Estimation" : " Budget Request") . " Report - " . ($cid == 0 ? "summary" : $category_array[$cid] . " details");
+		$title = "FY" . $year . ($type == 1 ? " Estimation" : " Budget Request") . " Report - " . ($cid == 0 ? "summary" : $category_array[$cid] . " details");
 
 		// create new PHPExcel object
 		$excelObj = $this->get('xls.service_xls5')->excelObj;
@@ -76,7 +76,7 @@ class BudgetExportingController extends Controller
 
 		// add table header
 		$excelObj->setActiveSheetIndex(0)
-					->setCellValue("A1", "Budget Id")
+					->setCellValue("A1", "Request No.")
 					->setCellValue("B1", "Holder")
 					->setCellValue("C1", "Category")
 					->setCellValue("D1", "Starting Date")
@@ -84,10 +84,9 @@ class BudgetExportingController extends Controller
 					->setCellValue("F1", "Abstract")
 					->setCellValue("G1", "Details")
 					->setCellValue("H1", "Amount")
-					->setCellValue("I1", "Currency Type")
-					->setCellValue("J1", "Amount (USD)")
-					->setCellValue("K1", "Submission Date")
-					->setCellValue("L1", "Approved?");
+					->setCellValue("I1", "Amount (USD)")
+					->setCellValue("J1", "Status")
+					->setCellValue("K1", "Submission Date");
 
 		$row = 2;
 
@@ -96,18 +95,17 @@ class BudgetExportingController extends Controller
 			if ($cid != 0 && $budget->getCategory() != $cid) {
 				continue;
 			}
-			$excelObj->getActiveSheet()->setCellValue("A$row", $budget->getBid());
+			$excelObj->getActiveSheet()->setCellValue("A$row", sprintf("#%08d", $budget->getBid()));
 			$excelObj->getActiveSheet()->setCellValue("B$row", $user_array[$budget->getHolder()]);
 			$excelObj->getActiveSheet()->setCellValue("C$row", $category_array[$budget->getCategory()]);
 			$excelObj->getActiveSheet()->setCellValue("D$row", $budget->getStartDate()->format('m/d/Y'));
 			$excelObj->getActiveSheet()->setCellValue("E$row", $budget->getEndDate()->format('m/d/Y'));
 			$excelObj->getActiveSheet()->setCellValue("F$row", $budget->getAbstract());
 			$excelObj->getActiveSheet()->setCellValue("G$row", $budget->getDetails());
-			$excelObj->getActiveSheet()->setCellValue("H$row", sprintf("%.2f", $budget->getAmount()));
-			$excelObj->getActiveSheet()->setCellValue("I$row", $currency_array['code'][$budget->getCurtype()]);
-			$excelObj->getActiveSheet()->setCellValue("J$row", sprintf("%.2f", $budget->getAmount() * $currency_array['rate'][$budget->getCurtype()]));
+			$excelObj->getActiveSheet()->setCellValue("H$row", sprintf("%.2f", $budget->getAmount()) . " " . $currency_array['code'][$budget->getCurtype()]);
+			$excelObj->getActiveSheet()->setCellValue("I$row", sprintf("%.2f", $budget->getAmount() * $currency_array['rate'][$budget->getCurtype()]));
+			$excelObj->getActiveSheet()->setCellValue("J$row", $budget->getApproved() ? "Yes" : "No");
 			$excelObj->getActiveSheet()->setCellValue("K$row", $budget->getDate()->format('m/d/Y'));
-			$excelObj->getActiveSheet()->setCellValue("L$row", $budget->getApproved() ? "Yes" : "No");
 			$row++;
 		}
 

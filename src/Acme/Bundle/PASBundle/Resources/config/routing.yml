@@ -87,6 +87,10 @@ pas_progress_exporting:
     pattern: /progress-export
     defaults: { _controller: AcmePASBundle:ProgressExporting:export }
 
+pas_budget_requests_list_exporting:
+    pattern: /budget-list-export
+    defaults: { _controller: AcmePASBundle:BudgetRequestsListExporting:export }
+
 pas_pre_requests_list_exporting:
     pattern: /pre-list-export
     defaults: { _controller: AcmePASBundle:PreRequestsListExporting:export }

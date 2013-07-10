@@ -34,6 +34,7 @@
 								<th class="list_no">Request No.</th>
 {% endif %}
 								<th class="list_requester">Budget Holder</th>
+								<th class="list_category">Budget Category</th>
 								<th class="list_amount">Amount</th>
 								<th class="list_date">Submission Date</th>
 								<th class="list_status">Status</th>
@@ -47,6 +48,7 @@
 								<td class="list_no">{{ req.bid }}</td>
 {% endif %}
 								<td class="list_holder">{{ holders[req.holder] }}</td>
+								<td class="list_category">{{ categories[req.category] }}</td>
 								<td class="list_amount">{{ req.amount|number_format(2, '.') }} {{ currencies['code'][req.curtype] }}</td>
 								<td class="list_date">{{ req.date|date("m/d/Y") }}</td>
 								<td class="list_status">{% if req.approved == 1 %}Approved{% else %}Waiting for approval{% endif %}</td>
@@ -55,6 +57,9 @@
 {% endfor %}
 						</tbody>
 					</table>
+					<div class="form_item" style="float: right;">
+						<input id="list_export" type="button" value="Export Budget List" onclick="listExport();" />
+					</div>
 				</form>
 			</div>
 {% endblock %}
@@ -69,7 +74,10 @@
 				$("#fiscalyear").change(function (){
 					window.location.replace("budget-requests-list?type={{ type }}&year=" + $(this).val());
 				});
-				ChangeAllCheckboxes();
 			});
+
+			function listExport() {
+				window.location.replace("budget-list-export?year={{ year }}");
+			}
 		</script>
 {% endblock %}

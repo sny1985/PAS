@@ -15,7 +15,10 @@ class ProgressExportingController extends Controller
 	{
 		$cc = $this->get('currency_converter');
 		$em = $this->getDoctrine()->getManager();
-		$id = null;
+		$id = 0;
+		$preRequest = null;
+		$postRequest = null;
+		$postRequests = null;
 
 		// get currency type list from database and get the rate to USD
 		$currencies = $em->getRepository('AcmePASBundle:CurrencyType')->findAll();
@@ -41,76 +44,75 @@ class ProgressExportingController extends Controller
 				$preRequest = $postRequest;
 				$postRequests = array($postRequest);
 			}
-
-			$title = "Expense Budget Progress Report - pre-payment #" . $prid;
-
-			// create new PHPExcel object
-			$excelObj = $this->get('xls.service_xls5')->excelObj;
-
-			// set document properties
-			$excelObj->getProperties()
-						->setCreator("Blu-ray Disc Association")
-						->setLastModifiedBy("Blu-ray Disc Association")
-						->setTitle($title)
-						->setSubject($title)
-						->setDescription($title)
-						->setCategory("Report");
-
-			// add table header
-			$excelObj->setActiveSheetIndex(0)
-						->setCellValue("A1", "Requester $requester")
-						->setCellValue("A3", "Pre-approval No.")
-						->setCellValue("B3", "Explanation")
-						->setCellValue("C3", "Amount (Requested Currency)")
-						->setCellValue("D3", "Amount (USD)");
-
-			$row = 4;
-
-			// fill data
-			$total = sprintf("%.2f", $preRequest->getAmount());
-			$totalActual = sprintf("%.2f",$preRequest->getAmount() * $currency_array['rate'][$preRequest->getCurtype()]);
-			$totalCompleted = 0;
-			$totalCompletedActual = 0;
-			for ($i = 0, $num = count($postRequests); $i < $num; $i++, $row++) {
-				if ($i == 0) $excelObj->getActiveSheet()->setCellValue("A$row", "#".sprintf("%08d", intval($postRequests[$i]->getRid()))); // add # before id to prevent number-conversion
-				$excelObj->getActiveSheet()->setCellValue("B$row", $postRequests[$i]->getExplanation());
-				$excelObj->getActiveSheet()->setCellValue("C$row", $postRequests[$i]->getAmount() . " " . $currency_array['code'][$postRequests[$i]->getCurtype()]);
-				$actual = sprintf("%.2f", $postRequests[$i]->getActualAmount());
-				$excelObj->getActiveSheet()->setCellValue("D$row", $actual);
-				$totalCompletedActual += $actual;
-			}
-
-			$progress = $totalCompletedActual * 100.0 / $totalActual;
-
-			$excelObj->getActiveSheet()->setCellValue("A$row", "Total");
-			$excelObj->getActiveSheet()->setCellValue("D$row", $totalCompletedActual);
-			$row++;
-
-			$excelObj->getActiveSheet()->setCellValue("A$row", "Budget of this item");
-			$excelObj->getActiveSheet()->setCellValue("C$row", $total . " " . $currency_array['code'][$preRequest->getCurtype()]);
-			$excelObj->getActiveSheet()->setCellValue("D$row", $totalActual);
-			$row++;
-
-			$excelObj->getActiveSheet()->setCellValue("A$row", "Budget Progress");
-			$excelObj->getActiveSheet()->setCellValue("D$row", sprintf("%.2f", $progress)."%");
-
-			// rename worksheet
-			$excelObj->getActiveSheet()->setTitle("Requester $requester");
-
-			// set active sheet index to the first sheet, so Excel opens this as the first sheet
-			$excelObj->setActiveSheetIndex(0);
-
-			$title = str_replace(' ', '_', $title);
-			$filename = $title . "_" . date('mdY');
-
-			// create the response and redirect output to a client’s web browser (Excel5)
-			$response = $this->get('xls.service_xls5')->getResponse();
-			$response->headers->set('Content-Type', 'application/vnd.ms-excel; charset=utf-8');
-			$response->headers->set("Content-Disposition", "attachment;filename=" . $filename . ".xls");
-			$response->headers->set("Cache-Control", "max-age=0");
-			return $response;
 		}
 
-		return $this->render('AcmePASBundle:Default:failure.html.twig', array('id' => $id));
+		$title = "Expense Budget Progress Report - pre-payment #" . $prid;
+
+		// create new PHPExcel object
+		$excelObj = $this->get('xls.service_xls5')->excelObj;
+
+		// set document properties
+		$excelObj->getProperties()
+					->setCreator("Blu-ray Disc Association")
+					->setLastModifiedBy("Blu-ray Disc Association")
+					->setTitle($title)
+					->setSubject($title)
+					->setDescription($title)
+					->setCategory("Report");
+
+		// add table header
+		$excelObj->setActiveSheetIndex(0)
+					->setCellValue("A1", "Requester $requester")
+					->setCellValue("A3", "Pre-approval No.")
+					->setCellValue("B3", "Explanation")
+					->setCellValue("C3", "Amount (Requested Currency)")
+					->setCellValue("D3", "Amount (USD)");
+
+		$row = 4;
+
+		// fill data
+		$total = sprintf("%.2f", $preRequest->getAmount());
+		$totalActual = sprintf("%.2f",$preRequest->getAmount() * $currency_array['rate'][$preRequest->getCurtype()]);
+		$totalCompleted = 0;
+		$totalCompletedActual = 0;
+		foreach ($postRequests as $request) {
+			$excelObj->getActiveSheet()->setCellValue("A$row", "#" . sprintf("%08d", intval($request->getRid()))); // add # before id to prevent number-conversion
+			$excelObj->getActiveSheet()->setCellValue("B$row", $request->getExplanation());
+			$excelObj->getActiveSheet()->setCellValue("C$row", $request->getAmount() . " " . $currency_array['code'][$request->getCurtype()]);
+			$actual = sprintf("%.2f", $request->getActualAmount());
+			$excelObj->getActiveSheet()->setCellValue("D$row", $actual);
+			$totalCompletedActual += $actual;
+			$row++;
+		}
+
+		$progress = $totalCompletedActual * 100.0 / $totalActual;
+
+		$excelObj->getActiveSheet()->setCellValue("A$row", "Total");
+		$excelObj->getActiveSheet()->setCellValue("D$row", $totalCompletedActual);
+		$row++;
+
+		$excelObj->getActiveSheet()->setCellValue("A$row", "Budget of this item");
+		$excelObj->getActiveSheet()->setCellValue("C$row", $total . " " . $currency_array['code'][$preRequest->getCurtype()]);
+		$excelObj->getActiveSheet()->setCellValue("D$row", $totalActual);
+		$row++;
+
+		$excelObj->getActiveSheet()->setCellValue("A$row", "Budget Progress");
+		$excelObj->getActiveSheet()->setCellValue("D$row", sprintf("%.2f", $progress)."%");
+
+		// rename worksheet
+		$excelObj->getActiveSheet()->setTitle("Requester $requester");
+
+		// set active sheet index to the first sheet, so Excel opens this as the first sheet
+		$excelObj->setActiveSheetIndex(0);
+
+		$title = str_replace(' ', '_', $title);
+		$filename = $title . "_" . date('mdY');
+
+		// create the response and redirect output to a client’s web browser (Excel5)
+		$response = $this->get('xls.service_xls5')->getResponse();
+		$response->headers->set('Content-Type', 'application/vnd.ms-excel; charset=utf-8');
+		$response->headers->set("Content-Disposition", "attachment;filename=" . $filename . ".xls");
+		$response->headers->set("Cache-Control", "max-age=0");
+		return $response;
 	}
 }
