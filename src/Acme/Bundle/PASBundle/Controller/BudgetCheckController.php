@@ -30,7 +30,7 @@ class BudgetCheckController extends Controller
 			$currency_array['code'][$key + 1] = $value->getCode();
 			$currency_array['rate'][$key + 1] = $cc->updateRate($value->getCode());
 		}
-		
+
 		$param = $req->query->all();
 		if (isset($param)) {
 			if (isset($param['year'])) {

@@ -84,20 +84,16 @@ pas_budget_exporting:
     defaults: { _controller: AcmePASBundle:BudgetExporting:export }
 
 pas_progress_exporting:
-    pattern: /payment-export
-    defaults: { _controller: AcmePASBundle:PaymentExporting:export }
+    pattern: /progress-export
+    defaults: { _controller: AcmePASBundle:ProgressExporting:export }
 
-pas_budget_list_exporting:
-    pattern: /budget-export
-    defaults: { _controller: AcmePASBundle:BudgetExporting:export }
+pas_pre_requests_list_exporting:
+    pattern: /pre-list-export
+    defaults: { _controller: AcmePASBundle:PreRequestsListExporting:export }
 
-pas_pre_payment_list_exporting:
-    pattern: /payment-export
-    defaults: { _controller: AcmePASBundle:PaymentExporting:export }
-
-pas_post_payment_list_exporting:
-    pattern: /payment-export
-    defaults: { _controller: AcmePASBundle:PaymentExporting:export }
+pas_post_requests_list_exporting:
+    pattern: /post-list-export
+    defaults: { _controller: AcmePASBundle:PostRequestsListExporting:export }
 
 pas_user:
     pattern: /user

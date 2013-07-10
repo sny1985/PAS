@@ -65,6 +65,9 @@
 {% endfor %}
 						</tbody>
 					</table>
+					<div class="form_item" style="float: right;">
+						<input id="list_export" type="button" value="Export Payment List" onclick="listExport();" />
+					</div>
 				</form>
 			</div>
 {% endblock %}
@@ -77,5 +80,9 @@
 					window.location.replace("post-requests-list?year=" + $(this).val());
 				});
 			});
+
+			function listExport() {
+				window.location.replace("post-list-export?year={{ year }}");
+			}
 		</script>
 {% endblock %}

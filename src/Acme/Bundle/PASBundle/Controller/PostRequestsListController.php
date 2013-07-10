@@ -11,7 +11,7 @@ class PostRequestsListController extends Controller
 	public function postRequestsListAction(Request $req)
 	{
 		$em = $this->getDoctrine()->getManager();
-		$type = 2;
+		$postRequests = null;
 		$this->user = $this->getUser();
 		$year = date('Y');
 
@@ -47,6 +47,6 @@ class PostRequestsListController extends Controller
 
 //var_dump($postRequests);
 
-		return $this->render('AcmePASBundle:Default:post-requests-list.html.twig', array('currencies' => $currency_array, 'requesters' => $user_array, 'requests' => $postRequests, 'type' => $type, 'year' => $year));
+		return $this->render('AcmePASBundle:Default:post-requests-list.html.twig', array('currencies' => $currency_array, 'requesters' => $user_array, 'requests' => $postRequests, 'year' => $year));
 	}
 }

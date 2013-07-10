@@ -9,7 +9,7 @@ use Acme\Bundle\PASBundle\Entity\PreRequest;
 use Acme\Bundle\PASBundle\Entity\User;
 use Acme\Bundle\PASBundle\Services\CurrencyConverter;
 
-class PaymentExportingController extends Controller
+class ProgressExportingController extends Controller
 {
 	public function exportAction(Request $req)
 	{

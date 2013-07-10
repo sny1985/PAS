@@ -61,6 +61,9 @@
 {% endfor %}
 						</tbody>
 					</table>
+					<div class="form_item" style="float: right;">
+						<input id="list_export" type="button" value="Export Pre-payment List" onclick="listExport();" />
+					</div>
 				</form>
 			</div>
 {% endblock %}
@@ -73,5 +76,9 @@
 					window.location.replace("pre-requests-list?year=" + $(this).val());
 				});
 			});
+
+			function listExport() {
+				window.location.replace("pre-list-export?year={{ year }}");
+			}
 		</script>
 {% endblock %}

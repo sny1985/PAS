@@ -11,7 +11,6 @@ class PreRequestsListController extends Controller
 	public function preRequestsListAction(Request $req)
 	{
 		$em = $this->getDoctrine()->getManager();
-		$type = 2;
 		$this->user = $this->getUser();
 		$year = date('Y');
 
