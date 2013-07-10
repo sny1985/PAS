@@ -58,7 +58,7 @@
 						</tbody>
 					</table>
 					<br />
-{% if app.user.role == 'cfo' %}
+{% if app.user.role == 'cfo' and type == 2 %}
 					<div class="form_item" style="float: right;">
 						<input type="submit" value="Approve Selected Budgets" />
 					</div>

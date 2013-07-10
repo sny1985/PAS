@@ -103,8 +103,8 @@ class BudgetExportingController extends Controller
 			$excelObj->getActiveSheet()->setCellValue("F$row", $budget->getAbstract());
 			$excelObj->getActiveSheet()->setCellValue("G$row", $budget->getDetails());
 			$excelObj->getActiveSheet()->setCellValue("H$row", sprintf("%.2f", $budget->getAmount()) . " " . $currency_array['code'][$budget->getCurtype()]);
-			$excelObj->getActiveSheet()->setCellValue("I$row", sprintf("%.2f", $budget->getAmount() * $currency_array['rate'][$budget->getCurtype()]));
-			$excelObj->getActiveSheet()->setCellValue("J$row", $budget->getApproved() ? "Yes" : "No");
+			$excelObj->getActiveSheet()->setCellValue("I$row", sprintf("%.2f", $budget->getAmount() * $currency_array['rate'][$budget->getCurtype()]) . " USD");
+			$excelObj->getActiveSheet()->setCellValue("J$row", $budget->getApproved() ? "Approved" : "Waiting for approval");
 			$excelObj->getActiveSheet()->setCellValue("K$row", $budget->getDate()->format('m/d/Y'));
 			$row++;
 		}
