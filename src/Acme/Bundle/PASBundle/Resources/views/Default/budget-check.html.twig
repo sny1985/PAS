@@ -32,7 +32,7 @@
 							<tr>
 								<td class="check_no"></td>
 								<td></td>
-								<td class="check_amount">Total Amount: {{ budgets['sum'] }}</td>
+								<td class="check_amount">Total Amount: {{ budgets['sum']|number_format(2, '.', ',') }}</td>
 								<td></td>
 							</tr>
 						</tfoot>
@@ -41,7 +41,7 @@
 							<tr>
 								<td class="check_no">{{ loop.index }}</td>
 								<td class="check_category">{{ categories[cat] }}</td>
-								<td class="check_amount">{{ budgets[cat]['amount'] }}</td>
+								<td class="check_amount">{{ budgets[cat]['amount']|number_format(2, '.', ',') }}</td>
 								<td class="check_selected"><input type="radio" name="selected_budget" value="{{ year }}-{{ cat }}" required="required" /></td>
 							</tr>
 {% endfor %}
