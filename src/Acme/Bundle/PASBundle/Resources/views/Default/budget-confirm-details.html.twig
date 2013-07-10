@@ -58,9 +58,11 @@
 						</tbody>
 					</table>
 					<br />
+{% if app.user.role == 'cfo' %}
 					<div class="form_item" style="float: right;">
 						<input type="submit" value="Approve Selected Budgets" />
 					</div>
+{% endif %}
 					<div class="form_item" style="float: right;">
 						<input id="budgests_export" type="button" value="Export FY{{ year }}-{{ categories[cid] }} Budgets Report" onclick="budgetExport();" />
 					</div>

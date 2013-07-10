@@ -41,7 +41,7 @@ class BudgetRequestsListController extends Controller
 			$start = new \DateTime($year . '-01-01');
 			$end = new \DateTime($year . '-12-31');
 
-			if ($this->user->getRole() == 'admin' || $this->user->getRole() == 'cfo' || $this->user->getRole() == 'vtm' || $this->user->getRole() == 'president' || $this->user->getRole() == 'secretary' || $this->user->getRole() == 'chair') {
+			if ($this->user->getRole() == 'admin' || $this->user->getRole() == 'cfo' || $this->user->getRole() == 'vtm' || $this->user->getRole() == 'president' || $this->user->getRole() == 'secretary') {
 				$budgetRequests = $em->createQuery('SELECT br FROM AcmePASBundle:BudgetRequest br WHERE br.startdate >= :start and br.startdate <= :end and br.requestType = :type')->setParameters(array('start' => $start, 'end' => $end, 'type' => $type))->getResult();
 			} else {
 				$budgetRequests = $em->createQuery('SELECT br FROM AcmePASBundle:BudgetRequest br WHERE br.startdate >= :start and br.startdate <= :end and br.holder = :holder and br.requestType = :type')->setParameters(array('start' => $start, 'end' => $end, 'holder' => $this->user->getUid(), 'type' => $type))->getResult();

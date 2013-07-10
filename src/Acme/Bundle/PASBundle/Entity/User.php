@@ -29,7 +29,6 @@ class User implements AdvancedUserInterface, \Serializable
 
 	/**
 	* @ORM\Column(type="string", length=40)
-	* @Assert\NotNull(message="Fist name should not be null.")
 	* @Assert\Length(max="40", maxMessage="The first name cannot be longer than {{ limit }} characters length.")
 	*/
 	private $firstname;
@@ -42,14 +41,13 @@ class User implements AdvancedUserInterface, \Serializable
 
 	/**
 	* @ORM\Column(type="string", length=40)
-	* @Assert\NotNull(message="Last name should not be null.")
 	* @Assert\Length(max="40", maxMessage="The last name cannot be longer than {{ limit }} characters length.")
 	*/
 	private $lastname;
 
 	/**
 	* @ORM\Column(type="string", length=10)
-	* @Assert\Length(max="40", maxMessage="The title cannot be longer than {{ limit }} characters length.")
+	* @Assert\Length(max="10", maxMessage="The title cannot be longer than {{ limit }} characters length.")
 	*/
 	private $title;
 
@@ -61,22 +59,21 @@ class User implements AdvancedUserInterface, \Serializable
 	/**
 	* @ORM\Column(type="string", length=40)
 	* @Assert\NotNull(message="Password should not be null.")
-	* @Assert\Length(max="40", maxMessage="The name cannot be longer than {{ limit }} characters length.")
+	* @Assert\Length(max="40", maxMessage="The password cannot be longer than {{ limit }} characters length.")
 	*/
 	private $password;
 
 	/**
 	* @ORM\Column(type="string", length=80, unique=true)
 	* @Assert\NotNull(message="Email address should not be null.")
-	* @Assert\Email(checkMX=true)
-	* @Assert\Length(max = "80", maxMessage = "The name cannot be longer than {{ limit }} characters length.")
+	* @Assert\Length(max = "80", maxMessage = "The email address cannot be longer than {{ limit }} characters length.")
 	*/
 	private $email;
 
 	/**
 	* @ORM\Column(type="string", length=10)
 	* @Assert\NotNull(message="Role should not be null.")
-	* @Assert\Length(max="10", maxMessage="The name cannot be longer than {{ limit }} characters length.")
+	* @Assert\Length(max="10", maxMessage="The role cannot be longer than {{ limit }} characters length.")
 	*/
 	private $role;
 

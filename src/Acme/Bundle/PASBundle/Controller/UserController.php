@@ -13,7 +13,6 @@ class UserController extends Controller
 		$em = $this->getDoctrine()->getManager();
 		$factory = $this->get('security.encoder_factory');
 		$user = new User();
-		$encoder = $factory->getEncoder($user);
 
 		$param = $req->query->all();
 		if (isset($param) && isset($param['id'])) {
@@ -27,9 +26,9 @@ class UserController extends Controller
 		$form = $this->createFormBuilder($user)
 						->add('uid', 'hidden')
 						->add('username', 'text', array('label' => 'Username:'))
-						->add('firstname', 'text', array('label' => 'First Name:'))
+						->add('firstname', 'text', array('label' => 'First Name:', 'required' => false))
 						->add('middlename', 'text', array('label' => 'Middle Name:', 'required' => false))
-						->add('lastname', 'text', array('label' => 'Last Name:'))
+						->add('lastname', 'text', array('label' => 'Last Name:', 'required' => false))
 						->add('title', 'text', array('label' => 'Title:', 'required' => false))
 						->add('password', 'text', array('label' => 'Password:'))
 						->add('email', 'email', array('label' => 'Email Address:'))
@@ -41,6 +40,7 @@ class UserController extends Controller
 			// validate the data
 			if ($form->isValid()) {
 				// add salt to password
+				$encoder = $factory->getEncoder($user);
 				$password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
 				$user->setPassword($password);
 
@@ -50,10 +50,10 @@ class UserController extends Controller
 					// update database
 					$oldUser = $em->getRepository('AcmePASBundle:User')->findOneByUid($id);
 					$oldUser->setUsername($user->getUsername());
-					$oldUser->setUsername($user->getFirstname());
-					$oldUser->setUsername($user->getMiddlename());
-					$oldUser->setUsername($user->getLastname());
-					$oldUser->setUsername($user->getTitle());
+					$oldUser->setFirstname($user->getFirstname());
+					$oldUser->setMiddlename($user->getMiddlename());
+					$oldUser->setLastname($user->getLastname());
+					$oldUser->setTitle($user->getTitle());
 					$oldUser->setSalt($user->getSalt());
 					$oldUser->setPassword($user->getPassword());
 					$oldUser->setEmail($user->getEmail());

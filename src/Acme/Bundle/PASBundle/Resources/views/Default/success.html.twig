@@ -43,7 +43,7 @@
 {% if form == 'budget request' %}
 					<a href="{{ path('pas_homepage') }}">Home</a> <a href="{{ path('pas_budget_request_form') }}">Submit Another Request</a>
 {% elseif form == 'budget approval' %}
-					<a href="{{ path('pas_homepage') }}">Home</a> <a href="{{ path('pas_budget_confirmation_form') }}">Back</a>
+					<a href="{{ path('pas_budget_confirmation_form') }}">Back</a>
 {% elseif form == 'pre request' %}
 					<a href="{{ path('pas_homepage') }}">Home</a> <a href="{{ path('pas_pre_request_form') }}">Submit Another Request</a>
 {% elseif form == 'pre approval' %}
