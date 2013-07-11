@@ -33,7 +33,7 @@ class ProgressExportingController extends Controller
 			$id = $param['id'];
 
 			$postRequest = $em->getRepository('AcmePASBundle:PostRequest')->findOneByRid($id);
-			$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($postRequest->getRequester())->getUsername();
+			$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($postRequest->getRequester())->getName();
 
 			$prid = $postRequest->getPrid();
 			if ($prid != null) {

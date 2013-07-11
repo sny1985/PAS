@@ -22,7 +22,7 @@ class BudgetExportingController extends Controller
 		$users = $em->getRepository('AcmePASBundle:User')->findAll();
 		$user_array = array();
 		foreach ($users as $user) {
-			$user_array[$user->getUid()] = $user->getUsername();
+			$user_array[$user->getUid()] = $user->getName();
 		}
 
 		// get category list from database

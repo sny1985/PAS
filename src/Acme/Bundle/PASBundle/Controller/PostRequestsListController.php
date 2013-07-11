@@ -25,7 +25,7 @@ class PostRequestsListController extends Controller
 		// get user list from database
 		$users = $em->getRepository('AcmePASBundle:User')->findAll();
 		foreach ($users as $user) {
-			$user_array[$user->getUid()] = $user->getUsername();
+			$user_array[$user->getUid()] = $user->getName();
 		}
 
 		$param = $req->query->all();

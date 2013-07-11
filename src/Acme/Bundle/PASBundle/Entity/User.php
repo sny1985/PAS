@@ -99,11 +99,7 @@ class User implements AdvancedUserInterface, \Serializable
 	* @inheritDoc
 	*/
 	public function getUsername() {
-		if ($this->firstname != null) {
-			return $this->firstname . " " . $this->lastname;
-		} else {
-			return $this->username;
-		}
+		return $this->username;
 	}
 	
 	public function setUsername($username) {
@@ -140,6 +136,14 @@ class User implements AdvancedUserInterface, \Serializable
 
 	public function setTitle($title) {
 		$this->title = $title;
+	}
+
+	public function getName() {
+		if ($this->firstname != null) {
+			return $this->firstname . " " . $this->lastname;
+		} else {
+			return $this->username;
+		}
 	}
 
 	/**

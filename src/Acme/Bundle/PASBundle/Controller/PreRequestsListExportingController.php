@@ -32,7 +32,7 @@ class PreRequestsListExportingController extends Controller
 		// get user list from database
 		$users = $em->getRepository('AcmePASBundle:User')->findAll();
 		foreach ($users as $key => $value) {
-			$user_array['name'][$key] = $value->getUsername();
+			$user_array['name'][$key] = $value->getName();
 			$user_array['email'][$key] = $value->getEmail();
 		}
 

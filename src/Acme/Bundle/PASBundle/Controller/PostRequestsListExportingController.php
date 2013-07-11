@@ -26,7 +26,7 @@ class PostRequestsListExportingController extends Controller
 		// get user list from database
 		$users = $em->getRepository('AcmePASBundle:User')->findAll();
 		foreach ($users as $user) {
-			$user_array['name'][$user->getUid()] = $user->getUsername();
+			$user_array['name'][$user->getUid()] = $user->getName();
 			$user_array['email'][$user->getUid()] = $user->getEmail();
 		}
 

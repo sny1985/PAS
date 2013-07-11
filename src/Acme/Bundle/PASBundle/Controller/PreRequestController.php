@@ -47,13 +47,13 @@ class PreRequestController extends Controller
 		$users = $em->getRepository('AcmePASBundle:User')->findAll();
 		foreach ($users as $user) {
 			if ($user->getRole() == "chair") {
-				$chair_array[$user->getUid()] = $user->getUsername();
+				$chair_array[$user->getUid()] = $user->getName();
 			} else if ($user->getRole() == "cfo") {
-				$cfo_array[$user->getUid()] = $user->getUsername();
+				$cfo_array[$user->getUid()] = $user->getName();
 			} else if ($user->getRole() == "president") {
-				$president_array[$user->getUid()] = $user->getUsername();
+				$president_array[$user->getUid()] = $user->getName();
 			} else if ($user->getRole() == "secretary") {
-				$secretary_array[$user->getUid()] = $user->getUsername();
+				$secretary_array[$user->getUid()] = $user->getName();
 			}
 		}
 
@@ -73,7 +73,7 @@ class PreRequestController extends Controller
 		// create form
 		$form = $this->createFormBuilder($preRequest)
 						->add('prid', 'hidden')
-						->add('requester', 'choice', array('choices' => array($this->user->getUid() => $this->user->getUsername()), 'empty_value' => false, 'label' => 'Requester:'))
+						->add('requester', 'choice', array('choices' => array($this->user->getUid() => $this->user->getName()), 'empty_value' => false, 'label' => 'Requester:'))
 						->add('category', 'choice', array('choices' => $category_array, 'empty_value' => 'Choose one category', 'label' => 'Budget Category (class):'))
 						->add('explanation', 'textarea', array('label' => 'Explanation of the Expense:', 'required' => false))
 						->add('amount', 'money', array('currency' => false, 'label' => 'Amount (e.g. 200 or 199.99):'))
