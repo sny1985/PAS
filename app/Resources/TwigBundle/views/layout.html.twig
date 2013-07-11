@@ -10,7 +10,7 @@
 	<body>
 		<div id="logout">
 			{% if app.security.getToken().getUser() != 'anon.' %}
-				Welcome {{ app.security.getToken().getUser().getUsername() }} &nbsp; 
+				Welcome {{ app.security.getToken().getUser().getName() }} &nbsp; 
 				<a id="home_btn" href="{{ path('pas_homepage') }}">Home</a> &nbsp; 
 				<a id="logout_btn" href="{{ path('logout') }}">Log Out</a>
 			{% endif %}
@@ -18,14 +18,5 @@
 		<div id="content">
 			{% block body %}{% endblock %}
 		</div>
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-		<script type="text/javascript">
-			$("#logout_btn").click(function(e) {
-				var res = window.confirm("Leave this form?");
-				if (res == false) {
-					e.preventDefault();
-				}
-			});
-		</script>
 	</body>
 </html>

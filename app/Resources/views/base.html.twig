@@ -13,7 +13,7 @@
 {% block logout %}
 		<div id="logout">
 {% if app.security.getToken().getUser() != 'anon.' %}
-			Welcome {{ app.security.getToken().getUser().getUsername() }} &nbsp; 
+			Welcome {{ app.security.getToken().getUser().getName() }} &nbsp; 
 			<a id="home_btn" href="{{ path('pas_homepage') }}">Home</a> &nbsp; 
 			<a id="logout_btn" href="{{ path('logout') }}">Log Out</a>
 {% endif %}
@@ -33,7 +33,7 @@
 		<script type="text/javascript" src="{{ asset('bundles/acmepas/js/fn.js') }}"></script>
 		<script type="text/javascript">
 			$("#logout_btn").click(function(e) {
-				var res = window.confirm("Leave this form?");
+				var res = window.confirm("Leave this page?");
 				if (res == false) {
 					e.preventDefault();
 				}
