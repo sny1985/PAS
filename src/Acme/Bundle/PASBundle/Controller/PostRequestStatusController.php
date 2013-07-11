@@ -102,11 +102,18 @@ class PostRequestStatusController extends Controller
 				$currency = $em->getRepository('AcmePASBundle:CurrencyType')->findOneByCtid($postRequest->getCurtype());
 				$currency->setRate($cc->updateRate($currency->getCode()));
 
+				$cApproved = $postRequest->getCfoApproved();
 				$level = $postRequest->getLevel();
 				if ($level == 1) {
-					$status = $postRequest->getChairApproved();
-				} else {
-					$cApproved = $postRequest->getCfoApproved();
+					$chApproved = $postRequest->getChairApproved();
+					if ($cApproved == 2 || $chApproved == 2) {
+						$status = 2;
+					} else if ($cApproved == 1 && $chApproved == 1) {
+						$status = 1;
+					} else {
+						$status = 0;
+					}
+				} else if ($level == 2) {
 					$pApproved = $postRequest->getPresidentApproved();
 					$sApproved = $postRequest->getSecretaryApproved();
 					if ($cApproved == 2 || $pApproved == 2 || $sApproved == 2) {
@@ -116,6 +123,8 @@ class PostRequestStatusController extends Controller
 					} else {
 						$status = 0;
 					}
+				} else {
+					$status = $cApproved;
 				}
 		
 				$requester = $em->getRepository('AcmePASBundle:User')->findOneByUid($postRequest->getRequester());

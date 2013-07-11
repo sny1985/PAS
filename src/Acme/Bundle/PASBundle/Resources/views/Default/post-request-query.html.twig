@@ -25,12 +25,16 @@
 {% else %}
 			<div id="main">
 {% if action == 'query' %}
-{% if status == 0 %}
-				<h4>Your payment request is waiting for approval.</h4>
-{% elseif status == 1 %}
-				<h4>Your payment request is approved.</h4>
+{% if request.actualAmount > 0.0 %}
+				<h4>The payment is made.</h4>
 {% else %}
-				<h4>Your payment request is pending.</h4>
+{% if status == 0 %}
+				<h4>This payment request is waiting for approval.</h4>
+{% elseif status == 1 %}
+				<h4>This payment request is approved.</h4>
+{% else %}
+				<h4>This payment request is pending.</h4>
+{% endif %}
 {% endif %}
 				<br />
 {% elseif action == 'submit' %}
@@ -141,6 +145,14 @@
 						<td class="status_tag">Contact Email:</td>
 						<td class="status_content">{% if request.contactEmail %}{{ request.contactEmail }}{% else %}N/A{% endif %}</td>
 					</tr>
+					<tr>
+						<td class="status_tag">Number of Invoices:</td>
+						<td class="status_content">{{ request.numberOfInvoices }}</td>
+					</tr>
+					<tr>
+						<td class="status_tag">Invoice link:</td>
+						<td class="status_content"><a class="link" href="../../uploads/documents/{{ request.invoicePath }}" target="_blank">{{ request.invoicePath }}</a></td>
+					</tr>
 {% if request.preApproval == 1 %}
 					<tr>
 						<td class="status_tag">Pre-approved:</td>
@@ -149,14 +161,6 @@
 					<tr>
 						<td class="status_tag">Pre-request No.:</td>
 						<td class="status_content"><a class="link" href="{{ path('pas_pre_request_status', {'id': request.prid, 'action': 'query'}) }}">{{ "%08d"|format(request.prid) }}</a></td>
-					</tr>
-					<tr>
-						<td class="status_tag">Number of Invoices:</td>
-						<td class="status_content">{{ request.numberOfInvoices }}</td>
-					</tr>
-					<tr>
-						<td class="status_tag">Invoice:</td>
-						<td class="status_content"><a class="link" href="../../uploads/documents/{{ request.invoicePath }}" target="_blank">{{ request.invoicePath }}</a></td>
 					</tr>
 					<tr>
 						<td class="status_tag">Approvers:</td>
@@ -263,7 +267,7 @@
 					<input type="hidden" name="id" value="{{ id }}">
 				</form>
 {% elseif action == 'query' %}
-{% if role == 'vtm' %}
+{% if role == 'vtm' and request.actualAmount == 0.0 %}
 				<br />
 				<form id="post_query_form" class="bda_form" action="{{ path('pas_post_request_status', {'id': id}) }}" method="post">
 					<label for="actual_amount">Actual Amount (about {{ currency.rate * request.amount }} USD): </label>

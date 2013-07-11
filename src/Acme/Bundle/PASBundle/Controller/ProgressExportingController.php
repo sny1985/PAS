@@ -62,7 +62,7 @@ class ProgressExportingController extends Controller
 
 		// add table header
 		$excelObj->setActiveSheetIndex(0)
-					->setCellValue("A1", "Requester $requester")
+					->setCellValue("A1", "Requester: $requester")
 					->setCellValue("A3", "Pre-approval No.")
 					->setCellValue("B3", "Explanation")
 					->setCellValue("C3", "Amount (Requested Currency)")
@@ -78,9 +78,9 @@ class ProgressExportingController extends Controller
 		foreach ($postRequests as $request) {
 			$excelObj->getActiveSheet()->setCellValue("A$row", "#" . sprintf("%08d", intval($request->getRid()))); // add # before id to prevent number-conversion
 			$excelObj->getActiveSheet()->setCellValue("B$row", $request->getExplanation());
-			$excelObj->getActiveSheet()->setCellValue("C$row", $request->getAmount() . " " . $currency_array['code'][$request->getCurtype()]);
-			$actual = sprintf("%.2f", $request->getActualAmount());
-			$excelObj->getActiveSheet()->setCellValue("D$row", $actual);
+			$excelObj->getActiveSheet()->setCellValue("C$row", sprintf("%.2f", $request->getAmount()) . " " . $currency_array['code'][$request->getCurtype()]);
+			$actual = $request->getActualAmount();
+			$excelObj->getActiveSheet()->setCellValue("D$row", sprintf("%.2f", $actual) . " USD");
 			$totalCompletedActual += $actual;
 			$row++;
 		}
@@ -88,12 +88,12 @@ class ProgressExportingController extends Controller
 		$progress = $totalCompletedActual * 100.0 / $totalActual;
 
 		$excelObj->getActiveSheet()->setCellValue("A$row", "Total");
-		$excelObj->getActiveSheet()->setCellValue("D$row", $totalCompletedActual);
+		$excelObj->getActiveSheet()->setCellValue("D$row", sprintf("%.2f", $totalCompletedActual) . " USD");
 		$row++;
 
 		$excelObj->getActiveSheet()->setCellValue("A$row", "Budget of this item");
-		$excelObj->getActiveSheet()->setCellValue("C$row", $total . " " . $currency_array['code'][$preRequest->getCurtype()]);
-		$excelObj->getActiveSheet()->setCellValue("D$row", $totalActual);
+		$excelObj->getActiveSheet()->setCellValue("C$row", sprintf("%.2f", $total) . " " . $currency_array['code'][$preRequest->getCurtype()]);
+		$excelObj->getActiveSheet()->setCellValue("D$row", sprintf("%.2f", $totalActual) . " USD");
 		$row++;
 
 		$excelObj->getActiveSheet()->setCellValue("A$row", "Budget Progress");

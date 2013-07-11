@@ -81,11 +81,18 @@ class PostRequestsListExportingController extends Controller
 		// fill data
 		foreach ($postRequests as $request) {
 			$selectedBudget = explode('-', $request->getSelectedBudget());
+			$cApproved = $request->getCfoApproved();
 			$level = $request->getLevel();
 			if ($level == 1) {
-				$status = $request->getChairApproved();
-			} else {
-				$cApproved = $request->getCfoApproved();
+				$chApproved = $request->getChairApproved();
+				if ($cApproved == 2 || $chApproved == 2) {
+					$status = 2;
+				} else if ($cApproved == 1 && $chApproved == 1) {
+					$status = 1;
+				} else {
+					$status = 0;
+				}
+			} else if ($level == 2) {
 				$pApproved = $request->getPresidentApproved();
 				$sApproved = $request->getSecretaryApproved();
 				if ($cApproved == 2 || $pApproved == 2 || $sApproved == 2) {
@@ -95,6 +102,8 @@ class PostRequestsListExportingController extends Controller
 				} else {
 					$status = 0;
 				}
+			} else {
+				$status = $cApproved;
 			}
 			if ($status == 1) {
 				$statusText = "Approved";

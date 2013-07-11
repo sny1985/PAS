@@ -99,7 +99,11 @@ class User implements AdvancedUserInterface, \Serializable
 	* @inheritDoc
 	*/
 	public function getUsername() {
-		return $this->username;
+		if ($this->firstname != null) {
+			return $this->firstname . " " . $this->lastname;
+		} else {
+			return $this->username;
+		}
 	}
 	
 	public function setUsername($username) {
