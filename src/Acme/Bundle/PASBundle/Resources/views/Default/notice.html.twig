@@ -13,7 +13,7 @@
 				{% if receiver == false %}
 					To whom it may concern,
 				{% else %}
-					Dear {{ receiver.username }},
+					Dear {% if receiver.firstname != "" and receiver.lastname != "" %}{{ receiver.firstname }} {{ receiver.lastname }}{% else %}{{ receiver.username }}{% endif %},
 				{% endif %}
 				<br /><br />
 				{% if type == "BDA Expense Budget Request" %}
