@@ -44,6 +44,6 @@ class PreRequestsListController extends Controller
 			}
 		}
 
-		return $this->render('AcmePASBundle:Default:pre-requests-list.html.twig', array('currencies' => $currency_array, 'requesters' => $user_array, 'requests' => $preRequests, 'year' => $year));
+		return $this->render('AcmePASBundle:Default:pre-requests-list.html.twig', array('currencies' => $currency_array, 'users' => $user_array, 'requests' => $preRequests, 'year' => $year));
 	}
 }

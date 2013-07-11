@@ -26,6 +26,7 @@
 								<th class="list_requester">Requester</th>
 								<th class="list_amount">Amount</th>
 								<th class="list_budget">Selected Budget</th>
+								<th class="list_budget_holder">Budget Holder</th>
 								<th class="list_invoices">Number of Invoices</th>
 								<th class="list_date">Submission Date</th>
 								<th class="list_status">Status</th>
@@ -42,9 +43,10 @@
 {% if app.user.role == 'admin' %}
 								<td class="list_no">{{ req.rid }}</td>
 {% endif %}
-								<td class="list_requester">{{ requesters[req.requester] }}</td>
+								<td class="list_requester">{{ users[req.requester] }}</td>
 								<td class="list_amount">{{ req.amount|number_format(2, '.') }} {{ currencies['code'][req.curtype] }}</td>
 								<td class="list_budget">{{ req.selectedBudget|split('-')[1] }}</td>
+								<td class="list_budget_holder">{{ users[req.selectedBudget|split('-')[2]] }}</td>
 								<td class="list_invoices">{{ req.numberOfInvoices }}</td>
 								<td class="list_date">{{ req.date|date("m/d/Y") }}</td>
 								<td class="list_status">

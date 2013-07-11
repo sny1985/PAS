@@ -45,6 +45,6 @@ class PostRequestsListController extends Controller
 			}
 		}
 
-		return $this->render('AcmePASBundle:Default:post-requests-list.html.twig', array('currencies' => $currency_array, 'requesters' => $user_array, 'requests' => $postRequests, 'year' => $year));
+		return $this->render('AcmePASBundle:Default:post-requests-list.html.twig', array('currencies' => $currency_array, 'users' => $user_array, 'requests' => $postRequests, 'year' => $year));
 	}
 }

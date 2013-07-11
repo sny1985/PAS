@@ -24,6 +24,7 @@
 							<tr>
 								<th class="check_no">No.</th>
 								<th class="check_category">Officer/Committee Chair/TF Chair</th>
+								<th class="check_holder">Budget Holder</th>
 								<th class="check_amount">Amount (USD)</th>
 								<th class="check_selected">Selected</th>
 							</tr>
@@ -31,9 +32,10 @@
 						<tfoot>
 							<tr>
 								<td class="check_no"></td>
-								<td></td>
+								<td class="check_category"></td>
+								<td class="check_holder"></td>
 								<td class="check_amount">Total Amount: {{ budgets['sum']|number_format(2, '.', ',') }}</td>
-								<td></td>
+								<td class="check_selected"></td>
 							</tr>
 						</tfoot>
 						<tbody>
@@ -41,6 +43,7 @@
 							<tr>
 								<td class="check_no">{{ loop.index }}</td>
 								<td class="check_category">{{ categories[cat] }}</td>
+								<td class="check_holder">{{ budgets[cat]['holder'] }}</td>
 								<td class="check_amount">{{ budgets[cat]['amount']|number_format(2, '.', ',') }}</td>
 								<td class="check_selected"><input type="radio" name="selected_budget" value="{{ year }}-{{ cat }}" required="required" /></td>
 							</tr>
@@ -68,6 +71,7 @@
 					var $uncles = $selected.parent().siblings().each(function () {
 						if ($(this).hasClass("check_no")) result.no = $(this).text();
 						if ($(this).hasClass("check_category")) result.category = $(this).text();
+						if ($(this).hasClass("check_holder")) result.holder = $(this).text();
 						if ($(this).hasClass("check_amount")) result.amount = $(this).text();
 					});				
 					var id = $selected.val();

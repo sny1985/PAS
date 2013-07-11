@@ -92,7 +92,7 @@
 					</div>
 					<input type="hidden" name="id" value="{{ id }}">
 				</form>
-{% elseif action == 'query' and requester.uid == app.user.uid %}
+{% elseif action == 'query' and request.approved != 1 and requester.uid == app.user.uid %}
 				<div id="links">
 					<a href="{{ path('pas_budget_request_form', {'id': id, 'action': 'edit'}) }}">Edit</a>
 				</div>

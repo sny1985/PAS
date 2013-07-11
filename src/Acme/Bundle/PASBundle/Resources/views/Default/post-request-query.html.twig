@@ -278,7 +278,7 @@
 						<input type="submit" value="Confirm" />
 					</div>
 				</form>
-{% elseif app.user.uid == requester.uid %}
+{% elseif app.user.uid == requester.uid and status != 1 %}
 				<div id="links">
 					<a href="{{ path('pas_post_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
 				</div>

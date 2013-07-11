@@ -74,9 +74,10 @@ class PreRequestsListExportingController extends Controller
 					->setCellValue("C1", "Requester's Email")
 					->setCellValue("D1", "Explanation")
 					->setCellValue("E1", "Selected Budget")
-					->setCellValue("F1", "Amount")
-					->setCellValue("G1", "Status")
-					->setCellValue("H1", "Submission Date");
+					->setCellValue("F1", "Budget Holder")
+					->setCellValue("G1", "Amount")
+					->setCellValue("H1", "Status")
+					->setCellValue("I1", "Submission Date");
 
 		$row = 2;
 
@@ -111,9 +112,10 @@ class PreRequestsListExportingController extends Controller
 			$excelObj->getActiveSheet()->setCellValue("C$row", $user_array['email'][$request->getRequester()]);
 			$excelObj->getActiveSheet()->setCellValue("D$row", $request->getExplanation());
 			$excelObj->getActiveSheet()->setCellValue("E$row", $selectedBudget[1]);
-			$excelObj->getActiveSheet()->setCellValue("F$row", sprintf("%.2f", $request->getAmount()) . " " . $currency_array['code'][$request->getCurtype()]);
-			$excelObj->getActiveSheet()->setCellValue("G$row", $statusText);
-			$excelObj->getActiveSheet()->setCellValue("H$row", $request->getDate()->format('m/d/Y'));
+			$excelObj->getActiveSheet()->setCellValue("F$row", $user_array['name'][$selectedBudget[2]]);
+			$excelObj->getActiveSheet()->setCellValue("G$row", sprintf("%.2f", $request->getAmount()) . " " . $currency_array['code'][$request->getCurtype()]);
+			$excelObj->getActiveSheet()->setCellValue("H$row", $statusText);
+			$excelObj->getActiveSheet()->setCellValue("I$row", $request->getDate()->format('m/d/Y'));
 			$row++;
 		}
 

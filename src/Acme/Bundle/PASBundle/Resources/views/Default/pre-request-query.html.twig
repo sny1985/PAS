@@ -169,11 +169,10 @@
 				</form>
 {% elseif action == 'query' %}
 				<div id="links">
-{% if app.user.uid == requester.uid %}
+{% if app.user.uid == requester.uid and status != 1 %}
 					<a href="{{ path('pas_pre_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
-{% if status == 1 %}
+{% else %}
 					<a href="{{ path('pas_post_request_form', {'prid': id}) }}">Submit Payment Request</a> &nbsp; 
-{% endif %}
 {% endif %}
 				</div>
 {% elseif action == 'approve' %}
@@ -183,7 +182,7 @@
 						<input type="submit" value="Confirm" />
 					</div>
 				</form>
-	{% else %}
+{% else %}
 				<form id="pre_approval_form" class="bda_form" action="{{ path('pas_pre_approval_form', {'id': id}) }}" method="post" {{ form_enctype(form) }}>
 					<div class="form_item">
 						{{ form_errors(form.approval) }}

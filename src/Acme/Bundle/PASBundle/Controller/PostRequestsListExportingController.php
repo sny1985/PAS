@@ -68,13 +68,14 @@ class PostRequestsListExportingController extends Controller
 					->setCellValue("C1", "Requester's Email")
 					->setCellValue("D1", "Explanation")
 					->setCellValue("E1", "Selected Budget")
-					->setCellValue("F1", "Amount")
-					->setCellValue("G1", "Actual Amount")
-					->setCellValue("H1", "Pre-approved?")
-					->setCellValue("I1", "Pre-request No.")
-					->setCellValue("J1", "Number of Invoices")
-					->setCellValue("K1", "Status")
-					->setCellValue("L1", "Submission Date");
+					->setCellValue("F1", "Budget Holder")
+					->setCellValue("G1", "Amount")
+					->setCellValue("H1", "Actual Amount")
+					->setCellValue("I1", "Pre-approved?")
+					->setCellValue("J1", "Pre-request No.")
+					->setCellValue("K1", "Number of Invoices")
+					->setCellValue("L1", "Status")
+					->setCellValue("M1", "Submission Date");
 
 		$row = 2;
 
@@ -118,13 +119,14 @@ class PostRequestsListExportingController extends Controller
 			$excelObj->getActiveSheet()->setCellValue("C$row", $user_array['email'][$request->getRequester()]);
 			$excelObj->getActiveSheet()->setCellValue("D$row", $request->getExplanation());
 			$excelObj->getActiveSheet()->setCellValue("E$row", $selectedBudget[1]);
-			$excelObj->getActiveSheet()->setCellValue("F$row", sprintf("%.2f", $request->getAmount()) . " " . $currency_array['code'][$request->getCurtype()]);
-			$excelObj->getActiveSheet()->setCellValue("G$row", ($request->getActualAmount() > 0 ? sprintf("%.2f", $request->getActualAmount()) . " USD" : ""));
-			$excelObj->getActiveSheet()->setCellValue("H$row", ($request->getPreApproval() ? "Yes" : "No"));
-			$excelObj->getActiveSheet()->setCellValue("I$row", sprintf("#%08d", intval($request->getPrid())));
-			$excelObj->getActiveSheet()->setCellValue("J$row", $request->getNumberOfInvoices());
-			$excelObj->getActiveSheet()->setCellValue("K$row", $statusText);
-			$excelObj->getActiveSheet()->setCellValue("L$row", $request->getDate()->format('m/d/Y'));
+			$excelObj->getActiveSheet()->setCellValue("F$row", $user_array['name'][$selectedBudget[2]]);
+			$excelObj->getActiveSheet()->setCellValue("G$row", sprintf("%.2f", $request->getAmount()) . " " . $currency_array['code'][$request->getCurtype()]);
+			$excelObj->getActiveSheet()->setCellValue("H$row", ($request->getActualAmount() > 0 ? sprintf("%.2f", $request->getActualAmount()) . " USD" : ""));
+			$excelObj->getActiveSheet()->setCellValue("I$row", ($request->getPreApproval() ? "Yes" : "No"));
+			$excelObj->getActiveSheet()->setCellValue("J$row", sprintf("#%08d", intval($request->getPrid())));
+			$excelObj->getActiveSheet()->setCellValue("K$row", $request->getNumberOfInvoices());
+			$excelObj->getActiveSheet()->setCellValue("L$row", $statusText);
+			$excelObj->getActiveSheet()->setCellValue("M$row", $request->getDate()->format('m/d/Y'));
 			$row++;
 		}
 

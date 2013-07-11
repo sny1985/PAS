@@ -50,6 +50,11 @@ class BudgetCheckController extends Controller
 				if (array_search($category, $budgets["categories"]) == false) {
 					array_push($budgets["categories"], $category);
 				}
+				// find holder of each category
+				if (!isset($budgets[$category]['holder'])) {
+					$budgets[$category]['holder'] = 0;
+				}
+				$budgets[$category]['holder'] = $request->getHolder();
 				// calculate total amount of each category
 				if (!isset($budgets[$category]['amount'])) {
 					$budgets[$category]['amount'] = 0;
