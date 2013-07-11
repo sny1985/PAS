@@ -517,7 +517,8 @@ hr {background-color: #ffffff; color: #ffffff; border: medium none; height: 2px;
 
 .clearfix:after {content: "."; display: block; height: 0; clear: both; visibility: hidden;}
 
-ul li {color: #ff0000;} /* error messages */
+
+.error, ul li {color: #ff0000;} /* error messages */
 
 #content {width: 960px; margin: 0 auto;}
 

@@ -3,9 +3,6 @@
 {% block title %}Login to Blu-ray Disc Payment Approval System{% endblock %}
 
 {% block main %}
-{% if error %}
-			<div>{{ error.message }}</div>
-{% endif %}
 			<div id="login">
 				<form id="login_form" action="{{ path('login_check') }}" method="post">
 					<label for="username">Username:</label>
@@ -16,7 +13,11 @@
 					<input type="password" id="password" name="_password" />
 					<br />
 					<br />
+{% if error %}
+					<div class="error">{{ error.message }}</div>
+{% endif %}
 					<button type="submit">login</button>
 				</form>
+
 			</div>
 {% endblock %}
