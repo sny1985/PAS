@@ -37,7 +37,7 @@ class PreRequestController extends Controller
 
 		// get chairs, secretary, CFO & president from database
 		$chair_array = array();
-		$chair_array[0] = "Choose one chair";
+        $chair_array[0] = "Choose on chair";
 		$cfo_array = array();
 		$cfo_array[0] = "Choose one CFO";
 		$president_array = array();
@@ -78,7 +78,7 @@ class PreRequestController extends Controller
 						->add('explanation', 'textarea', array('label' => 'Explanation of the Expense:', 'required' => false))
 						->add('amount', 'money', array('currency' => false, 'label' => 'Amount (e.g. 200 or 199.99):'))
 						->add('curtype', 'choice', array('choices' => $currency_array['code'], 'empty_value' => 'Choose one type', 'label' => 'Currency Type:', 'preferred_choices' => array('empty_value')))
-						->add('selectedBudget', 'hidden', array('data' => null))
+						->add('selectedBudget', 'text', array('data' => null, 'required' => false))
 						->add('level', 'choice', array('choices' => array(1 => 'Below or equal to 10,000 USD: by the Chair', 2 => 'Above 10,000 USD: by Secretary, President and CFO '), 'empty_value' => 'Choose one level', 'label' => 'Approval Level:', 'preferred_choices' => array('empty_value')))
 						->add('chairId', 'choice', array('choices' => $chair_array, 'label' => 'Chair:'))
 						->add('chairApproved', 'hidden', array('data' => 0))

@@ -21,21 +21,21 @@ class BudgetRequest
 
 	/**
 	* @ORM\Column(name="uid", type="smallint")
-	* @Assert\NotNull(message="Budget Requester should not be null.")
+	* @Assert\NotNull(message="Budget Requester is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $holder;
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Request Type should not be null.")
+	* @Assert\NotNull(message="Request Type is needed.")
 	* @Assert\Range(min="1", max="2")
 	*/
 	protected $requestType;
 
 	/**
 	* @ORM\Column(name="bcid", type="smallint")
-	* @Assert\NotNull(message="Budget Category should not be null.")
+	* @Assert\NotNull(message="Budget Category is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $category;
@@ -46,12 +46,12 @@ class BudgetRequest
 	protected $startdate;
 
 	/**
-	* @Assert\NotNull(message="Starting month should not be null.")
+	* @Assert\NotNull(message="Starting month is needed.")
 	*/
 	protected $startmonth;
 
 	/**
-	* @Assert\NotNull(message="Starting year should not be null.")
+	* @Assert\NotNull(message="Starting year is needed.")
 	*/
 	protected $startyear;
 
@@ -61,12 +61,12 @@ class BudgetRequest
 	protected $enddate;
 
 	/**
-	* @Assert\NotNull(message="Ending month should not be null.")
+	* @Assert\NotNull(message="Ending month is needed.")
 	*/
 	protected $endmonth;
 
 	/**
-	* @Assert\NotNull(message="Ending year should not be null.")
+	* @Assert\NotNull(message="Ending year is needed.")
 	*/
 	protected $endyear;
 
@@ -82,28 +82,28 @@ class BudgetRequest
 
 	/**
 	* @ORM\Column(type="decimal", scale=2)
-	* @Assert\NotNull(message="Amount should not be null.")
+	* @Assert\NotNull(message="Amount is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $amount;
 
 	/**
 	* @ORM\Column(name="ctid", type="smallint")
-	* @Assert\NotNull(message="Currency Type should not be null.")
+	* @Assert\NotNull(message="Currency Type is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $curtype;
 
 	/**
 	* @ORM\Column(type="date")
-	* @Assert\NotNull(message="Submission date should not be null.")
+	* @Assert\NotNull(message="Submission date is needed.")
 	* @Assert\Date()
 	*/
 	protected $date;
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Approval status should not be null.")
+	* @Assert\NotNull(message="Approval status is needed.")
 	*/
 	protected $approved;
 

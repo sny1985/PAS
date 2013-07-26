@@ -63,8 +63,10 @@ class PostRequestController extends Controller
 			$prid = $param['prid'];
 			$postRequest->setPreApproval(1);
 			$postRequest->setPreApprovalNo(sprintf("%08d", $prid));
-			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($prid);
-			$selectedBudget = $preRequest->getSelectedBudget();
+			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($postRequest->getPreApprovalNo());
+			if (count($preRequest) > 0) {
+				$postRequest->setSelectedBudget($preRequest->getSelectedBudget());
+			}
 		}
 		// edit
 		if (isset($param) && isset($param['id']) && isset($param['action'])) {
@@ -103,8 +105,8 @@ class PostRequestController extends Controller
 						->add('contactEmail', 'text', array('label' => 'Contact Email (if known):', 'required' => false))
 						->add('numberOfInvoices', 'text', array('label' => 'How many invoices?'))
 						->add('invoice', 'file', array('label' => 'Invoice:', 'required' => false))
-						->add('invoicePath', 'hidden', array('data' => $postRequest->getInvoicePath() != null ? $postRequest->getInvoicePath() : null))
-						->add('selectedBudget', 'hidden', array('data' => $selectedBudget))
+						->add('invoicePath', 'text', array('data' => $postRequest->getInvoicePath() != null ? $postRequest->getInvoicePath() : null, 'required' => false))
+						->add('selectedBudget', 'text', array('data' => $selectedBudget, 'required' => false))
 						->add('level', 'choice', array('choices' => array(1 => 'Below or equal to 10,000 USD: by the Chair', 2 => 'Above 10,000 USD: by Secretary, President and CFO '), 'empty_value' => 'Choose one level', 'label' => 'Approval Level:', 'preferred_choices' => array('empty_value'), 'required' => false))
 						->add('chairId', 'choice', array('choices' => $chair_array, 'empty_value' => false, 'label' => 'Chair:', 'required' => false))
 						->add('chairApproved', 'hidden', array('data' => 0))
@@ -124,11 +126,18 @@ class PostRequestController extends Controller
 		// if the HTTP method is POST, handle form submission
 		if ($req->isMethod('POST')) {
 			$form->bind($req);
+
+            $postRequest = $form->getData();
+			$postRequest->formatPreApprovalNo();
+			$postRequest->uploadFiles();
+			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($postRequest->getPreApprovalNo());
+			if (count($preRequest) > 0) {
+				$postRequest->setSelectedBudget($preRequest->getSelectedBudget());
+			}
+
 			// validate the data and put into database
 			// HANDLE MULTIPLE FILES UPLOADING ???
 			if ($form->isValid()) {
-				$postRequest->formatPreApprovalNo();
-				$postRequest->uploadFiles();
 				$post = $req->request->all();
 				$action = $post['action'];
 				if (isset($action) && $action == 'edit') {
@@ -154,7 +163,7 @@ class PostRequestController extends Controller
 					$oldRequest->setContactEmail($postRequest->getContactEmail());
 					$oldRequest->setnumberOfInvoices($postRequest->getnumberOfInvoices());
 					$oldRequest->setInvoicePath($postRequest->getInvoicePath());
-					$oldRequest->setBudget($postRequest->getBudget());
+					$oldRequest->setSelectedBudget($postRequest->getSelectedBudget());
 					$oldRequest->setLevel($postRequest->getLevel());
 					$oldRequest->setChairId($postRequest->getChairId());
 					$oldRequest->setCfoId($postRequest->getCfoId());

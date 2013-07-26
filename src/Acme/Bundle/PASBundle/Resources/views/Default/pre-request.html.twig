@@ -42,6 +42,7 @@
 					</div>
 					<div id="budget" class="form_item">
 						<label for="budget_btn">Budget:</label> <button id="budget_btn">Click to choose one</button>
+                        {{ form_errors(form.selectedBudget) }}
 						<table id="budget_table" class="status summary">
 							<thead>
 								<tr>
@@ -87,6 +88,9 @@
 						{{ form_errors(form.secretaryId) }}
 						{{ form_widget(form.secretaryId) }}
 					{{ form_row(form.secretaryApproved) }}
+					</div>
+					<div id="selected_budget" class="form_item" style="display: none;">
+						{{ form_widget(form.selectedBudget) }}
 					</div>
 					<input type="hidden" name="action" value="{% if action != false %}{{ action }}{% endif %}">
 					{{ form_rest(form) }}

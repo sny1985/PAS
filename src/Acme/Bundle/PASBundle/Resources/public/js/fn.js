@@ -38,13 +38,15 @@ function SelectLevel(amount) {
 		// change level
 		$("#form_level").val($("#form_level option:nth-child(2)").val());
 		// show chair
-//		$("select", $chair).prop("required", true); // HOW TO MAKE IT REQUIRED ???
+		$("select option:first", $chair).val("");
+		$("select", $chair).prop("required", true);
 		$chair.show();
 		// clear cfo, president & secretary
 		$("select", $cfo).val($("select option:first", $cfo).val());
 		$("select", $president).val($("select option:first", $president).val());
 		$("select", $secretary).val($("select option:first", $secretary).val());
 		if ($unPreApproved.length && !$unPreApproved.prop("checked")) {
+			$("select", $chair).prop("required", true);
 			$("select", $cfo).val($("select option:last", $cfo).val());
 			$cfo.show();
 		}
@@ -53,8 +55,10 @@ function SelectLevel(amount) {
 		// change level
 		$("#form_level").val($("#form_level option:nth-child(3)").val());
 		// clear chair
+		$("select option:first", $chair).val('0');
+		$("select option:first", $chair).attr("selected", "selected");
 		$("select", $chair).val($("select option:first", $chair).val());
-//		$("select", $chair).prop("required", false);
+		$("select", $chair).prop("required", false);
 		if ($unPreApproved.length && !$unPreApproved.prop("checked")) {
 			$chair.show();
 		}
@@ -168,17 +172,19 @@ function SelectPreApproved() {
 		// clear
 		$("#form_budget").val("N/A");
 		$("#form_level").val("");
-		$("#form_prid").prop("required", true);
+		$("#form_preApprovalNo").prop("required", true);
 // 		$invoice.prop("required", true);
-		$("#chair select").val(0).removeProp('required');
+		$("#form_chairId select").val(0).removeProp('required');
 		// show
 		$preApproved.show();
 		$("select", $cfo).val($("select option:last", $cfo).val());
 		$cfo.show();
 	} else if (isPreApproved == '0') {
 		$("#form_budget").val("");
-		$("#form_prid").val("").removeProp("required");
+        $("#form_chairId").prop("required", true);
+		$("#form_preApprovalNo").val("").removeProp("required");
 		$("#form_preApprovalNo").val("");
+        $("#form_selectedBudget").val("");
 // 		$invoice.removeProp("required");
 // 		$invoice.replaceWith($invoice.val("").clone(true));
 		$unPreApproved.show();

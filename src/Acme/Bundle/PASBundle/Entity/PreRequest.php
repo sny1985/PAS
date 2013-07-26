@@ -21,14 +21,14 @@ class PreRequest
 
 	/**
 	* @ORM\Column(name="uid", type="string", length=80)
-	* @Assert\NotNull(message="Requester should not be null.")
+	* @Assert\NotNull(message="Requester is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $requester;
 
 	/**
 	* @ORM\Column(name="bcid", type="smallint")
-	* @Assert\NotNull(message="Budget Category should not be null.")
+	* @Assert\NotNull(message="Budget Category is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $category;
@@ -40,7 +40,7 @@ class PreRequest
 
 	/**
 	* @ORM\Column(type="decimal", scale=2)
-	* @Assert\NotNull(message="Amount should not be null.")
+	* @Assert\NotNull(message="Amount is needed.")
 	* @Assert\Type(type="numeric", message="The value {{ value }} is not a valid {{ type }}.")
 	* @Assert\Range(min="0")
 	*/
@@ -48,34 +48,34 @@ class PreRequest
 
 	/**
 	* @ORM\Column(name="ctid", type="smallint")
-	* @Assert\NotNull(message="Currency Type should not be null.")
+	* @Assert\NotNull(message="Currency Type is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $curtype;
 
 	/**
 	* @ORM\Column(type="string", length=64)
-	* @Assert\NotNull(message="Budget should not be null.")
+	* @Assert\NotNull(message="Budget is needed.")
 	*/
 	protected $selectedBudget;
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Request Level should not be null.")
+	* @Assert\NotNull(message="Request Level is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $level;
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Chair should not be null.")
+	* @Assert\NotNull(message="Chair is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $chairId;
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Chair's Approval should not be null.")
+	* @Assert\NotNull(message="Chair's Approval is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $chairApproved;
@@ -87,14 +87,14 @@ class PreRequest
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="CFO should not be null.")
+	* @Assert\NotNull(message="CFO is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $cfoId;
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="CFO's Approval should not be null.")
+	* @Assert\NotNull(message="CFO's Approval is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $cfoApproved;
@@ -106,14 +106,14 @@ class PreRequest
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="President should not be null.")
+	* @Assert\NotNull(message="President is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $presidentId;
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="President's Approval should not be null.")
+	* @Assert\NotNull(message="President's Approval is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $presidentApproved;
@@ -125,14 +125,14 @@ class PreRequest
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Secretary should not be null.")
+	* @Assert\NotNull(message="Secretary is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $secretaryId;
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Secretary's Approval should not be null.")
+	* @Assert\NotNull(message="Secretary's Approval is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $secretaryApproved;
@@ -144,7 +144,7 @@ class PreRequest
 
 	/**
 	* @ORM\Column(type="date")
-	* @Assert\NotNull(message="Submission date should not be null.")
+	* @Assert\NotNull(message="Submission date is needed.")
 	* @Assert\Date()
 	*/
 	protected $date;

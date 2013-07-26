@@ -21,14 +21,14 @@ class PostRequest
 
 	/**
 	* @ORM\Column(name="uid", type="string", length=80)
-	* @Assert\NotNull(message="Requester should not be null.")
+	* @Assert\NotNull(message="Requester is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $requester;
 
 	/**
 	* @ORM\Column(name="bcid", type="smallint")
-	* @Assert\NotNull(message="Budget Category should not be null.")
+	* @Assert\NotNull(message="Budget Category is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $category;
@@ -56,14 +56,14 @@ class PostRequest
 
 	/**
 	* @ORM\Column(name="ctid", type="smallint")
-	* @Assert\NotNull(message="Currency Type should not be null.")
+	* @Assert\NotNull(message="Currency Type is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $curtype;
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Pre-Approval should not be null.")
+	* @Assert\NotNull(message="Pre-Approval is needed.")
 	* @Assert\Range(min="0", max="1")
 	*/
 	protected $preApproval;
@@ -81,7 +81,7 @@ class PostRequest
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Payment Method should not be null.")
+	* @Assert\NotNull(message="Payment Method is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $paymentMethod;
@@ -149,22 +149,25 @@ class PostRequest
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Number of invoices should not be null.")
+	* @Assert\NotNull(message="Number of invoices is needed.")
 	* @Assert\Range(min="1")
 	*/
 	protected $numberOfInvoices;
 
-	// ???
+	//
 	protected $invoice;
 
 	/**
-	* @ORM\Column(type="text", nullable=true)
+	* @ORM\Column(type="text")
+    * @Assert\Type(type="string", message="The value {{ value }} is not a valid {{ type }}.")
+    * @Assert\NotBlank(message="Invoice Path is needed.")
 	*/
 	protected $invoicePath;
 
 	/**
 	* @ORM\Column(type="string", length=64)
-	* @Assert\NotNull(message="Budget should not be null.")
+    * @Assert\Type(type="string", message="The value {{ value }} is not a valid {{ type }}.")
+    * @Assert\NotBlank(message="Selected Budget is needed.")
 	*/
 	protected $selectedBudget;
 
@@ -175,14 +178,14 @@ class PostRequest
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Chair should not be null.")
+	* @Assert\NotNull(message="Chair is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $chairId;
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Chair's Approval should not be null.")
+	* @Assert\NotNull(message="Chair's Approval is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $chairApproved;
@@ -194,14 +197,14 @@ class PostRequest
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="CFO should not be null.")
+	* @Assert\NotNull(message="CFO is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $cfoId;
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="CFO's Approval should not be null.")
+	* @Assert\NotNull(message="CFO's Approval is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $cfoApproved;
@@ -213,14 +216,14 @@ class PostRequest
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="President should not be null.")
+	* @Assert\NotNull(message="President is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $presidentId;
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="President's Approval should not be null.")
+	* @Assert\NotNull(message="President's Approval is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $presidentApproved;
@@ -232,14 +235,14 @@ class PostRequest
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Secretary should not be null.")
+	* @Assert\NotNull(message="Secretary is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $secretaryId;
 
 	/**
 	* @ORM\Column(type="smallint")
-	* @Assert\NotNull(message="Secretary's Approval should not be null.")
+	* @Assert\NotNull(message="Secretary's Approval is needed.")
 	* @Assert\Range(min="0")
 	*/
 	protected $secretaryApproved;
@@ -251,7 +254,7 @@ class PostRequest
 
 	/**
 	* @ORM\Column(type="date")
-	* @Assert\NotNull(message="Submission date should not be null.")
+	* @Assert\NotNull(message="Submission date is needed.")
 	* @Assert\Date()
 	*/
 	protected $date;
@@ -607,7 +610,7 @@ class PostRequest
 			return;
 		}
 
-		$this->invoicePath = 'invoice_' . sprintf("%08d", $this->rid) . '_' . date('mdY') . '.' . $this->invoice->guessExtension(); // invoice_postrequestno_timestamp.extension
+		$this->invoicePath = 'invoice_' . date('mdY') . "_" . $this->invoice->getClientOriginalName(); // invoice_timestamp.filename
 		$this->invoice->move(__DIR__.'/../../../../../uploads/documents', __DIR__.'/../../../../../uploads/documents/' . $this->invoicePath);
 		$this->invoice = null;
 	}

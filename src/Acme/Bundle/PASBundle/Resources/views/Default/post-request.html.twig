@@ -124,6 +124,7 @@
 					<div id="un_pre_approved">
 						<div id="budget" class="form_item">
 							<label for="budget_btn">Budget:</label> <button id="budget_btn">Click to choose one</button>
+                            {{ form_errors(form.selectedBudget) }}
 							<table id="budget_table" class="status summary">
 								<thead>
 									<tr>
@@ -178,12 +179,19 @@
 					</div>
 					<div id="invoices" class="form_item">
 						{{ form_label(form.invoice) }}<br />
+						{{ form_errors(form.invoice) }}
+                        {{ form_errors(form.invoicePath) }}
 						{% if form.vars.value.invoicePath is defined and form.vars.value.invoicePath != '' %}
 							<br />Uploaded file: {{ form.vars.value.invoicePath }} (*Upload a new file to replace the current one.)
 							<br />
 						{% endif %}
-						{{ form_errors(form.invoice) }}
 						{{ form_widget(form.invoice) }}
+					</div>
+					<div id="selected_budget" class="form_item" style="display: none;">
+						{{ form_widget(form.selectedBudget) }}
+					</div>
+					<div id="invoice_path" class="form_item" style="display: none;">
+						{{ form_widget(form.invoicePath) }}
 					</div>
 					<input type="hidden" name="action" value="{% if action != false %}{{ action }}{% endif %}">
 					{{ form_rest(form) }}
@@ -216,6 +224,13 @@
 					var url = window.location.href;
 					url = url.slice(0, url.lastIndexOf("/")) + "/budget-check";
 					window.open(url, "smallwin", "width=960,height=600,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no");
+				});
+				$("#form_preApprovalNo").change(function() {
+					$("#form_selectedBudget").val($(this).val());
+				});
+				$("#form_invoice").change(function() {
+					if (this.value != "")
+                        $("#form_invoicePath").val("uploading");
 				});
 				$("#home_btn").click(function(e) {
 					var res = window.confirm("Leave this form?");
