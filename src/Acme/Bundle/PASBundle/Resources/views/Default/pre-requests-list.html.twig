@@ -48,11 +48,31 @@
 								<td class="list_date">{{ req.date|date("m/d/Y") }}</td>
 								<td class="list_status">
 {% if (req.chairId != 0 and req.chairApproved == 2) or (req.cfoId != 0 and req.cfoApproved == 2) or (req.presidentId != 0 and req.presidentApproved == 2) or (req.secretaryId != 0 and req.secretaryApproved == 2) %}
-									Pending
-{% elseif (req.chairId != 0 and req.chairApproved == 0) or (req.cfoId != 0 and req.cfoApproved == 0) or (req.presidentId != 0 and req.presidentApproved == 0) or (req.secretaryId != 0 and req.secretaryApproved == 0) %}
-									Waiting for approval
+									<span class="pending">Pending</span>
+{% elseif app.user.role == 'chair' %}
+{% if (req.chairId != 0 and req.chairApproved == 0) %}
+									<span class="waiting">Waiting for approval</span>
 {% else %}
-									Approved
+									<span class="approved">Approved</span>
+{% endif %}
+{% elseif app.user.role == 'cfo' %}
+{% if (req.cfoId != 0 and req.cfoApproved == 0) %}
+									<span class="waiting">Waiting for approval</span>
+{% else %}
+									<span class="approved">Approved</span>
+{% endif %}
+{% elseif app.user.role == 'president' %}
+{% if (req.presidentId != 0 and req.presidentApproved == 0) %}
+									<span class="waiting">Waiting for approval</span>
+{% else %}
+									<span class="approved">Approved</span>
+{% endif %}
+{% elseif app.user.role == 'secretary' %}
+{% if (req.secretaryId != 0 and req.secretaryApproved == 0) %}
+									<span class="waiting">Waiting for approval</span>
+{% else %}
+									<span class="approved">Approved</span>
+{% endif %}
 {% endif %}
 								</td>
 								<td class="list_link"><a class="link" href="{{ path('pas_pre_request_status', {'id': req.prid, 'action': 'query'}) }}">Review</a></td>

@@ -38,7 +38,10 @@
 								<th class="list_amount">Amount</th>
 								<th class="list_date">Submission Date</th>
 								<th class="list_status">Status</th>
-								<th class="list_link">Link</th>
+								<th class="list_link">Review</th>
+{% if app.user.role == 'cfo' or app.user.role == 'president' or app.user.role == 'secretary' %}
+								<th class="list_link">Approve</th>
+{% endif %}
 							</tr>
 						</thead>
 						<tbody>
@@ -51,8 +54,17 @@
 								<td class="list_category">{{ categories[req.category] }}</td>
 								<td class="list_amount">{{ req.amount|number_format(2, '.') }} {{ currencies['code'][req.curtype] }}</td>
 								<td class="list_date">{{ req.date|date("m/d/Y") }}</td>
-								<td class="list_status">{% if req.approved == 1 %}Approved{% else %}Waiting for approval{% endif %}</td>
+								<td class="list_status">
+{% if req.approved == 1 %}
+									<span class="approved">Approved</span>
+{% else %}
+									<span class="waiting">Waiting for approval</span>
+{% endif %}
+								</td>
 								<td class="list_link"><a class="link" href="{{ path('pas_budget_request_status', {'id': req.bid, 'action': 'query'}) }}">Review</a></td>
+{% if app.user.role == 'cfo' or app.user.role == 'president' or app.user.role == 'secretary' %}
+								<td class="list_link"><a class="link" href="{{ path('pas_budget_confirmation_form') }}">Approve</a></td>
+{% endif %}
 							</tr>
 {% endfor %}
 						</tbody>

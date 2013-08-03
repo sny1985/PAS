@@ -169,12 +169,10 @@
 				</form>
 {% elseif action == 'query' %}
 				<div id="links">
-{% if app.user.uid == requester.uid %}
 {% if status != 1 %}
 					<a href="{{ path('pas_pre_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
-{% else  %}
+{% else %}
 					<a href="{{ path('pas_post_request_form', {'prid': id}) }}">Submit Payment Request</a> &nbsp; 
-{% endif %}
 {% endif %}
 				</div>
 {% elseif action == 'approve' %}

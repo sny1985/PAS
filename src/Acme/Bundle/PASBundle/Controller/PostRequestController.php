@@ -103,7 +103,7 @@ class PostRequestController extends Controller
 						->add('swiftCode', 'text', array('label' => 'Swift Code:', 'required' => false))
 						->add('routingNumber', 'text', array('label' => 'Routing Number:', 'required' => false))
 						->add('contactEmail', 'text', array('label' => 'Contact Email (if known):', 'required' => false))
-						->add('numberOfInvoices', 'text', array('label' => 'How many invoices?'))
+						->add('numberOfInvoices', 'text', array('label' => 'Invoice Number'))
 						->add('invoice', 'file', array('label' => 'Invoice:', 'required' => false))
 						->add('invoicePath', 'text', array('data' => $postRequest->getInvoicePath() != null ? $postRequest->getInvoicePath() : null, 'required' => false))
 						->add('selectedBudget', 'text', array('data' => $selectedBudget, 'required' => false))

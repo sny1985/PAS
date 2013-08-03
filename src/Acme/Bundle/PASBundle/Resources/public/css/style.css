@@ -610,6 +610,9 @@ table th, table td {border: 1px solid #ffffff; vertical-align: top; padding: 10p
 
 /* list table */
 .list td {text-align: center;}
+.waiting {color: #ffff99;}
+.pending {color: #ff3300;}
+.approved {color: #66ff33;}
 
 #prerequest_status, #postrequest_status, #notice {padding: 20px;}
 #links {margin: 40px auto;}
