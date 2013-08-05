@@ -76,6 +76,13 @@
 {% else %}
 									<span class="approved">Approved</span>
 {% endif %}
+{% else %}
+{% if (req.cfoId != 0 and req.cfoApproved != 1) or (req.chairId != 0 and req.chairApproved != 1) or (req.presidentId != 0 and req.presidentApproved != 1) or (req.secretaryId != 0 and req.secretaryApproved != 1) %}
+                                    <span class="waiting">Waiting for approval</span>
+{% else %}
+                                    <span class="approved">Approved</span>
+{% endif %}
+
 {% endif %}
 
 								</td>
