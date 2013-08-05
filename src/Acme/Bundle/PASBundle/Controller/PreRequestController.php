@@ -64,10 +64,6 @@ class PreRequestController extends Controller
 			$id = $param['id'];
 			$action = $param['action'];
 			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($id);
-			// do not allow other people peek it
-			if ($preRequest->getRequester() != $this->user->getUid()) {
-				throw new HttpException(403, 'You are not allowed to change this request.');
-			}
 		}
 
 		// create form

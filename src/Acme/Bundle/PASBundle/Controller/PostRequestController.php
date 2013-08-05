@@ -73,10 +73,6 @@ class PostRequestController extends Controller
 			$id = $param['id'];
 			$action = $param['action'];
 			$postRequest = $em->getRepository('AcmePASBundle:PostRequest')->findOneByRid($id);
-			// do not allow other people peek it
-			if ($postRequest->getRequester() != $this->user->getUid()) {
-				throw new HttpException(403, 'You are not allowed to change this request.');
-			}
 		}
 
 		// create form
