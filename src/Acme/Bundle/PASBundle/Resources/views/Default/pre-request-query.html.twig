@@ -169,9 +169,8 @@
 				</form>
 {% elseif action == 'query' %}
 				<div id="links">
-{% if status != 1 %}
 					<a href="{{ path('pas_pre_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
-{% else %}
+{% if status == 1 %}
 					<a href="{{ path('pas_post_request_form', {'prid': id}) }}">Submit Payment Request</a> &nbsp; 
 {% endif %}
 				</div>

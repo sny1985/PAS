@@ -274,11 +274,14 @@
 					<br />
 					<input type="text" id="actual_amount" name="actual_amount" required="required" />
 					<input type="hidden" name="id" value="{{ id }}">
+    				<div id="links">
+    					<a href="{{ path('pas_post_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
+    				</div>
 					<div id="buttons" class="form_item">
 						<input type="submit" value="Confirm" />
 					</div>
 				</form>
-{% elseif status != 1 %}
+{% else %}
 				<div id="links">
 					<a href="{{ path('pas_post_request_form', {'action': 'edit', 'id': id}) }}">Edit</a> &nbsp; 
 				</div>
