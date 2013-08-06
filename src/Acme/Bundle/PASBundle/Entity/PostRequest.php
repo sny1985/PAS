@@ -69,8 +69,8 @@ class PostRequest
 	protected $preApproval;
 
 	/**
-	* @Assert\Type(type="numeric", message="The value {{ value }} is not a valid {{ type }}.")
-	* @Assert\Range(min="0")
+    * @Assert\NotBlank(message="Pre-Approval No. is not valid.")
+	* @Assert\Type(type="string", message="Pre-Approval No. is not valid.")
 	*/
 	protected $preApprovalNo;
 
@@ -159,15 +159,15 @@ class PostRequest
 
 	/**
 	* @ORM\Column(type="text")
-    * @Assert\Type(type="string", message="The value {{ value }} is not a valid {{ type }}.")
-    * @Assert\NotBlank(message="Invoice Path is needed.")
+	* @Assert\Type(type="string", message="The value {{ value }} is not a valid {{ type }}.")
+	* @Assert\NotBlank(message="Invoice Path is needed.")
 	*/
 	protected $invoicePath;
 
 	/**
 	* @ORM\Column(type="string", length=64)
-    * @Assert\Type(type="string", message="The value {{ value }} is not a valid {{ type }}.")
-    * @Assert\NotBlank(message="Selected Budget is needed.")
+	* @Assert\NotBlank(message="Selected Budget is needed.")
+	* @Assert\Type(type="string", message="The value {{ value }} is not a valid {{ type }}.")
 	*/
 	protected $selectedBudget;
 
@@ -610,7 +610,7 @@ class PostRequest
 			return;
 		}
 
-		$this->invoicePath = 'invoice_' . date('mdY') . "_" . $this->invoice->getClientOriginalName(); // invoice_timestamp.filename
+		$this->invoicePath = 'invoice_' . date('mdY'). "_" . time() . "_" . $this->invoice->getClientOriginalName(); // invoice_date_timestamp.filename
 		$this->invoice->move(__DIR__.'/../../../../../uploads/documents', __DIR__.'/../../../../../uploads/documents/' . $this->invoicePath);
 		$this->invoice = null;
 	}

@@ -17,6 +17,7 @@ class PostRequestController extends Controller
 		$hasInvoice = 0;
 		$postRequest = new PostRequest();
 		$preApproval = 0;
+		$preApprovalError = null;
 		$selectedBudget = null;
 		$this->user = $this->getUser();
 
@@ -66,6 +67,8 @@ class PostRequestController extends Controller
 			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($postRequest->getPreApprovalNo());
 			if (count($preRequest) > 0) {
 				$postRequest->setSelectedBudget($preRequest->getSelectedBudget());
+			} else {
+			    $postRequest->setPreApprovalNo(null);
 			}
 		}
 		// edit
@@ -100,7 +103,7 @@ class PostRequestController extends Controller
 						->add('routingNumber', 'text', array('label' => 'Routing Number:', 'required' => false))
 						->add('contactEmail', 'text', array('label' => 'Contact Email (if known):', 'required' => false))
 						->add('numberOfInvoices', 'text', array('label' => 'Invoice Number'))
-						->add('invoice', 'file', array('label' => 'Invoice:', 'required' => false))
+						->add('invoice', 'file', array('label' => 'Invoice:'))
 						->add('invoicePath', 'text', array('data' => $postRequest->getInvoicePath() != null ? $postRequest->getInvoicePath() : null, 'required' => false))
 						->add('selectedBudget', 'text', array('data' => $selectedBudget, 'required' => false))
 						->add('level', 'choice', array('choices' => array(1 => 'Below or equal to 10,000 USD: by the Chair', 2 => 'Above 10,000 USD: by Secretary, President and CFO '), 'empty_value' => 'Choose one level', 'label' => 'Approval Level:', 'preferred_choices' => array('empty_value'), 'required' => false))
@@ -122,18 +125,19 @@ class PostRequestController extends Controller
 		// if the HTTP method is POST, handle form submission
 		if ($req->isMethod('POST')) {
 			$form->bind($req);
-
-            $postRequest = $form->getData();
+			$postRequest = $form->getData();
 			$postRequest->formatPreApprovalNo();
-			$postRequest->uploadFiles();
 			$preRequest = $em->getRepository('AcmePASBundle:PreRequest')->findOneByPrid($postRequest->getPreApprovalNo());
 			if (count($preRequest) > 0) {
 				$postRequest->setSelectedBudget($preRequest->getSelectedBudget());
+			} else {
+				$preApprovalError = "Pre-Approval No. is not valid.";
 			}
 
 			// validate the data and put into database
 			// HANDLE MULTIPLE FILES UPLOADING ???
-			if ($form->isValid()) {
+			if (!$preApprovalError && $form->isValid()) {
+				$postRequest->uploadFiles();
 				$post = $req->request->all();
 				$action = $post['action'];
 				if (isset($action) && $action == 'edit') {
@@ -185,6 +189,6 @@ class PostRequestController extends Controller
 		}
 
 		// display form
-		return $this->render('AcmePASBundle:Default:post-request.html.twig', array('form' => $form->createView(), 'action' => $action));
+		return $this->render('AcmePASBundle:Default:post-request.html.twig', array('form' => $form->createView(), 'action' => $action, 'preApprovalError' => $preApprovalError));
 	}
 }

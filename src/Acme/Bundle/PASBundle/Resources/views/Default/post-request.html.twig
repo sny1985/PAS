@@ -118,6 +118,9 @@
 						<div id="pre_approval_no" class="form_item">
 							{{ form_label(form.preApprovalNo) }}<br />
 							{{ form_errors(form.preApprovalNo) }}
+{% if preApprovalError %}
+						<br /><span class="error">{{ preApprovalError }}</span><br />
+{% endif %}
 							{{ form_widget(form.preApprovalNo) }}
 						</div>
 					</div>
@@ -181,8 +184,8 @@
 						{{ form_label(form.invoice) }}<br />
 						{{ form_errors(form.invoice) }}
                         {{ form_errors(form.invoicePath) }}
-						{% if form.vars.value.invoicePath is defined and form.vars.value.invoicePath != '' %}
-							<br />Uploaded file: {{ form.vars.value.invoicePath }} (*Upload a new file to replace the current one.)
+						{% if form.vars.value.invoicePath is defined and form.vars.value.invoicePath != '' and form.vars.value.invoicePath != 'uploading' %}
+							<br /><span id="uploaded_file">Uploaded file: {{ form.vars.value.invoicePath }} (*Upload a new file to replace the current one.)</span>
 							<br />
 						{% endif %}
 						{{ form_widget(form.invoice) }}
@@ -210,6 +213,9 @@
 				SelectPaymentMethod();
 				SelectPreApproved();
 				SelectBudget();
+				if ($("#uploaded_file").length) {
+					$("#form_invoice").prop("required", false);
+				}
 				$("#form_amount, #form_curtype").change(function() {
 					ConvertCurrency();
 				});
@@ -230,7 +236,7 @@
 				});
 				$("#form_invoice").change(function() {
 					if (this.value != "")
-                        $("#form_invoicePath").val("uploading");
+						$("#form_invoicePath").val("uploading");
 				});
 				$("#home_btn").click(function(e) {
 					var res = window.confirm("Leave this form?");
