@@ -618,3 +618,5 @@ table th, table td {border: 1px solid #ffffff; vertical-align: top; padding: 10p
 #links {margin: 40px auto;}
 #links a:link, #links a:visited {background-color: #0b759e; color: #ffffff; text-decoration: none; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; padding: 5px 8px;}
 #links a:hover {text-decoration: underline;}
+
+.deletion {color: red; font-size: 12px; text-decoration: none; float: right;}

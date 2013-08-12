@@ -99,6 +99,10 @@ pas_post_requests_list_exporting:
     pattern: /post-list-export
     defaults: { _controller: AcmePASBundle:PostRequestsListExporting:export }
 
+pas_request_deletion:
+    pattern: /request-delete
+    defaults: { _controller: AcmePASBundle:RequestDeletion:delete }
+
 pas_user:
     pattern: /user
     defaults: { _controller: AcmePASBundle:User:user }

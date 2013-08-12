@@ -37,7 +37,7 @@
 				<h4>Is all information correct?</h4>
 				<br />
 {% endif %}
-
+				<a class="deletion" href="{{ path('pas_request_deletion', {'req_type': 'pre', 'id': id}) }}">Delete</a>
 				<table id="prerequest_status" class="status">
 {% if role == 'requester' %}
 {% if status == 1 %}
@@ -49,7 +49,7 @@
 {% endif %}
 					<tr>
 						<td class="status_tag">Requester:</td>
-						<td class="status_content">{{ requester.username }}</td>
+						<td class="status_content">{{ requester.name }}</td>
 					</tr>
 					<tr>
 						<td class="status_tag">Requester's Email:</td>
@@ -206,6 +206,12 @@
 {% block javascripts %}
 {{ parent() }}
 		<script type="text/javascript">
+			$(".deletion").click(function(e) {
+				var res = window.confirm("Do you want to delete this request?");
+				if (res == false) {
+					e.preventDefault();
+				}
+			});
 			function edit(id) {
 				window.location.replace("pre-request?id=" + id + "&action=" + "edit");
 			}
